@@ -11,14 +11,15 @@ var users = require('./routes/users');
 var webhooks = require('./routes/webhooks');
 
 var app = express();
+var env = process.env;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 log4js.configure({
-    appenders: {cheese: {type: 'file', filename: 'cheese.log'}},
-    categories: {default: {appenders: ['cheese'], level: 'error'}},
+    appenders: {cheese: {type: 'file', filename: env.LogPath || 'log/cheese.log'}},
+    categories: {default: {appenders: ['cheese'], level: 'info'}},
     replaceConsole: true
 });
 
