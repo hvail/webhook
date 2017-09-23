@@ -83,6 +83,13 @@ var _location = function (req, res, next) {
         res.send('0');
         return;
     }
+    var _pos = [];
+    for (var i = 0; i < pos.length; i++) {
+        if (pos[i] && pos[i] != null) {
+            _pos.push(pos[i]);
+        }
+    }
+    pos = _pos;
     var sn = pos[0].SerialNumber;
     getWebHooks(sn, "GPSPosition", function (err, data) {
         doWebPush(data, pos);
