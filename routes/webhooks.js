@@ -97,7 +97,7 @@ var _power = function (req, res, next) {
 var _event = function (req, res, next) {
     var eve = req.body;
     var sn = eve.SerialNumber;
-    getWebHooks(sn, "GPSEventAlarm", function (err, data) {
+    getWebHooks(sn, "GPSEvent", function (err, data) {
         doWebPush(data, pos);
         res.send("1");
     });
