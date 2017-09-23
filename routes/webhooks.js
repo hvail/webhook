@@ -85,7 +85,7 @@ var _location = function (req, res, next) {
     }
     var _pos = [];
     for (var i = 0; i < pos.length; i++) {
-        if (pos[i] && pos[i] != null) {
+        if (pos[i] && pos[i] != "null") {
             _pos.push(pos[i]);
         }
     }
