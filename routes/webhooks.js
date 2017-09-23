@@ -67,7 +67,7 @@ var _doPost = function (req, res, next) {
             return;
         }
         var arr = result != null ? JSON.parse(result) : [];
-        if (result.indexOf(JSON.stringify(data)) < 0) {
+        if (!result || result.indexOf(JSON.stringify(data)) < 0) {
             arr.push(data);
             redis.HSET(HashWebHooks, key, JSON.stringify(data));
         } else console.log("重复不添加");
