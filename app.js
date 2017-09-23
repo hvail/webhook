@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var log4js = require('log4js');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -15,9 +16,17 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+log4js.configure({
+    appenders: {cheese: {type: 'file', filename: 'cheese.log'}},
+    categories: {default: {appenders: ['cheese'], level: 'error'}},
+    replaceConsole: true
+});
+
+var logger = log4js.getLogger('normal');
+// logger.setLevel('DEBUG')
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
