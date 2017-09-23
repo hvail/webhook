@@ -97,7 +97,7 @@ var _power = function (req, res, next) {
     }
     var sn = pow[0].SerialNumber;
     getWebHooks(sn, "GPSPower", function (err, data) {
-        doWebPush(data, pos);
+        doWebPush(data, pow);
         res.send("1");
     });
 }
@@ -110,7 +110,7 @@ var _event = function (req, res, next) {
     }
     var sn = eve[0].SerialNumber;
     getWebHooks(sn, "GPSEvent", function (err, data) {
-        doWebPush(data, pos);
+        doWebPush(data, eve);
         res.send("1");
     });
 }
