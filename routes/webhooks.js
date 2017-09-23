@@ -31,12 +31,13 @@ var getWebHooks = function (sn, lis, cb) {
     });
 }
 
-var totalPush = function (url, status) {
+var totalPush = function (url, data, status) {
     var ds = new Date().toISOString().split("T")[0];
     var totalKey = SetSendStatusTotalKey + ds;
     var statusKey = (status > 0 ? SetSendStatusSuccessKey : SetSendStatusFailureKey) + ds;
     redis.ZINCRBY(totalKey, 1, url);
     redis.ZINCRBY(statusKey, 1, url);
+    console.log(url + "(" + status + ")" + " - " + JSON.stringify(data));
 }
 
 var doWebPush = function (arr, data) {
