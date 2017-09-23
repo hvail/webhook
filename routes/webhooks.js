@@ -78,6 +78,10 @@ var _doPost = function (req, res, next) {
 
 var _location = function (req, res, next) {
     var pos = req.body;
+    if (!pos) {
+        res.send('0');
+        return;
+    }
     var sn = pos[0].SerialNumber;
     getWebHooks(sn, "GPSPosition", function (err, data) {
         doWebPush(data, pos);
@@ -87,6 +91,10 @@ var _location = function (req, res, next) {
 
 var _power = function (req, res, next) {
     var pow = req.body;
+    if (!pow) {
+        res.send('0');
+        return;
+    }
     var sn = pow[0].SerialNumber;
     getWebHooks(sn, "GPSPower", function (err, data) {
         doWebPush(data, pos);
@@ -96,6 +104,10 @@ var _power = function (req, res, next) {
 
 var _event = function (req, res, next) {
     var eve = req.body;
+    if (!eve) {
+        res.send('0');
+        return;
+    }
     var sn = eve[0].SerialNumber;
     getWebHooks(sn, "GPSEvent", function (err, data) {
         doWebPush(data, pos);
