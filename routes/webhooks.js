@@ -4,6 +4,7 @@
 var express = require('express');
 var router = express.Router();
 var _util = require('./../my_modules/utils');
+var util = require('util');
 var redis = require('./../my_modules/redishelp');
 
 const HashWebHooks = "web-hook-listener-hash";
@@ -94,6 +95,11 @@ var _power = function (req, res, next) {
     if (!pow) {
         res.send('0');
         return;
+    }
+    if (!util.isArray(pow)) {
+        var _pow = [];
+        _pow.push(pow);
+        pow = _pow;
     }
     var sn = pow[0].SerialNumber;
     getWebHooks(sn, "GPSPower", function (err, data) {
