@@ -48,7 +48,7 @@ router.ClassClone = function (src, tar, res) {
 
 router.DoPushPost = function (url, data, cb) {
     request(getHttpOptions(url, data), function (err, res, body) {
-        cb && cb(url, res.statusCode < 500 ? 1 : -1);
+        cb && cb(url, res.statusCode < 400 ? 1 : -1);
     })
 }
 
