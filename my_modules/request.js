@@ -1,23 +1,21 @@
 const URL = require('url');
 const http = require('http');
 var _index = 0;
-var requestGetUrl = function (url, cb, eb) {
+var requestGetUrl = function (url, cb) {
     var option = URL.parse(url);
     option.method = "GET";
     var req = http.request(option, function (httpRes) {
         var buffers = [];
-        httpRes.on('data', function (chunk) {
+        httpRes.on('data', function (chunk, x, y) {
             buffers.push(chunk);
         });
 
         httpRes.on('end', function (chunk) {
             var wholeData = Buffer.concat(buffers);
             var dataStr = wholeData.toString('utf8');
-            cb && cb(dataStr);
+            cb && cb(null, dataStr);
         });
-    }).on('error', function (err) {
-        eb && eb(err);
-    });
+    }).on('error', cb);
     req.end();
 }
 
@@ -27,11 +25,8 @@ var requestPostUrl = function (url, data, cb, eb) {
     option.headers = {
         'Content-Type': 'application/json',
     }
-    var _id = data._id;
     var req = http.request(option, function (httpRes) {
         _index++;
-        // if (_index % 100 == 0)
-        //     console.log(_index + " - " + _id + ' - STATUS: ' + httpRes.statusCode + ":" + option.path);
         if (httpRes.statusCode == 204) {
             cb && cb();
             return;
@@ -51,7 +46,6 @@ var requestPostUrl = function (url, data, cb, eb) {
         console.log("requestPostUrl err");
         eb && eb(err);
     });
-    delete data._id;
     req.write(JSON.stringify(data));
     req.end();
 }
