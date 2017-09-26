@@ -151,46 +151,39 @@ GPSUtils.GetLineDistance = function (points) {
     }
 }
 
-/**
+/***
  * 判断点是否在圆形内
- * @param {pCircle} 圆心点
- * @param {pPoint} 目标点
- * @param {radius} 半径
- * @returns {Boolean} 点在圆形内返回true,否则返回false
  */
-GPSUtils.IsPointInCircle = function (pCircle, radius, pPoint) {
+GPSUtils.IsPointInCircle = function (Fps, lat, lng) {
     //point与圆心距离小于圆形半径，则点在圆内，否则在圆外
-    var r = radius;
+    var pCircle = Fps[0];
+    var r = GPSUtils.GetDistance(pCircle.Lat, pCircle.Lng, Fps[1].Lat, Fps[1].Lng);
 
-    var dis = GPSUtils.GetDistance(pCircle.Lat, pCircle.Lng, pPoint.Lat, pPoint.Lng);
+    var dis = GPSUtils.GetDistance(pCircle.Lat, pCircle.Lng, lat, lng);
     return (dis <= r);
 }
 
-/**
+/***
  * 判断点是否在矩形内
- * @param {sw} point 西南点对象
- * @param {ne} point 东北点对象
- * @param {pPoint} 目标点
- * @returns {Boolean} 点在矩形内返回true,否则返回false
  */
-GPSUtils.IsPointInRect = function (sw, ne, pPoint) {
-    return (point.Lng >= sw.Lng && pPoint.Lng <= ne.Lng && pPoint.Lat >= sw.Lat && pPoint.Lat <= ne.Lat);
+GPSUtils.IsPointInRect = function (Fps, lat, lng) {
+    var sw = Fps[0];
+    var ne = Fps[1];
+    return (lng >= sw.Lng && lng <= ne.Lng && lat >= sw.Lat && lat <= ne.Lat);
 }
 
-/**
+/***
  * 判断点是否多边形内
- * @param {Point} point 点对象
- * @param {Polyline} polygon 多边形对象
- * @returns {Boolean} 点在多边形内返回true,否则返回false
  */
-GPSUtils.IsPointInPolygon = function (pPolygon, pPoint) {
+GPSUtils.IsPointInPolygon = function (Fps, lat, lng) {
+    var pPoint = {Lat: lat, Lng: lng};
     //首先判断点是否在多边形的外包矩形内，如果在，则进一步判断，否则返回false
     var polygonBounds = this.getPolygonBound(pPolygon);
     if (!this.IsPointInRect(pPoint, polygonBounds)) {
         return false;
     }
 
-    var pts = pPolygon;//获取多边形点
+    var pts = Fps;//获取多边形点
 
     //下述代码来源：http://paulbourke.net/geometry/insidepoly/，进行了部分修改
     //基本思想是利用射线法，计算射线与多边形各边的交点，如果是偶数，则点在多边形外，否则

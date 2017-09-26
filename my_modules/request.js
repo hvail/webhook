@@ -19,7 +19,7 @@ var requestGetUrl = function (url, cb) {
     req.end();
 }
 
-var requestPostUrl = function (url, data, cb, eb) {
+var requestPostUrl = function (url, data, cb) {
     var option = URL.parse(url);
     option.method = "POST";
     option.headers = {
@@ -28,7 +28,7 @@ var requestPostUrl = function (url, data, cb, eb) {
     var req = http.request(option, function (httpRes) {
         _index++;
         if (httpRes.statusCode == 204) {
-            cb && cb();
+            cb && cb(null);
             return;
         }
         var buffers = [];
@@ -39,12 +39,12 @@ var requestPostUrl = function (url, data, cb, eb) {
         httpRes.on('end', function (chunk) {
             var wholeData = Buffer.concat(buffers);
             var dataStr = wholeData.toString('utf8');
-            cb && cb(dataStr);
+            cb && cb(null, dataStr);
         });
     }).on('error', function (err) {
         console.log(err);
         console.log("requestPostUrl err");
-        eb && eb(err);
+        cb && cb(err);
     });
     req.write(JSON.stringify(data));
     req.end();
