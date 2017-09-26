@@ -5,6 +5,7 @@
 var express = require('express');
 var request = require('./../my_modules/request');
 var gpsUtil = require('./../my_modules/gpsutils');
+var util = require('util');
 var router = express.Router();
 var area = process.env.DATAAREA || "zh-cn";
 
@@ -17,26 +18,27 @@ const LeaveTitle = "exited";
 
 var TriggerFenceAlarm = function (sn, fence, x) {
     var io_type = x ? EnterTitle : LeaveTitle;
-    var title = String.format(FenceTriggerTitle, sn, io_type, fence.Name);
+    console.log(fence);
+    var title = util.format(FenceTriggerTitle, sn, io_type, fence.Name);
     var be = {};
     be.EventType = 0x0E + x;
     be.Message = title;
     be.UpTime = time;
     be.SerialNumber = sn;
     console.log(be);
+    // 利用MQ进行消息中转
 }
 
 var toCoordPoi = function (fence, p) {
     if (!fence.Coord || fence.Coord == "WGS84") {
         return {Lat: p.Lat, Lng: p.Lng};
     } else if (fence.Coord == "GCJ02") {
-        return {Lat: p.Lat_Gg, Lng: p.Lng_Gg};
-    } else if (fence.Coord == "GCJ02") {
-        return {Lat: p.Lat_Bd, Lng: p.Lng_Bd};
+        return {Lat: p.Lat_Gg || p.Lat, Lng: p.Lng_Gg || p.Lng};
+    } else if (fence.Coord == "BD09") {
+        return {Lat: p.Lat_Bd || p.Lat, Lng: p.Lng_Bd || p.Lng};
     } else {
         return {Lat: p.Lat, Lng: p.Lng};
     }
-
 }
 
 var trigger = function (ps, fence) {
@@ -65,8 +67,7 @@ var _location = function (req, res, next) {
     }
     var _pos = [];
     for (var i = 0; i < pos.length; i++)
-        if (pos[i] && pos[i] != "null")
-            _pos.push(pos[i]);
+        if (pos[i] && pos[i] != "null") _pos.push(pos[i]);
     pos = _pos;
     var sn = pos[0].SerialNumber;
     var getFenceUrl = fenceUrl + sn;

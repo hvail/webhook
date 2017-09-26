@@ -51,5 +51,5 @@ var doPostNewUrl = function (data, i) {
 request.Post(getFenceUrl, {}, function (err, result) {
     var data = JSON.parse(result);
     // console.log(data.length);
-    // doPostNewUrl(data);
+    doPostNewUrl(data);
 });
