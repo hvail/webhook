@@ -21,7 +21,7 @@ var TriggerFenceAlarm = function (sn, fence, x) {
     console.log(fence);
     var title = util.format(FenceTriggerTitle, sn, io_type, fence.Name);
     var be = {};
-    be.EventType = 0x0E + x;
+    be.EventType = 0x0E + (x ? 1 : 0);
     be.Message = title;
     be.UpTime = time;
     be.SerialNumber = sn;
