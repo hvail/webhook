@@ -11,11 +11,50 @@ var area = process.env.DATAAREA || "zh-cn";
 var fenceUrl = "http://v3.res-mongo.local." + area + ".sky1088.com/fence/sn/";
 const FenceTypeEnum = [null, gpsUtil.IsPointInCircle, gpsUtil.IsPointInRect, gpsUtil.IsPointInPolygon];
 
+const FenceTriggerTitle = "Device %s has %s fence %s";
+const EnterTitle = "entered";
+const LeaveTitle = "exited";
+
+var TriggerFenceAlarm = function (sn, fence, x) {
+    var io_type = x ? EnterTitle : LeaveTitle;
+    var title = String.format(FenceTriggerTitle, sn, io_type, fence.Name);
+    var be = {};
+    be.EventType = 0x0E + x;
+    be.Message = title;
+    be.UpTime = time;
+    be.SerialNumber = sn;
+    console.log(be);
+}
+
+var toCoordPoi = function (fence, p) {
+    if (!fence.Coord || fence.Coord == "WGS84") {
+        return {Lat: p.Lat, Lng: p.Lng};
+    } else if (fence.Coord == "GCJ02") {
+        return {Lat: p.Lat_Gg, Lng: p.Lng_Gg};
+    } else if (fence.Coord == "GCJ02") {
+        return {Lat: p.Lat_Bd, Lng: p.Lng_Bd};
+    } else {
+        return {Lat: p.Lat, Lng: p.Lng};
+    }
+
+}
+
 var trigger = function (ps, fence) {
     var fp = ps[0];
     var _fenceCalc = FenceTypeEnum[fence.Type];
-    var _io_f = _fenceCalc(fence.Points, fp.Lat, fp.Lng);
 
+    var poi = toCoordPoi(fence, fp);
+    var _io_f = _fenceCalc(fence.Points, poi.Lat, poi.Lng);
+
+    for (var i = 1; i < ps.length; i++) {
+        poi = toCoordPoi(fence, ps[i]);
+        var _tio = _fenceCalc(fence.Points, poi.Lat, poi.Lng);
+        if (_tio != _io_f) {
+            // 触发围栏报警
+            TriggerFenceAlarm(fp.SerialNumber, fence, _tio);
+        }
+        _io_f = _tio;
+    }
 }
 
 var _location = function (req, res, next) {
@@ -35,12 +74,9 @@ var _location = function (req, res, next) {
     request.Get(getFenceUrl, function (err, result) {
         var fences = JSON.parse(result);
         if (fences.length < 1 || pos.length < 2) return;
-        console.log(pos[0]);
         for (var i = 0; i < fences.length; i++) {
             trigger(pos, fences[i]);
         }
-        // console.log(pos.length);
-        // console.log(fences.length);
     });
     res.send("1");
 }
