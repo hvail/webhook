@@ -69,9 +69,9 @@ router.SendMqObject = function (exchage, obj, target) {
         Context: JSON.stringify(obj)
     };
 
-    request.Post(MqSendUrl, push, function (err, data) {
+    request(getHttpOptions(MqSendUrl, push), function (err, res, body) {
         console.log(err);
-        console.log(data);
+        console.log(body);
     });
 }
 
