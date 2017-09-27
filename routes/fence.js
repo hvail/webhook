@@ -13,7 +13,7 @@ var area = process.env.DATAAREA || "zh-cn";
 var fenceUrl = "http://v3.res-mongo.local." + area + ".sky1088.com/fence/sn/";
 const FenceTypeEnum = [null, gpsUtil.IsPointInCircle, gpsUtil.IsPointInRect, gpsUtil.IsPointInPolygon];
 
-const FenceTriggerTitle = "Device %s has %s fence %s";
+const FenceTriggerTitle = "Your Device %s has %s fence %s";
 const EnterTitle = "entered";
 const LeaveTitle = "exited";
 
