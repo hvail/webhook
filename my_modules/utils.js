@@ -3,6 +3,8 @@
  */
 const request = require('request');
 const REQUIRED = "required";
+var area = process.env.DATAAREA || "zh-cn";
+const MqSendUrl = "http://v3.local-mq-rabbit." + area + ".sky1088.com/mq/send";
 var router = {};
 
 var getHttpOptions = function (url, data) {
@@ -57,6 +59,20 @@ router.DoPushPost = function (url, data, cb) {
     request(getHttpOptions(url, data), function (err, res, body) {
         cb && cb(url, data, res.statusCode < 400 ? 1 : -1);
     })
+}
+
+router.SendMqObject = function (exchage, obj, target) {
+    var tag = exchage + "." + target;
+    var push = {
+        Exchange: exchage,
+        MsgTag: tag,
+        Context: JSON.stringify(obj)
+    };
+
+    request.Post(MqSendUrl, push, function (err, data) {
+        console.log(err);
+        console.log(data);
+    });
 }
 
 router.REQUIRED = REQUIRED;

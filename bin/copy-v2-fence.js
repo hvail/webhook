@@ -40,7 +40,7 @@ var doPostNewUrl = function (data, i) {
             Lng: _pps[1].split(",")[1] * 1
         }];
     _data.Coord = "WGS84";
-    console.log(_data);
+    // console.log(_data);
     ii++;
     request.Post(postFenceUrl, _data, function (err, _result) {
         console.log(_result);

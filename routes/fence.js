@@ -5,6 +5,7 @@
 var express = require('express');
 var request = require('./../my_modules/request');
 var gpsUtil = require('./../my_modules/gpsutils');
+var myUtil = require('./../my_modules/utils');
 var util = require('util');
 var router = express.Router();
 var area = process.env.DATAAREA || "zh-cn";
@@ -16,13 +17,15 @@ const FenceTriggerTitle = "Device %s has %s fence %s";
 const EnterTitle = "entered";
 const LeaveTitle = "exited";
 
+const ExchangeName = "hyz.protocol.BaseEvent";
+
 var time = function () {
     return Math.round(new Date().getTime() / 1000);
 }
 
+
 var TriggerFenceAlarm = function (sn, fence, x) {
     var io_type = x ? EnterTitle : LeaveTitle;
-    console.log(fence);
     var title = util.format(FenceTriggerTitle, sn, io_type, fence.Name);
     var be = {};
     be.EventType = 0x0E + (x ? 1 : 0);
@@ -31,6 +34,7 @@ var TriggerFenceAlarm = function (sn, fence, x) {
     be.SerialNumber = sn;
     console.log(be);
     // 利用MQ进行消息中转
+    myUtil.SendMqObject(ExchangeName, [be], sn);
 }
 
 var toCoordPoi = function (fence, p) {
@@ -86,7 +90,6 @@ var _location = function (req, res, next) {
     res.send("1");
 }
 
-/* GET users listing. */
 router.get('/');
 router.post('/location', _location);
 
