@@ -20,7 +20,7 @@ const LeaveTitle = "exited";
 const ExchangeName = "hyz.protocol.BaseEvent";
 
 var time = function () {
-    return Math.round(new Date().getTime() / 1000);
+    return Math.round(new Date().getTime() / 1000) + 3;
 }
 
 
@@ -32,6 +32,7 @@ var TriggerFenceAlarm = function (sn, fence, x) {
     be.Message = title;
     be.UpTime = time();
     be.SerialNumber = sn;
+    be.Description = "By Web Hooks";
     console.log(be);
     // 利用MQ进行消息中转
     myUtil.SendMqObject(ExchangeName, [be], sn);
