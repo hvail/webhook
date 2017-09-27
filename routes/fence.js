@@ -16,6 +16,10 @@ const FenceTriggerTitle = "Device %s has %s fence %s";
 const EnterTitle = "entered";
 const LeaveTitle = "exited";
 
+var time = function () {
+    return Math.round(new Date().getTime() / 1000);
+}
+
 var TriggerFenceAlarm = function (sn, fence, x) {
     var io_type = x ? EnterTitle : LeaveTitle;
     console.log(fence);
@@ -23,7 +27,7 @@ var TriggerFenceAlarm = function (sn, fence, x) {
     var be = {};
     be.EventType = 0x0E + (x ? 1 : 0);
     be.Message = title;
-    be.UpTime = time;
+    be.UpTime = time();
     be.SerialNumber = sn;
     console.log(be);
     // 利用MQ进行消息中转
