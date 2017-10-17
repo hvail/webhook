@@ -28,7 +28,9 @@ var calcMidPowers = function (sn, start, end, cb) {
     if (!start) start = 0;
     if (!end) end = Math.round(new Date().getTime() / 1000);
     var url = util.format(getRangePower, sn, start, end);
+    console.log(url);
     request(url, function (err, res, body) {
+        console.log(body);
         var data = JSON.parse(body);
         if (start == 0) {
             start = data[0].PowerTime - data[0].PowerTime % calc_mid;
@@ -64,8 +66,6 @@ var calcMidPowers = function (sn, start, end, cb) {
                 var ave = powersAverage(ps);
                 result.push({SerialNumber: _pa.SerialNumber, PowerValue: ave, PowerTime: _ptst});
             }
-            console.log(result.length);
-            console.log(data.length);
             var i = 0, limit = 200;
             var sendCount = 0;
             var mss = [];
@@ -88,8 +88,8 @@ var poolPost = function (subs, cb, i) {
         cb && cb();
         return;
     }
-    myUtil.DoPushPost(batch_host, subs[i], function (err, response, body) {
-        console.log("POST : " + batch_host + " Length : " + subs[i].length);
+    myUtil.DoPushPost(batch_host, subs[i], function (url, data, status, body) {
+        console.log("POST : " + batch_host + " Length : " + body);
         i++;
         poolPost(subs, cb, i);
     });
@@ -185,13 +185,16 @@ var getLastTime = function (req, res, next) {
 
 var doPostPower = function (req, res, next) {
     var body = req.body;
+    var sn = body.SerialNumber;
     var end = body.PowerTime;
-    redis.ZSCORE(key_power_calc, body.SerialNumber, function (err, score) {
+    redis.ZSCORE(key_power_calc, sn, function (err, score) {
+        console.log(score);
+        console.log(err);
         score = score || 0;
         calcMidPowers(sn, score, end, function (err, lastTime) {
             // 最大的上传条数为200
-            redis.ZADD(key_power_calc, sn, lastTime);
-            res.send(200, lastTime);
+            redis.ZADD(key_power_calc, lastTime, sn);
+            res.status(200).send('' + lastTime);
         });
     });
 }
