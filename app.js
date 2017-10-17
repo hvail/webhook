@@ -5,17 +5,19 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var log4js = require('log4js');
+var fs = require('fs');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 var fence = require('./routes/fence');
+var power = require('./routes/power');
 var webhooks = require('./routes/webhooks');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'ejs');
 
 log4js.configure({
     appenders: {cheese: {type: 'file', filename: 'cheese.log'}},
@@ -36,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/fence', fence);
+app.use('/power', power);
 app.use('/webhooks', webhooks);
 
 // catch 404 and forward to error handler

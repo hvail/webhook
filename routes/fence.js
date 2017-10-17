@@ -13,16 +13,15 @@ var area = process.env.DATAAREA || "zh-cn";
 var fenceUrl = "http://v3.res-mongo.local." + area + ".sky1088.com/fence/sn/";
 const FenceTypeEnum = [null, gpsUtil.IsPointInCircle, gpsUtil.IsPointInRect, gpsUtil.IsPointInPolygon];
 
-const FenceTriggerTitle = "Your Device %s has %s fence %s";
+const FenceTriggerTitle = "Device %s has %s fence %s";
 const EnterTitle = "entered";
 const LeaveTitle = "exited";
 
 const ExchangeName = "hyz.protocol.BaseEvent";
 
 var time = function () {
-    return Math.round(new Date().getTime() / 1000) + 3;
+    return Math.round(new Date().getTime() / 1000);
 }
-
 
 var TriggerFenceAlarm = function (sn, fence, x) {
     var io_type = x ? EnterTitle : LeaveTitle;

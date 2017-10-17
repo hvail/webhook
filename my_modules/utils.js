@@ -29,9 +29,7 @@ var getHttpOptions = function (url, data) {
  */
 router.Clone = function (src, tar) {
     var clone = {};
-    if (!tar) {
-        return null;
-    }
+    if (!tar) return null;
     for (var k in src) {
         if (!!tar[k] && typeof(src[k]) == 'number') {
             clone[k] = isNaN(tar[k]) ? 0 : tar[k];
