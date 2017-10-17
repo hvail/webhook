@@ -17,9 +17,9 @@ var host = util.format("http://v3.res-ots.server.%s.sky1088.com", area);
 var batch_host = util.format("http://v3.res-ots.server.%s.sky1088.com/power-timer/batch", area);
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-    res.send('respond with a resource');
-});
+// router.get('/', function (req, res, next) {
+//     res.send('respond with a resource');
+// });
 
 // Demo              http://v3.res-ots.server.zh-cn.sky1088.com/power/range/0503041708260062/0/1507349366
 var getRangePower = host + "/power/range/%s/%s/%s";
