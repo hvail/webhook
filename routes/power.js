@@ -30,7 +30,7 @@ var calcMidPowers = function (sn, start, end, cb) {
     var url = util.format(getRangePower, sn, start, end);
     console.log(url);
     request(url, function (err, res, body) {
-        console.log(body);
+        // console.log(body);
         var data = JSON.parse(body);
         if (start == 0) {
             start = data[0].PowerTime - data[0].PowerTime % calc_mid;
