@@ -188,8 +188,8 @@ var doPostPower = function (req, res, next) {
     var sn = body.SerialNumber;
     var end = body.PowerTime;
     redis.ZSCORE(key_power_calc, sn, function (err, score) {
-        console.log(score);
-        console.log(err);
+        // console.log(score);
+        // console.log(err);
         score = score || 0;
         calcMidPowers(sn, score, end, function (err, lastTime) {
             // 最大的上传条数为200
