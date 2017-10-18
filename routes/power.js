@@ -29,13 +29,13 @@ var calcMidPowers = function (sn, start, end, cb) {
     if (!start) start = first_data;
     if (!end) end = Math.round(new Date().getTime() / 1000);
     var url = util.format(getRangePower, sn, start, end);
-    console.log(url);
     request(url, function (err, res, body) {
         // console.log(body);
         var data = JSON.parse(body);
+        console.log(url + ": length " + data.length);
         if (start == first_data) {
             start = data[0].PowerTime - data[0].PowerTime % calc_mid;
-            // end = start + calc_length;
+            console.log(sn + " init power timer format")
             calcMidPowers(sn, start, end, cb);
         } else {
             // var clen = end - start;
@@ -190,7 +190,7 @@ var doPostPower = function (req, res, next) {
     var sn = body.SerialNumber;
     var end = body.PowerTime;
     redis.ZSCORE(key_power_calc, sn, function (err, score) {
-        score = score || 0;
+        score = score || first_data;
         calcMidPowers(sn, score, end, function (err, lastTime) {
             // 最大的上传条数为200
             redis.ZADD(key_power_calc, lastTime, sn);
