@@ -11,7 +11,7 @@ var router = express.Router();
 var area = process.env.DATAAREA || "zh-cn";
 var calc_length = 4 * 3600;
 var calc_mid = 900;
-var first_data = 1501516800; // 电量统计从 UTC: 2017-08-01 开始算起
+var first_data = 1501516801; // 电量统计从 UTC: 2017-08-01 开始算起
 
 var key_power_calc = "SET-spark-end-time";
 var host = util.format("http://v3.res-ots.server.%s.sky1088.com", area);
@@ -35,7 +35,7 @@ var calcMidPowers = function (sn, start, end, cb) {
         console.log(url + ": length " + data.length);
         if (start == first_data) {
             start = data[0].PowerTime - data[0].PowerTime % calc_mid;
-            console.log(sn + " init power timer format")
+            console.log(sn + " init power timer format start is " + start)
             calcMidPowers(sn, start, end, cb);
         } else {
             // var clen = end - start;
