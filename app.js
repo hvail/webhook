@@ -11,6 +11,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var fence = require('./routes/fence');
 var power = require('./routes/power');
+var alarm_push_phone = require('./routes/push-alarm-phone');
 var webhooks = require('./routes/webhooks');
 
 var app = express();
@@ -39,6 +40,7 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/fence', fence);
 app.use('/power', power);
+app.use('/push-alarm-phone', alarm_push_phone);
 app.use('/webhooks', webhooks);
 
 // catch 404 and forward to error handler

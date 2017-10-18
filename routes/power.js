@@ -11,6 +11,7 @@ var router = express.Router();
 var area = process.env.DATAAREA || "zh-cn";
 var calc_length = 4 * 3600;
 var calc_mid = 900;
+var first_data = 1501516800; // 电量统计从 UTC: 2017-08-01 开始算起
 
 var key_power_calc = "SET-spark-end-time";
 var host = util.format("http://v3.res-ots.server.%s.sky1088.com", area);
@@ -25,14 +26,14 @@ var batch_host = util.format("http://v3.res-ots.server.%s.sky1088.com/power-time
 var getRangePower = host + "/power/range/%s/%s/%s";
 
 var calcMidPowers = function (sn, start, end, cb) {
-    if (!start) start = 0;
+    if (!start) start = first_data;
     if (!end) end = Math.round(new Date().getTime() / 1000);
     var url = util.format(getRangePower, sn, start, end);
     console.log(url);
     request(url, function (err, res, body) {
         // console.log(body);
         var data = JSON.parse(body);
-        if (start == 0) {
+        if (start == first_data) {
             start = data[0].PowerTime - data[0].PowerTime % calc_mid;
             // end = start + calc_length;
             calcMidPowers(sn, start, end, cb);
@@ -98,6 +99,7 @@ var poolPost = function (subs, cb, i) {
 // 具体算法
 var powerRight = function (p1, p2, io) {
     var kn = io == 0 ? "BatInside" : "BatOutside";
+    if (io == -1 && p1.BatOutside > 8000) kn = "BatOutside";
     var pv1 = p1[kn], pv2 = p2[kn];
     if (pv1 == pv2) return "HOLD";
     return pv1 < pv2 ? "UP" : "DOWN";
@@ -188,8 +190,6 @@ var doPostPower = function (req, res, next) {
     var sn = body.SerialNumber;
     var end = body.PowerTime;
     redis.ZSCORE(key_power_calc, sn, function (err, score) {
-        // console.log(score);
-        // console.log(err);
         score = score || 0;
         calcMidPowers(sn, score, end, function (err, lastTime) {
             // 最大的上传条数为200
@@ -200,7 +200,7 @@ var doPostPower = function (req, res, next) {
 }
 
 var getDemo = function (req, res, next) {
-    res.send('1.0.0.0');
+    res.send('1.1.0.0 修改电压指示中的负数');
 }
 
 router.post('/', doPostPower);
