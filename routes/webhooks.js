@@ -123,9 +123,9 @@ var _event = function (req, res, next) {
     }
     var sn = eve[0].SerialNumber;
     getWebHooks(sn, "GPSEvent", function (err, data) {
-        for (var i = 0; i < data.length; i++) {
-            if (!data[i].AlarmType && data[i].EventType)
-                data[i].AlarmType = data[i].EventType;
+        for (var i = 0; i < eve.length; i++) {
+            if (!eve[i].AlarmType && eve[i].EventType)
+                eve[i].AlarmType = eve[i].EventType;
         }
         doWebPush(data, eve);
         res.send("1");
