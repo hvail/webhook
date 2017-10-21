@@ -84,11 +84,12 @@ var _location = function (req, res, next) {
         return;
     }
     var _pos = [];
-    for (var i = 0; i < pos.length; i++) {
+    for (var i = 1; i < pos.length; i++) {
         if (pos[i] && pos[i] != "null") {
             _pos.push(pos[i]);
         }
     }
+    if (_pos.length < 1)return;
     pos = _pos;
     var sn = pos[0].SerialNumber;
     getWebHooks(sn, "GPSPosition", function (err, data) {
