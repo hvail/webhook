@@ -2,7 +2,8 @@
  * Created by hvail on 2017/9/26.
  */
 const request = require('./../my_modules/request');
-var area = process.env.DATAAREA || "zh-cn";
+var area = process.env.DATAAREA || "en-us";
+// var area = "en-us";
 var util = require('util');
 var myUtil = require('./../my_modules/utils');
 
@@ -53,7 +54,8 @@ var doPostFence = function (data, i) {
             Lng: _pps[1].split(",")[1] * 1
         }];
     _data.Coord = "WGS84";
-    // console.log(_data);
+    console.log(postFenceUrl);
+    console.log(_data);
     ii++;
     request.Post(postFenceUrl, _data, function (err, _result) {
         console.log(_result);
@@ -88,6 +90,7 @@ var doPostNewUrl = function (data, i) {
 }
 
 var doFences = function () {
+    console.log(getFencesUrl);
     request.Post(getFencesUrl, {}, function (err, result) {
         var data = JSON.parse(result);
         doPostFence(data);
@@ -101,4 +104,6 @@ var doBindFences = function () {
         doPostNewUrl(data);
     });
 }
-doBindFences();
+
+doFences();
+// doBindFences();
