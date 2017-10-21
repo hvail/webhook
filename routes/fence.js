@@ -53,7 +53,7 @@ var trigger = function (ps, fence) {
     var fp = ps[0];
     var _fenceCalc = FenceTypeEnum[fence.Type];
     var poi = toCoordPoi(fence, fp);
-    console.log(poi);
+    // console.log(poi);
     var _io_f = _fenceCalc(fence.Points, poi.Lat, poi.Lng);
     for (var i = 1; i < ps.length; i++) {
         poi = toCoordPoi(fence, ps[i]);
@@ -79,7 +79,7 @@ var _location = function (req, res, next) {
     var sn = pos[0].SerialNumber;
     var getFenceUrl = fenceUrl + sn;
     request.Get(getFenceUrl, function (err, result) {
-        console.log(getFenceUrl + " : " + result);
+        // console.log(getFenceUrl + " : " + result);
         var fences = JSON.parse(result);
         if (fences.length < 1 || pos.length < 2) return;
         for (var i = 0; i < fences.length; i++) {
