@@ -10,7 +10,7 @@ var util = require('util');
 var router = express.Router();
 var area = process.env.DATAAREA || "zh-cn";
 
-var fenceUrl = "http://v3.res-mongo.local." + area + ".sky1088.com/fence/sn/";
+var fenceUrl = "http://v3.res-mongo.server." + area + ".sky1088.com/fence/sn/";
 const FenceTypeEnum = [null, gpsUtil.IsPointInCircle, gpsUtil.IsPointInRect, gpsUtil.IsPointInPolygon];
 
 const FenceTriggerTitle = "Device %s has %s fence %s";
@@ -67,6 +67,7 @@ var trigger = function (ps, fence) {
 }
 
 var _location = function (req, res, next) {
+    console.log('_location ' + JSON.stringify(req.body));
     var pos = req.body;
     if (!pos) {
         res.send('0');
