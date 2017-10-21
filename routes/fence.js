@@ -67,7 +67,7 @@ var trigger = function (ps, fence) {
 }
 
 var _location = function (req, res, next) {
-    console.log('_location ' + JSON.stringify(req.body));
+    // console.log('_location ' + JSON.stringify(req.body));
     var pos = req.body;
     if (!pos) {
         res.send('0');
