@@ -105,5 +105,5 @@ var doBindFences = function () {
     });
 }
 
-doFences();
-// doBindFences();
+// doFences();
+doBindFences();
