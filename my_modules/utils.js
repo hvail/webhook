@@ -4,7 +4,7 @@
 const request = require('request');
 const REQUIRED = "required";
 var area = process.env.DATAAREA || "zh-cn";
-const MqSendUrl = "http://v3.local-mq-rabbit." + area + ".sky1088.com/mq/send";
+const MqSendUrl = "http://v3.mq-rabbit.server." + area + ".sky1088.com/mq/send";
 var router = {};
 
 var getHttpOptions = function (url, data) {
