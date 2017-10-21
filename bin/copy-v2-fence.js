@@ -105,5 +105,6 @@ var doBindFences = function () {
     });
 }
 
-// doFences();
-doBindFences();
+doFences();
+setTimeout(doBindFences, 450000);
+// doBindFences();
