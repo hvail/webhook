@@ -79,8 +79,8 @@ var _location = function (req, res, next) {
     pos = _pos;
     var sn = pos[0].SerialNumber;
     var getFenceUrl = fenceUrl + sn;
-
     request.Get(getFenceUrl, function (err, result) {
+        console.log(getFenceUrl + " : " + result);
         var fences = JSON.parse(result);
         if (fences.length < 1 || pos.length < 2) return;
         for (var i = 0; i < fences.length; i++) {
