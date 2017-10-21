@@ -52,10 +52,9 @@ var toCoordPoi = function (fence, p) {
 var trigger = function (ps, fence) {
     var fp = ps[0];
     var _fenceCalc = FenceTypeEnum[fence.Type];
-
     var poi = toCoordPoi(fence, fp);
+    console.log(poi);
     var _io_f = _fenceCalc(fence.Points, poi.Lat, poi.Lng);
-
     for (var i = 1; i < ps.length; i++) {
         poi = toCoordPoi(fence, ps[i]);
         var _tio = _fenceCalc(fence.Points, poi.Lat, poi.Lng);
@@ -74,8 +73,7 @@ var _location = function (req, res, next) {
         return;
     }
     var _pos = [];
-    for (var i = 0; i < pos.length; i++)
-        if (pos[i] && pos[i] != "null") _pos.push(pos[i]);
+    for (var i = 0; i < pos.length; i++) if (pos[i] && pos[i] != "null") _pos.push(pos[i]);
     pos = _pos;
     var sn = pos[0].SerialNumber;
     var getFenceUrl = fenceUrl + sn;
