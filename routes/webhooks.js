@@ -128,7 +128,7 @@ var _event = function (req, res, next) {
     var sn = eve[0].SerialNumber;
     var url = GetLastPositionUrl + sn;
     request(url, function (err, response, body) {
-        body = JSON.parse(body);
+        // body = JSON.parse(body);
         console.log(body);
         getWebHooks(sn, "GPSEvent", function (err, data) {
             for (var i = 0; i < eve.length; i++) {
