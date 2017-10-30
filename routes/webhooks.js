@@ -138,7 +138,14 @@ var _event = function (req, res, next) {
             for (var i = 0; i < eve.length; i++) {
                 if (!eve[i].AlarmType && eve[i].EventType)
                     eve[i].AlarmType = eve[i].EventType;
-                console.log(eve[i]);
+                if (body.GPSTime && Math.abs(body.GPSTime - eve[i].UpTime) < 60) {
+                    eve[i].Lat = body.Lat;
+                    eve[i].Lng = body.Lng;
+                    eve[i].Lat_Gg = body.Lat_Gg;
+                    eve[i].Lat_Bd = body.Lat_Bd;
+                    eve[i].Lng_Gg = body.Lng_Gg;
+                    eve[i].Lng_Bd = body.Lng_Bd;
+                }
             }
             doWebPush(data, eve);
             res.send("1");
