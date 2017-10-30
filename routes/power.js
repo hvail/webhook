@@ -4,9 +4,9 @@
  */
 var util = require('util');
 var myUtil = require('./../my_modules/utils');
+var redis = require('./../my_modules/redishelp');
 var request = require('request');
 var express = require('express');
-var redis = require('./../my_modules/redishelp');
 var router = express.Router();
 var area = process.env.DATAAREA || "zh-cn";
 var calc_length = 4 * 3600;

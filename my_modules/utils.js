@@ -21,6 +21,16 @@ var getHttpOptions = function (url, data) {
     return http_options;
 }
 
+Array.prototype.last = function () {
+    var me = this;
+    return me[me.length - 1];
+}
+
+Array.prototype.first = function () {
+    var me = this;
+    return me[0];
+}
+
 /***
  * 从SRC复制到TAR ,
  * @param src
@@ -55,6 +65,8 @@ router.ClassClone = function (src, tar, res) {
 
 router.DoPushPost = function (url, data, cb) {
     request(getHttpOptions(url, data), function (err, res, body) {
+        // console.log(err);
+        // console.log(body);
         cb && cb(url, data, res.statusCode < 400 ? 1 : -1, body);
     })
 }
@@ -69,6 +81,7 @@ router.SendMqObject = function (exchage, obj, target) {
 
 
     request(getHttpOptions(MqSendUrl, push), function (err, res, body) {
+
         // console.log(err);
         console.log(body);
     });

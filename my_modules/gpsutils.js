@@ -131,6 +131,7 @@ GPSUtils.GetDistance = function (Lat1, Lng1, Lat2, Lng2) {
  * @returns {Number} 折线或点数组对应的长度
  */
 GPSUtils.GetLineDistance = function (points) {
+    // console.log(points.length);
     //检查类型
     if (points instanceof Array) {
         if (points.length < 2) {
@@ -142,8 +143,8 @@ GPSUtils.GetLineDistance = function (points) {
         for (var i = 0; i < points.length - 1; i++) {
             var curPt = points[i];
             var nextPt = points[i + 1]
-            var dis = GPSUtils.GetDistance(curPt.Lat, curPt.Lng, nextPt.Lat, nextPt.Lng);
-            totalDis += dis;
+            var dis = GPSUtils.GetDistance(curPt.Lat, curPt.Lng, nextPt.Lat, nextPt.Lng) || 0;
+            totalDis += dis * 1;
         }
         return totalDis;
     } else {

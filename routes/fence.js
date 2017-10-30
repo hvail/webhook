@@ -53,7 +53,6 @@ var trigger = function (ps, fence) {
     var fp = ps[0];
     var _fenceCalc = FenceTypeEnum[fence.Type];
     var poi = toCoordPoi(fence, fp);
-    // console.log(poi);
     var _io_f = _fenceCalc(fence.Points, poi.Lat, poi.Lng);
     for (var i = 1; i < ps.length; i++) {
         poi = toCoordPoi(fence, ps[i]);

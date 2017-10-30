@@ -2,15 +2,19 @@
  * Created by hvail on 2017/9/23.
  */
 var express = require('express');
+var request = require('request');
 var router = express.Router();
 var _util = require('./../my_modules/utils');
 var util = require('util');
+var area = process.env.DATAAREA || "zh-cn";
 var redis = require('./../my_modules/redishelp');
 
 const HashWebHooks = "web-hook-listener-hash";
 const SetSendStatusTotalKey = "web-hook-send-total-";
 const SetSendStatusSuccessKey = "web-hook-send-success-";
 const SetSendStatusFailureKey = "web-hook-send-failure-";
+
+const GetLastPositionUrl = "http://v3.res-redis.server." + area + ".sky1088.com/track/single/";
 
 var __Demo_Class = {
     TargetUrl: _util.REQUIRED,
@@ -38,7 +42,6 @@ var totalPush = function (url, data, status) {
     var statusKey = (status > 0 ? SetSendStatusSuccessKey : SetSendStatusFailureKey) + ds;
     redis.ZINCRBY(totalKey, 1, url);
     redis.ZINCRBY(statusKey, 1, url);
-    console.log(url + "(" + status + ")" + " - " + JSON.stringify(data));
 }
 
 var doWebPush = function (arr, data) {
@@ -123,13 +126,18 @@ var _event = function (req, res, next) {
         return;
     }
     var sn = eve[0].SerialNumber;
-    getWebHooks(sn, "GPSEvent", function (err, data) {
-        for (var i = 0; i < eve.length; i++) {
-            if (!eve[i].AlarmType && eve[i].EventType)
-                eve[i].AlarmType = eve[i].EventType;
-        }
-        doWebPush(data, eve);
-        res.send("1");
+    var url = GetLastPositionUrl + sn;
+    request(url, function (err, response, body) {
+        body = JSON.parse(body);
+        console.log(body);
+        getWebHooks(sn, "GPSEvent", function (err, data) {
+            for (var i = 0; i < eve.length; i++) {
+                if (!eve[i].AlarmType && eve[i].EventType)
+                    eve[i].AlarmType = eve[i].EventType;
+            }
+            doWebPush(data, eve);
+            res.send("1");
+        });
     });
 }
 

@@ -1,4 +1,4 @@
-FROM node:6.11
+FROM node:8
 WORKDIR /usr/local/web
 
 ADD app.js                      /usr/local/web/app.js
