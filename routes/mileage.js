@@ -25,7 +25,7 @@ var _format_gt = function (time, mid) {
 }
 
 var _getNextGPSTime = function (sn, start, cb) {
-    var _now = Math.round(new Date().getTime() / 1000);
+    var _now = _format_gt(Math.round(new Date().getTime() / 1000), calc_length);
     if (_now < start) {
         cb && cb(_now);
         return;
@@ -33,12 +33,16 @@ var _getNextGPSTime = function (sn, start, cb) {
     var url = readUrl + sn + "/" + start + "/" + _now + '?count=1';
     request(url, function (err, response, body) {
         body = JSON.parse(body);
+        if (body.length < 1) {
+            cb && cb(_now);
+            return;
+        }
         console.log(url + " : " + body[0].GPSTime);
         cb && cb(body[0].GPSTime);
     });
 }
 
-var _readMileageRange = function (sn, cb) {
+var _readMileageRange = function (sn, last, cb) {
     redis.ZSCORE(key_mileage_calc, sn, function (err, score) {
         if (!score) {
             _getNextGPSTime(sn, first_data, function (score) {
@@ -49,6 +53,11 @@ var _readMileageRange = function (sn, cb) {
                 });
             });
         } else {
+            if (score >= last) {
+                console.log(sn + " read end ");
+                cb && cb(0, 0, []);
+                return;
+            }
             end = score * 1 + calc_length;
             var url = readUrl + sn + "/" + score + "/" + end;
             request(url, function (err, response, body) {
@@ -139,10 +148,10 @@ var _do_save_mileage = function (data, sn, middleTime) {
         obj.MiddleTime = middleTime;
         push_obj.push(obj);
     }
-    myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
-        console.log(post_url + " ( " + push_obj.length + " ) : " + status);
-    })
-    // console.log(push_obj);
+    if (push_obj.length > 1)
+        myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
+            console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status);
+        });
 }
 
 /***
@@ -154,12 +163,15 @@ var _do_save_mileage = function (data, sn, middleTime) {
  */
 var startCalcMileage = function (sn, lt, cb) {
     var _last_time = _format_gt(lt, calc_mid);
-    _readMileageRange(sn, function (start, end, data) {
+    _readMileageRange(sn, _last_time, function (start, end, data) {
+        if (start == 0) {
+            cb && cb();
+            return;
+        }
         if (data && data.length > 0) {
             var obj = _middle_mileage(start, end, data);
             obj = _calc_pack_mileage(obj);
             _do_save_mileage(obj, sn, calc_mid);
-            // console.log(obj);
         }
         var dd = end - calc_mid;
         redis.ZADD(key_mileage_calc, dd, sn);
@@ -167,9 +179,39 @@ var startCalcMileage = function (sn, lt, cb) {
     });
 }
 
-startCalcMileage("6191141612270116", Math.round(new Date().getTime() / 1000), function () {
-    console.log("handler data success");
-});
+// var arr = [
+//     "0500011708170038",
+//     "0080001309220012",
+//     "0024081501240113",
+//     "6191081509190071",
+//     "6191141702280026",
+//     "6191141703040099",
+//     "6191141703040174",
+//     "0090081604020253",
+//     "6191141703010017",
+//     "3124301309110061",
+//     "3124301312120039",
+//     "6190081509210211",
+//     "0090081603110025",
+//     "6190081509050022",
+//     "6124281503250066"
+// ]
+//
+// var buildMileage = function (sn, cb) {
+//     startCalcMileage(sn, myUtil.GetSecond(), cb);
+// }
+//
+// var pool = function (m) {
+//     if (m >= arr.length) {
+//         console.log('done');
+//         return;
+//     }
+//     buildMileage(arr[m], function () {
+//         m++;
+//         pool(m);
+//     })
+// }
+// pool(0);
 
 
 /***
@@ -185,9 +227,9 @@ startCalcMileage("6191141612270116", Math.round(new Date().getTime() / 1000), fu
  */
 var doLocationPost = function (req, res, next) {
     var sn = req.body.SerialNumber;
-    _readMileageRange(sn, function (body) {
-        console.log(body);
+    startCalcMileage(sn, myUtil.GetSecond(), function () {
     });
+    res.send("1");
 }
 
 /* GET users listing. */
