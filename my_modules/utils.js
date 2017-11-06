@@ -65,8 +65,6 @@ router.ClassClone = function (src, tar, res) {
 
 router.DoPushPost = function (url, data, cb) {
     request(getHttpOptions(url, data), function (err, res, body) {
-        // console.log(err);
-        // console.log(url + " : " + JSON.stringify(data) + " = " + body);
         cb && cb(url, data, res.statusCode < 400 ? 1 : -1, body);
     })
 }
@@ -81,8 +79,6 @@ router.SendMqObject = function (exchage, obj, target) {
 
 
     request(getHttpOptions(MqSendUrl, push), function (err, res, body) {
-
-        // console.log(err);
         console.log(body);
     });
 }

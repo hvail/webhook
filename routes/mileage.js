@@ -7,6 +7,7 @@ var gpsUtil = require('./../my_modules/gpsutils');
 var redis = require('./../my_modules/redishelp');
 var request = require('request');
 var express = require('express');
+var util = require('util');
 var router = express.Router();
 var area = process.env.DATAAREA || "zh-cn";
 var calc_length = 6 * 3600;     // 单次读取长度
@@ -226,7 +227,15 @@ var startCalcMileage = function (sn, lt, cb) {
  * @param next
  */
 var doLocationPost = function (req, res, next) {
-    var sn = req.body.SerialNumber;
+    var data = req.body;
+    if (util.isArray(req.body)) {
+        if (data.length > 0) data = data[0];
+        else {
+            res.send("-4");
+            return;
+        }
+    }
+    var sn = data.SerialNumber;
     startCalcMileage(sn, myUtil.GetSecond(), function () {
     });
     res.send("1");

@@ -32,10 +32,10 @@ var calcMidPowers = function (sn, start, end, cb) {
     request(url, function (err, res, body) {
         // console.log(body);
         var data = JSON.parse(body);
-        console.log(url + ": length " + data.length);
+        // console.log(url + ": length " + data.length);
         if (start == first_data) {
             start = data[0].PowerTime - data[0].PowerTime % calc_mid;
-            console.log(sn + " init power timer format start is " + start)
+            // console.log(sn + " init power timer format start is " + start)
             calcMidPowers(sn, start, end, cb);
         } else {
             // var clen = end - start;
@@ -90,7 +90,7 @@ var poolPost = function (subs, cb, i) {
         return;
     }
     myUtil.DoPushPost(batch_host, subs[i], function (url, data, status, body) {
-        console.log("POST : " + batch_host + " Length : " + body);
+        // console.log("POST : " + batch_host + " Length : " + body);
         i++;
         poolPost(subs, cb, i);
     });
