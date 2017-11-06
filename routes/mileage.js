@@ -55,7 +55,7 @@ var _readMileageRange = function (sn, last, cb) {
             });
         } else {
             if (score >= last) {
-                console.log(sn + " read end ");
+                // console.log(sn + " read end ");
                 cb && cb(0, 0, []);
                 return;
             }
