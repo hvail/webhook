@@ -38,7 +38,6 @@ var _getNextGPSTime = function (sn, start, cb) {
             cb && cb(_now);
             return;
         }
-        console.log(url + " : " + body[0].GPSTime);
         cb && cb(body[0].GPSTime);
     });
 }
