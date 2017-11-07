@@ -10,7 +10,7 @@ var express = require('express');
 var util = require('util');
 var router = express.Router();
 var area = process.env.DATAAREA || "zh-cn";
-var calc_length = 6 * 3600;     // 单次读取长度
+var calc_length = 2 * 3600;     // 单次读取长度
 var calc_mid = 5 * 60;          // 计算间隔5分钟
 var first_data = 1400000000;    // 里程统计从 UTC: 2017-08-01 开始算起
 var key_mileage_calc = "SET-spark-mileage-end-time"; // 记录最后计算的时间
@@ -180,24 +180,10 @@ var startCalcMileage = function (sn, lt, cb) {
     });
 }
 
-// var arr = [
-//     "0500011708170038",
-//     "0080001309220012",
-//     "0024081501240113",
-//     "6191081509190071",
-//     "6191141702280026",
-//     "6191141703040099",
-//     "6191141703040174",
-//     "0090081604020253",
-//     "6191141703010017",
-//     "3124301309110061",
-//     "3124301312120039",
-//     "6190081509210211",
-//     "0090081603110025",
-//     "6190081509050022",
-//     "6124281503250066"
-// ]
-//
+var arr = [
+    "0026231709300026"
+]
+
 // var buildMileage = function (sn, cb) {
 //     startCalcMileage(sn, myUtil.GetSecond(), cb);
 // }
