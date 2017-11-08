@@ -207,21 +207,21 @@ var startCalcMileage = function (sn, lt, cb) {
     });
 }
 
-var arr = ["0026231709300026"]
-var buildMileage = function (sn, cb) {
-    startCalcMileage(sn, myUtil.GetSecond(), cb);
-}
-var pool = function (m) {
-    if (m >= arr.length) {
-        console.log('done');
-        return;
-    }
-    buildMileage(arr[m], function () {
-        m++;
-        pool(m);
-    })
-}
-pool(0);
+// var arr = ["0026231709300026"]
+// var buildMileage = function (sn, cb) {
+//     startCalcMileage(sn, myUtil.GetSecond(), cb);
+// }
+// var pool = function (m) {
+//     if (m >= arr.length) {
+//         console.log('done');
+//         return;
+//     }
+//     buildMileage(arr[m], function () {
+//         m++;
+//         pool(m);
+//     })
+// }
+// pool(0);
 
 /***
  * localmileage demo
