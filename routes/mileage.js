@@ -152,11 +152,9 @@ var _calc_pack_mileage = function (pack_hash) {
                 MaxSpeed: _maxSpeed.toFixed(3) + " km/h",
                 Speed: (dis / (ps.last().GPSTime - ps.first().GPSTime)).toFixed(3),
             };
-            if (__obj.Speed < 80) {
+            if ((__obj.Speed * 3.6) < _maxSpeed) {
                 __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
                 obj[key] = __obj;
-            } else {
-                console.log("oookkk");
             }
         }
         top_key = key;
