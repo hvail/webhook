@@ -18,7 +18,7 @@ var readUrl = "http://v3.res-ots.server." + area + ".sky1088.com/track/range-mil
 var post_url = "http://v3.res-mongo.server." + area + ".sky1088.com/mileage";
 
 var demo = function (req, res, next) {
-    res.send('mileage v1.0.0.0');
+    res.send('mileage v1.1.0');
 }
 
 var _format_gt = function (time, mid) {
@@ -54,23 +54,23 @@ var _readMileageRange = function (sn, last, cb) {
             });
         } else {
             if (score >= last) {
-                // console.log(sn + " read end ");
                 cb && cb(0, 0, []);
                 return;
             }
-            end = score * 1 + calc_length;
+            end = score * 1 + calc_length + calc_mid;
             var url = readUrl + sn + "/" + score + "/" + end;
             request(url, function (err, response, body) {
                 body = JSON.parse(body);
-                // console.log(url + " : " + body.length);
-                if (body.length == 0) {
-                    _getNextGPSTime(sn, end, function (_socre) {
-                        var __end = _format_gt(_socre, calc_length);
-                        cb && cb(__end, __end + calc_length, body);
-                    });
-                } else {
-                    cb && cb(score, end, body);
-                }
+                cb && cb(score, end, body);
+                // 删除有关跳着读取的代码，这样不安全
+                // if (body.length == 0) {
+                //     _getNextGPSTime(sn, end, function (_socre) {
+                //         var __end = _format_gt(_socre, calc_length);
+                //         cb && cb(__end, __end + calc_length, body);
+                //     });
+                // } else {
+                //     cb && cb(score, end, body);
+                // }
             });
         }
     });
@@ -114,28 +114,53 @@ var _calc_pack_mileage = function (pack_hash) {
         if (ps.length < 2) continue;
         var dis = 0;
         var pf = ps.first(), pe = ps.last();
-        if (top_end_point && key * 1 - top_end_point.GPSTime < calc_mid) {
+        var _maxSpeed = pf.Speed;
+        for (var i = 1; i < ps.length; i++) {
+            if (ps[i].Speed > _maxSpeed) _maxSpeed = ps[i].Speed;
+        }
+        if (pe.Mileage > 0) {
+            dis = top_end_point ? Math.round((pe.Mileage - top_end_point.Mileage) * 1000) : Math.round((pe.Mileage - pf.Mileage) * 1000);
+            top_end_point = pe;
+        }
+        else if (top_end_point && key * 1 - top_end_point.GPSTime < calc_mid) {
             var middle_time = pf.GPSTime - top_end_point.GPSTime;
             // 如果有上一个点并且和此次时间相差小于静止间隔，则按比例分配两点间的距离
             var mid_distance = gpsUtil.GetDistance(top_end_point.Lat, top_end_point.Lng, pf.Lat, pf.Lng) || 0;
-            if (middle_time < calc_mid && mid_distance > 10) {
+            if (middle_time > 0 && middle_time < calc_mid && mid_distance > 10) {
                 var ut = mid_distance / middle_time;
                 var ft = _format_gt(pf.GPSTime, calc_mid);
                 var left = Math.round((ft - top_end_point.GPSTime) * ut), right = Math.round((pf.GPSTime - ft) * ut);
                 obj[top_key] && (obj[top_key].Distance += left);
                 dis = right;
             }
+            dis = Math.round(dis + gpsUtil.GetLineDistance(ps));
+        } else if (!top_end_point) {
+            dis = gpsUtil.GetLineDistance(ps);
         }
-        dis = Math.round(dis + gpsUtil.GetLineDistance(ps));
-        if (pe.Mileage > pf.Mileage) dis = Math.round((pe.Mileage - pf.Mileage) * 1000);
-        if (dis > 0)
-            obj[key] = {
+        // 暂时先放弃(设备提供的里程精度太低) 17-11-6
+        // 优先使用设备里程。 17-11-7
+        // if (pe.Mileage > pf.Mileage) dis = Math.round((pe.Mileage - pf.Mileage) * 1000);
+        if (dis > 0) {
+            var __obj = {
                 Distance: dis,
                 PointCount: ps.length,
-                GPSTime: key * 1
+                GPSTime: key * 1,
+                MileageBegin: ps.first().Mileage,
+                MileageEnd: ps.last().Mileage,
+                // GPSTimeBegin: ps.first().GPSTime,
+                // GPSTimeEnd: ps.last().GPSTime,
+                MaxSpeed: _maxSpeed.toFixed(3) + " km/h",
+                Speed: (dis / (ps.last().GPSTime - ps.first().GPSTime)).toFixed(3),
             };
+            if (__obj.Speed < 80) {
+                __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
+                obj[key] = __obj;
+            } else {
+                console.log("oookkk");
+            }
+        }
         top_key = key;
-        top_end_point = ps.last();
+        top_end_point = pe;
     }
     return obj;
 }
@@ -150,7 +175,7 @@ var _do_save_mileage = function (data, sn, middleTime) {
     }
     if (push_obj.length > 1)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
-            console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status);
+            console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
         });
 }
 
@@ -164,6 +189,8 @@ var _do_save_mileage = function (data, sn, middleTime) {
 var startCalcMileage = function (sn, lt, cb) {
     var _last_time = _format_gt(lt, calc_mid);
     _readMileageRange(sn, _last_time, function (start, end, data) {
+        if (data.length)
+            console.log(new Date(start * 1000).FormatDate(4) + " :-: " + new Date(end * 1000).FormatDate(4) + " result length : " + data.length);
         if (start == 0) {
             cb && cb();
             return;
@@ -179,26 +206,21 @@ var startCalcMileage = function (sn, lt, cb) {
     });
 }
 
-var arr = [
-    "0026231709300026"
-]
-
-// var buildMileage = function (sn, cb) {
-//     startCalcMileage(sn, myUtil.GetSecond(), cb);
-// }
-//
-// var pool = function (m) {
-//     if (m >= arr.length) {
-//         console.log('done');
-//         return;
-//     }
-//     buildMileage(arr[m], function () {
-//         m++;
-//         pool(m);
-//     })
-// }
-// pool(0);
-
+var arr = ["0026231709300026"]
+var buildMileage = function (sn, cb) {
+    startCalcMileage(sn, myUtil.GetSecond(), cb);
+}
+var pool = function (m) {
+    if (m >= arr.length) {
+        console.log('done');
+        return;
+    }
+    buildMileage(arr[m], function () {
+        m++;
+        pool(m);
+    })
+}
+pool(0);
 
 /***
  * localmileage demo
