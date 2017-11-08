@@ -86,7 +86,7 @@ var _readMileageRange = function (sn, last, cb) {
  */
 var _middle_mileage = function (start, end, data) {
     var _start = start, i = 0;
-    var obj = {};
+    var obj = new myUtil.Hash();
     while (_start < end) {
         var dt = data[i].GPSTime, _m = _start * 1 + calc_mid;
         var key = _format_gt(dt, calc_mid);
@@ -99,7 +99,8 @@ var _middle_mileage = function (start, end, data) {
             }
         }
         _start = _m;
-        obj[key] = das;
+        obj.add(key, das);
+        // obj[key] = das;
         if (i == data.length) break;
     }
     return obj;
@@ -108,9 +109,9 @@ var _middle_mileage = function (start, end, data) {
 var _calc_pack_mileage = function (pack_hash) {
     var top_end_point = null;
     var top_key;
-    var obj = {};
-    for (var key in pack_hash) {
-        var ps = pack_hash[key];
+    var obj = new myUtil.Hash();
+    for (var key in pack_hash._hash) {
+        var ps = pack_hash._hash[key];
         if (ps.length < 2) continue;
         var dis = 0;
         var pf = ps.first(), pe = ps.last();
@@ -130,7 +131,7 @@ var _calc_pack_mileage = function (pack_hash) {
                 var ut = mid_distance / middle_time;
                 var ft = _format_gt(pf.GPSTime, calc_mid);
                 var left = Math.round((ft - top_end_point.GPSTime) * ut), right = Math.round((pf.GPSTime - ft) * ut);
-                obj[top_key] && (obj[top_key].Distance += left);
+                obj._hash[top_key] && (obj._hash[top_key].Distance += left);
                 dis = right;
             }
             dis = Math.round(dis + gpsUtil.GetLineDistance(ps));
@@ -147,14 +148,14 @@ var _calc_pack_mileage = function (pack_hash) {
                 GPSTime: key * 1,
                 MileageBegin: ps.first().Mileage,
                 MileageEnd: ps.last().Mileage,
-                // GPSTimeBegin: ps.first().GPSTime,
-                // GPSTimeEnd: ps.last().GPSTime,
                 MaxSpeed: _maxSpeed.toFixed(3) + " km/h",
                 Speed: (dis / (ps.last().GPSTime - ps.first().GPSTime)).toFixed(3),
             };
-            if ((__obj.Speed * 3.6) < _maxSpeed) {
+            var os = __obj.Speed * 3.6;
+            if (os < _maxSpeed * 1.5) {
                 __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
-                obj[key] = __obj;
+                obj.add(key, __obj);
+                // obj[key] = __obj;
             }
         }
         top_key = key;
@@ -188,7 +189,7 @@ var startCalcMileage = function (sn, lt, cb) {
     var _last_time = _format_gt(lt, calc_mid);
     _readMileageRange(sn, _last_time, function (start, end, data) {
         if (data.length)
-            console.log(new Date(start * 1000).FormatDate(4) + " :-: " + new Date(end * 1000).FormatDate(4) + " result length : " + data.length);
+            console.log(sn + " -> " + new Date(start * 1000).FormatDate(4) + " :-: " + new Date(end * 1000).FormatDate(4) + " result length : " + data.length);
         if (start == 0) {
             cb && cb();
             return;
@@ -196,6 +197,7 @@ var startCalcMileage = function (sn, lt, cb) {
         if (data && data.length > 0) {
             var obj = _middle_mileage(start, end, data);
             obj = _calc_pack_mileage(obj);
+            // if(obj.)
             _do_save_mileage(obj, sn, calc_mid);
         }
         var dd = end - calc_mid;
