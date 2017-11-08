@@ -100,7 +100,6 @@ var _middle_mileage = function (start, end, data) {
         }
         _start = _m;
         obj.add(key, das);
-        // obj[key] = das;
         if (i == data.length) break;
     }
     return obj;
@@ -155,7 +154,6 @@ var _calc_pack_mileage = function (pack_hash) {
             if (os < _maxSpeed * 1.5) {
                 __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
                 obj.add(key, __obj);
-                // obj[key] = __obj;
             }
         }
         top_key = key;
@@ -166,15 +164,15 @@ var _calc_pack_mileage = function (pack_hash) {
 
 var _do_save_mileage = function (data, sn, middleTime) {
     var push_obj = [];
-    for (var k in data) {
-        var obj = data[k];
+    for (var k in data._hash) {
+        var obj = data._hash[k];
         obj.SerialNumber = sn;
         obj.MiddleTime = middleTime;
         push_obj.push(obj);
     }
     if (push_obj.length > 1)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
-            console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
+            // console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
         });
 }
 
@@ -188,8 +186,8 @@ var _do_save_mileage = function (data, sn, middleTime) {
 var startCalcMileage = function (sn, lt, cb) {
     var _last_time = _format_gt(lt, calc_mid);
     _readMileageRange(sn, _last_time, function (start, end, data) {
-        if (data.length)
-            console.log(sn + " -> " + new Date(start * 1000).FormatDate(4) + " :-: " + new Date(end * 1000).FormatDate(4) + " result length : " + data.length);
+        // if (data.length)
+        //     console.log(sn + " -> " + start + " :-: " + end + " result length : " + data.length);
         if (start == 0) {
             cb && cb();
             return;
@@ -197,7 +195,10 @@ var startCalcMileage = function (sn, lt, cb) {
         if (data && data.length > 0) {
             var obj = _middle_mileage(start, end, data);
             obj = _calc_pack_mileage(obj);
-            // if(obj.)
+            if (obj.count() < 1 && data.length > 20) {
+                console.log(sn + " -> " + start + " :-: " + end + " result length : " + data.length);
+                console.log(readUrl + sn + "/" + start + "/" + end);
+            }
             _do_save_mileage(obj, sn, calc_mid);
         }
         var dd = end - calc_mid;
@@ -206,21 +207,21 @@ var startCalcMileage = function (sn, lt, cb) {
     });
 }
 
-// var arr = ["0026231709300026"]
-// var buildMileage = function (sn, cb) {
-//     startCalcMileage(sn, myUtil.GetSecond(), cb);
-// }
-// var pool = function (m) {
-//     if (m >= arr.length) {
-//         console.log('done');
-//         return;
-//     }
-//     buildMileage(arr[m], function () {
-//         m++;
-//         pool(m);
-//     })
-// }
-// pool(0);
+var arr = ["0026231709300026"]
+var buildMileage = function (sn, cb) {
+    startCalcMileage(sn, myUtil.GetSecond(), cb);
+}
+var pool = function (m) {
+    if (m >= arr.length) {
+        console.log('done');
+        return;
+    }
+    buildMileage(arr[m], function () {
+        m++;
+        pool(m);
+    })
+}
+pool(0);
 
 /***
  * localmileage demo
