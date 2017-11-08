@@ -17,6 +17,8 @@ var key_mileage_calc = "SET-spark-mileage-end-time"; // 记录最后计算的时
 var readUrl = "http://v3.res-ots.server." + area + ".sky1088.com/track/range-mileage/";
 var post_url = "http://v3.res-mongo.server." + area + ".sky1088.com/mileage";
 
+var temp = new myUtil.Hash();
+
 var demo = function (req, res, next) {
     res.send('mileage v1.1.0');
 }
@@ -62,15 +64,6 @@ var _readMileageRange = function (sn, last, cb) {
             request(url, function (err, response, body) {
                 body = JSON.parse(body);
                 cb && cb(score, end, body);
-                // 删除有关跳着读取的代码，这样不安全
-                // if (body.length == 0) {
-                //     _getNextGPSTime(sn, end, function (_socre) {
-                //         var __end = _format_gt(_socre, calc_length);
-                //         cb && cb(__end, __end + calc_length, body);
-                //     });
-                // } else {
-                //     cb && cb(score, end, body);
-                // }
             });
         }
     });
@@ -118,7 +111,7 @@ var _calc_pack_mileage = function (pack_hash) {
         for (var i = 1; i < ps.length; i++) {
             if (ps[i].Speed > _maxSpeed) _maxSpeed = ps[i].Speed;
         }
-        if (pe.Mileage > 0) {
+        if (pe.Mileage > 0 && pe.Mileage % 1 == 0) {
             dis = top_end_point ? Math.round((pe.Mileage - top_end_point.Mileage) * 1000) : Math.round((pe.Mileage - pf.Mileage) * 1000);
             top_end_point = pe;
         }
@@ -145,16 +138,18 @@ var _calc_pack_mileage = function (pack_hash) {
                 Distance: dis,
                 PointCount: ps.length,
                 GPSTime: key * 1,
-                MileageBegin: ps.first().Mileage,
-                MileageEnd: ps.last().Mileage,
+                MileageBegin: pf.Mileage,
+                MileageEnd: pe.Mileage,
                 MaxSpeed: _maxSpeed.toFixed(3) + " km/h",
-                Speed: (dis / (ps.last().GPSTime - ps.first().GPSTime)).toFixed(3),
+                Speed: (dis / (pe.GPSTime - pf.GPSTime)).toFixed(3),
             };
             var os = __obj.Speed * 3.6;
             if (os < _maxSpeed * 1.5) {
                 __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
                 obj.add(key, __obj);
             }
+        } else {
+            if (dis) console.log(dis)
         }
         top_key = key;
         top_end_point = pe;
@@ -168,11 +163,13 @@ var _do_save_mileage = function (data, sn, middleTime) {
         var obj = data._hash[k];
         obj.SerialNumber = sn;
         obj.MiddleTime = middleTime;
+        obj.TimeString = new Date(k * 1000).FormatDate(4);
         push_obj.push(obj);
     }
-    if (push_obj.length > 1)
+    // console.log(data.count() + " / " + push_obj.length);
+    if (push_obj.length > 0)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
-            // console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
+            console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
         });
 }
 
@@ -194,12 +191,13 @@ var startCalcMileage = function (sn, lt, cb) {
         }
         if (data && data.length > 0) {
             var obj = _middle_mileage(start, end, data);
-            obj = _calc_pack_mileage(obj);
-            if (obj.count() < 1 && data.length > 20) {
-                console.log(sn + " -> " + start + " :-: " + end + " result length : " + data.length);
-                console.log(readUrl + sn + "/" + start + "/" + end);
-            }
-            _do_save_mileage(obj, sn, calc_mid);
+            var calc_obj = _calc_pack_mileage(obj);
+            console.log(calc_obj.count() + "/" + obj.count() + " : " + new Date(start * 1000).FormatDate(4));
+            // if (obj.count() < 1 && data.length > 20) {
+            //     console.log(sn + " -> " + start + " :-: " + end + " result length : " + data.length);
+            //     console.log(readUrl + sn + "/" + start + "/" + end);
+            // }
+            _do_save_mileage(calc_obj, sn, calc_mid);
         }
         var dd = end - calc_mid;
         redis.ZADD(key_mileage_calc, dd, sn);
@@ -244,8 +242,15 @@ var doLocationPost = function (req, res, next) {
         }
     }
     var sn = data.SerialNumber;
-    startCalcMileage(sn, myUtil.GetSecond(), function () {
-    });
+    if (!temp.items(sn)) {
+        temp.add(sn, "Adds");
+        startCalcMileage(sn, myUtil.GetSecond(), function () {
+            temp.remove(sn);
+            console.log(sn + " done")
+        });
+    } else {
+        console.log(sn + " adds");
+    }
     res.send("1");
 }
 
