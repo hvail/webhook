@@ -194,7 +194,7 @@ var startCalcMileage = function (sn, lt, cb) {
                 var calc_obj = _calc_pack_mileage(obj);
                 if (calc_obj.count() < 1 && data.length > 20) {
                     // console.log(sn + " -> " + start + " :-: " + end + " result length : " + data.length);
-                    console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + " : " + new Date(start * 1000).FormatDate(4));
+                    console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + "/" + data.length + " : " + new Date(start * 1000).FormatDate(4));
                     console.log(readUrl + sn + "/" + start + "/" + end);
                 }
                 _do_save_mileage(calc_obj, sn, calc_mid);
