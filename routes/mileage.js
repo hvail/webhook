@@ -10,7 +10,7 @@ var express = require('express');
 var util = require('util');
 var router = express.Router();
 var area = process.env.DATAAREA || "zh-cn";
-var calc_length = 2 * 3600;     // 单次读取长度
+var calc_length = 12 * 3600;     // 单次读取长度
 var calc_mid = 5 * 60;          // 计算间隔5分钟
 var first_data = 1400000000;    // 里程统计从 UTC: 2017-08-01 开始算起
 var key_mileage_calc = "SET-spark-mileage-end-time"; // 记录最后计算的时间
@@ -192,7 +192,7 @@ var startCalcMileage = function (sn, lt, cb) {
         if (data && data.length > 0) {
             var obj = _middle_mileage(start, end, data);
             var calc_obj = _calc_pack_mileage(obj);
-            console.log(calc_obj.count() + "/" + obj.count() + " : " + new Date(start * 1000).FormatDate(4));
+            // console.log(calc_obj.count() + "/" + obj.count() + " : " + new Date(start * 1000).FormatDate(4));
             // if (obj.count() < 1 && data.length > 20) {
             //     console.log(sn + " -> " + start + " :-: " + end + " result length : " + data.length);
             //     console.log(readUrl + sn + "/" + start + "/" + end);
