@@ -192,7 +192,7 @@ var startCalcMileage = function (sn, lt, cb) {
             var obj = _middle_mileage(start, end, data);
             if (obj.count() > 0) {
                 var calc_obj = _calc_pack_mileage(obj);
-                if (calc_obj.count() < 1 && data.length > 20) {
+                if (calc_obj.count() < 1 && data.length > 400) {
                     console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + "/" + data.length + " : " + new Date(start * 1000).FormatDate(4));
                     console.log(readUrl + sn + "/" + start + "/" + end);
                 }
@@ -246,10 +246,10 @@ var doLocationPost = function (req, res, next) {
         temp.add(sn, "Adds");
         startCalcMileage(sn, myUtil.GetSecond(), function () {
             temp.remove(sn);
-            console.log(sn + " done")
+            // console.log(sn + " done");
         });
     } else {
-        console.log(sn + " adds");
+        // console.log(sn + " adds");
     }
     res.send("1");
 }
