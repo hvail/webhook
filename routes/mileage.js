@@ -189,14 +189,16 @@ var startCalcMileage = function (sn, lt, cb) {
             return;
         }
         if (data && data.length > 0) {
-            var obj = _middle_mileage(start, end, data);
-            var calc_obj = _calc_pack_mileage(obj);
-            if (calc_obj.count() < 1 && data.length > 20) {
-                // console.log(sn + " -> " + start + " :-: " + end + " result length : " + data.length);
-                console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + " : " + new Date(start * 1000).FormatDate(4));
-                console.log(readUrl + sn + "/" + start + "/" + end);
+            var obj = _middle_mileage(_start, _end, data);
+            if (obj.count() > 0) {
+                var calc_obj = _calc_pack_mileage(obj);
+                if (calc_obj.count() < 1 && data.length > 20) {
+                    // console.log(sn + " -> " + start + " :-: " + end + " result length : " + data.length);
+                    console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + " : " + new Date(start * 1000).FormatDate(4));
+                    console.log(readUrl + sn + "/" + _start + "/" + _end);
+                }
+                _do_save_mileage(calc_obj, sn, calc_mid);
             }
-            _do_save_mileage(calc_obj, sn, calc_mid);
         }
         var dd = end - calc_mid;
         redis.ZADD(key_mileage_calc, dd, sn);
