@@ -168,7 +168,7 @@ var _do_save_mileage = function (data, sn, middleTime) {
     }
     if (push_obj.length > 0)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
-            console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
+            // console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
         });
 }
 
@@ -193,7 +193,6 @@ var startCalcMileage = function (sn, lt, cb) {
             if (obj.count() > 0) {
                 var calc_obj = _calc_pack_mileage(obj);
                 if (calc_obj.count() < 1 && data.length > 20) {
-                    // console.log(sn + " -> " + start + " :-: " + end + " result length : " + data.length);
                     console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + "/" + data.length + " : " + new Date(start * 1000).FormatDate(4));
                     console.log(readUrl + sn + "/" + start + "/" + end);
                 }
