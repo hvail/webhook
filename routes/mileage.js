@@ -63,11 +63,13 @@ var _readMileageRange = function (sn, last, cb) {
             var url = readUrl + sn + "/" + score + "/" + end;
             request(url, function (err, response, body) {
                 try {
-                    body = JSON.parse(body);
-                    cb && cb(score, end, body);
+                    var __body = JSON.parse(body);
+                    cb && cb(score, end, __body);
                 } catch (e) {
                     console.log(e);
-                    _readMileageRange(sn, last, cb);
+                    console.log(body);
+                    cb && cb(0, 0, []);
+                    // _readMileageRange(sn, last, cb);
                 }
             });
         }
@@ -297,7 +299,7 @@ var doLocationPost = function (req, res, next) {
             console.log(sn + ' usr time : ' + ((new Date().getTime() || 0) - tt) + ' ms');
         });
     } else if (temp.count() > 5) {
-        console.log(sn + " adds fail . System busy");
+        // console.log(sn + " adds fail . System busy");
     } else {
         console.log(sn + " adding");
     }

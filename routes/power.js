@@ -30,7 +30,7 @@ var calcMidPowers = function (sn, start, end, cb) {
     if (!end) end = Math.round(new Date().getTime() / 1000);
     var url = util.format(getRangePower, sn, start, end);
     request(url, function (err, res, body) {
-        // console.log(body);
+
         var data = JSON.parse(body);
         // console.log(url + ": length " + data.length);
         if (start == first_data) {
