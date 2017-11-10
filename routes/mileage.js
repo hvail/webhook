@@ -183,7 +183,7 @@ var _do_save_mileage = function (data, sn, middleTime) {
     }
     if (push_obj.length > 0)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
-            console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
+            // console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
         });
 }
 
