@@ -86,7 +86,7 @@ var _location = function (req, res, next) {
             }
         } catch (e) {
             console.log(e);
-            console.log(response.statusCode);
+            console.log("GET " + getFenceUrl + " : " + response.statusCode);
         }
     });
     res.send("1");
