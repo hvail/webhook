@@ -62,8 +62,13 @@ var _readMileageRange = function (sn, last, cb) {
             end = score * 1 + calc_length + calc_mid;
             var url = readUrl + sn + "/" + score + "/" + end;
             request(url, function (err, response, body) {
-                body = JSON.parse(body);
-                cb && cb(score, end, body);
+                try {
+                    body = JSON.parse(body);
+                    cb && cb(score, end, body);
+                } catch (e) {
+                    console.log(e);
+                    _readMileageRange(sn, last, cb);
+                }
             });
         }
     });
