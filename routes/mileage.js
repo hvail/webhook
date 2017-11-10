@@ -122,7 +122,11 @@ var _calc_pack_mileage = function (pack_hash) {
             if (ps[i].Speed > _maxSpeed) _maxSpeed = ps[i].Speed;
         }
         if (pe.Mileage > 0 && (pe.Mileage % 1 == 0) && pe.Mileage > 0) {
-            dis = top_end_point ? Math.round((pe.Mileage - top_end_point.Mileage) * 1000) : Math.round((pe.Mileage - pf.Mileage) * 1000);
+            if (!top_end_point) top_end_point = pf;
+            dis = Math.round((pe.Mileage - top_end_point.Mileage) * 1000);
+            if (dis < 0) {
+                console.log(sn + " : " + dis + " start : " + top_end_point.Mileage + " -t " + top_end_point.GPSTime + " : end " + pe.Mileage + " -t " + pe.GPSTime);
+            }
             top_end_point = pe;
         }
         else if (top_end_point && key * 1 - top_end_point.GPSTime < calc_mid) {
