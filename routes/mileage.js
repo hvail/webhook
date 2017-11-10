@@ -101,12 +101,14 @@ var _middle_mileage = function (start, end, data) {
 var _calc_pack_mileage = function (pack_hash) {
     var top_end_point = null;
     var top_key;
+    var sn;
     var obj = new myUtil.Hash();
     for (var key in pack_hash._hash) {
         var ps = pack_hash._hash[key];
         if (ps.length < 2) continue;
         var dis = 0;
         var pf = ps.first(), pe = ps.last();
+        var sn = pf.SerialNumber;
         var _maxSpeed = pf.Speed;
         for (var i = 1; i < ps.length; i++) {
             if (ps[i].Speed > _maxSpeed) _maxSpeed = ps[i].Speed;
@@ -130,6 +132,7 @@ var _calc_pack_mileage = function (pack_hash) {
         } else if (!top_end_point) {
             dis = gpsUtil.GetLineDistance(ps);
         }
+        // console.log("KEY : " + key + " DIS : " + dis);
         // 暂时先放弃(设备提供的里程精度太低) 17-11-6
         // 优先使用设备里程。 17-11-7
         // if (pe.Mileage > pf.Mileage) dis = Math.round((pe.Mileage - pf.Mileage) * 1000);
@@ -144,12 +147,13 @@ var _calc_pack_mileage = function (pack_hash) {
                 Speed: (dis / (pe.GPSTime - pf.GPSTime)).toFixed(3),
             };
             var os = __obj.Speed * 3.6;
-            if (os < _maxSpeed * 1.5) {
+            if ((os < _maxSpeed * 1.5) || (_maxSpeed == 0 && os < 240)) {
+                if (_maxSpeed < os) __obj.MaxSpeed = (os * 1.2).toFixed(3) + " km/h";
                 __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
                 obj.add(key, __obj);
             }
         } else {
-            if (dis) console.log(dis)
+            if (dis) console.log(sn + " : " + dis);
         }
         top_key = key;
         top_end_point = pe;
@@ -172,6 +176,40 @@ var _do_save_mileage = function (data, sn, middleTime) {
         });
 }
 
+var _calcUrlMileage = function (url, cb) {
+    request(url, function (err, response, body) {
+        var _body = JSON.parse(body);
+        var obj = _calcMiddleMileage(_body);
+        for (var k in obj._hash) {
+            if (obj._hash[k].length < 2) obj.remove(k);
+        }
+        var calc_obj = _calc_pack_mileage(obj);
+        cb && cb(calc_obj);
+    });
+}
+
+var _calcMiddleMileage = function (data) {
+    var df = data.first(), de = data.last();
+    var _start = _format_gt(df.GPSTime, calc_mid), end = _format_gt(de.GPSTime, calc_mid) + calc_mid, i = 0;
+    var obj = new myUtil.Hash();
+    while (_start < end) {
+        var dt = data[i].GPSTime, _m = _start * 1 + calc_mid;
+        var key = _format_gt(dt, calc_mid);
+        var das = [];
+        if (dt < _m) {
+            while (data[i].GPSTime < _m) {
+                das.push(data[i]);
+                i++;
+                if (i == data.length) break;
+            }
+        }
+        _start = _m;
+        obj.add(key, das);
+        if (i == data.length) break;
+    }
+    return obj;
+}
+
 /***
  * 开始计算里程到指定时间
  * @param sn
@@ -180,10 +218,9 @@ var _do_save_mileage = function (data, sn, middleTime) {
  * @constructor
  */
 var startCalcMileage = function (sn, lt, cb) {
+    // 格式化最后时间
     var _last_time = _format_gt(lt, calc_mid);
     _readMileageRange(sn, _last_time, function (start, end, data) {
-        // if (data.length)
-        //     console.log(sn + " -> " + start + " :-: " + end + " result length : " + data.length);
         if (start == 0) {
             cb && cb();
             return;
@@ -204,6 +241,12 @@ var startCalcMileage = function (sn, lt, cb) {
         end < _last_time ? startCalcMileage(sn, lt, cb) : cb && cb();
     });
 }
+
+
+var testUrl = "http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/6193911606100053/1503057300/1503100800";
+_calcUrlMileage(testUrl, function (result) {
+    console.log(result);
+});
 
 // var arr = ["0026231709300026"]
 // var buildMileage = function (sn, cb) {
@@ -242,14 +285,16 @@ var doLocationPost = function (req, res, next) {
         }
     }
     var sn = data.SerialNumber;
-    if (!temp.items(sn)) {
-        temp.add(sn, "Adds");
+    if (!temp.items(sn) && temp.count() <= 5) {
+        temp.add(sn, "adds");
         startCalcMileage(sn, myUtil.GetSecond(), function () {
             temp.remove(sn);
-            // console.log(sn + " done");
+            console.log(sn + " done");
         });
+    } else if (temp.count() > 5) {
+        console.log(sn + " adds fail . System busy");
     } else {
-        // console.log(sn + " adds");
+        console.log(sn + " adding");
     }
     res.send("1");
 }
