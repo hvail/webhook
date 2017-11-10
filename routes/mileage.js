@@ -292,7 +292,7 @@ var doLocationPost = function (req, res, next) {
         }
     }
     var sn = data.SerialNumber;
-    if (!temp.items(sn) && temp.count() <= 5) {
+    if (!temp.items(sn) && temp.count() <= 3) {
         temp.add(sn, new Date().getTime());
         startCalcMileage(sn, myUtil.GetSecond(), function () {
             var tt = temp.items(sn);
@@ -300,7 +300,7 @@ var doLocationPost = function (req, res, next) {
             var mid = (new Date().getTime() || 0) - tt;
             if (mid > 1000) console.log(sn + ' usr time : ' + mid + ' ms');
         });
-    } else if (temp.count() > 5) {
+    } else if (temp.count() > 3) {
         // console.log(sn + " adds fail . System busy");
     } else {
         console.log(sn + " adding");
