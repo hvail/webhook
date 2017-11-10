@@ -10,7 +10,7 @@ var express = require('express');
 var util = require('util');
 var router = express.Router();
 var area = process.env.DATAAREA || "zh-cn";
-var calc_length = 6 * 3600;     // 单次读取长度
+var calc_length = 2 * 3600;     // 单次读取长度
 var calc_mid = 5 * 60;          // 计算间隔5分钟
 var first_data = 1400000000;    // 里程统计从 UTC: 2017-08-01 开始算起
 var key_mileage_calc = "SET-spark-mileage-end-time"; // 记录最后计算的时间
@@ -249,12 +249,10 @@ var startCalcMileage = function (sn, lt, cb) {
     });
 }
 
-
 // var testUrl = "http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/6193911606100053/1503057300/1503100800";
 // _calcUrlMileage(testUrl, function (result) {
 //     console.log(result);
 // });
-
 // var arr = ["0026231709300026"]
 // var buildMileage = function (sn, cb) {
 //     startCalcMileage(sn, myUtil.GetSecond(), cb);
@@ -295,17 +293,19 @@ var doLocationPost = function (req, res, next) {
     if (!temp.items(sn) && temp.count() <= 3) {
         temp.add(sn, new Date().getTime());
         startCalcMileage(sn, myUtil.GetSecond(), function () {
-            var tt = temp.items(sn);
             temp.remove(sn);
-            var mid = (new Date().getTime() || 0) - tt;
-            if (mid > 1000) console.log(sn + ' usr time : ' + mid + ' ms');
+            // var tt = temp.items(sn);
+            // var mid = (new Date().getTime() || 0) - tt;
+            // if (mid > 1000) console.log(sn + ' usr time : ' + mid + ' ms');
         });
+        res.send("1");
     } else if (temp.count() > 3) {
+        res.send("-2");
         // console.log(sn + " adds fail . System busy");
     } else {
         console.log(sn + " adding");
+        res.send("-3");
     }
-    res.send("1");
 }
 
 /* GET users listing. */
