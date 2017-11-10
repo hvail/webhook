@@ -132,7 +132,6 @@ var _calc_pack_mileage = function (pack_hash) {
         } else if (!top_end_point) {
             dis = gpsUtil.GetLineDistance(ps);
         }
-        // console.log("KEY : " + key + " DIS : " + dis);
         // 暂时先放弃(设备提供的里程精度太低) 17-11-6
         // 优先使用设备里程。 17-11-7
         // if (pe.Mileage > pf.Mileage) dis = Math.round((pe.Mileage - pf.Mileage) * 1000);
@@ -243,10 +242,10 @@ var startCalcMileage = function (sn, lt, cb) {
 }
 
 
-var testUrl = "http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/6193911606100053/1503057300/1503100800";
-_calcUrlMileage(testUrl, function (result) {
-    console.log(result);
-});
+// var testUrl = "http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/6193911606100053/1503057300/1503100800";
+// _calcUrlMileage(testUrl, function (result) {
+//     console.log(result);
+// });
 
 // var arr = ["0026231709300026"]
 // var buildMileage = function (sn, cb) {
@@ -290,7 +289,7 @@ var doLocationPost = function (req, res, next) {
         startCalcMileage(sn, myUtil.GetSecond(), function () {
             var tt = temp.items(sn);
             temp.remove(sn);
-            console.log(sn + 'usr time : ' + ((new Date().getTime() || 0) - tt) + ' ms');
+            console.log(sn + ' usr time : ' + ((new Date().getTime() || 0) - tt) + ' ms');
         });
     } else if (temp.count() > 5) {
         console.log(sn + " adds fail . System busy");
