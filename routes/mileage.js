@@ -163,8 +163,8 @@ var _calc_pack_mileage = function (pack_hash) {
                 __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
                 obj.add(key, __obj);
             }
-        } else {
-            if (dis) console.log(sn + " : " + dis);
+            // } else if (dis < 0) {
+            //     if (dis) console.log(sn + " : " + dis);
         }
         top_key = key;
         top_end_point = pe;
@@ -183,7 +183,7 @@ var _do_save_mileage = function (data, sn, middleTime) {
     }
     if (push_obj.length > 0)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
-            // console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
+            console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
         });
 }
 
