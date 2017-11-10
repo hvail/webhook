@@ -230,7 +230,7 @@ var _calcMiddleMileage = function (data) {
  */
 var startCalcMileage = function (sn, lt, cb) {
     // 格式化最后时间
-    var _last_time = _format_gt(lt, calc_mid);
+    var _last_time = _format_gt(lt, calc_length);
     _readMileageRange(sn, _last_time, function (start, end, data) {
         if (start == 0) {
             cb && cb();
