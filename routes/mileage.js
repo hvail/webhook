@@ -172,7 +172,7 @@ var _do_save_mileage = function (data, sn, middleTime) {
     }
     if (push_obj.length > 0)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
-            // console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
+            console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
         });
 }
 
@@ -286,10 +286,11 @@ var doLocationPost = function (req, res, next) {
     }
     var sn = data.SerialNumber;
     if (!temp.items(sn) && temp.count() <= 5) {
-        temp.add(sn, "adds");
+        temp.add(sn, new Date().getTime());
         startCalcMileage(sn, myUtil.GetSecond(), function () {
+            var tt = temp.items(sn);
             temp.remove(sn);
-            console.log(sn + " done");
+            console.log(sn + 'usr time : ' + ((new Date().getTime() || 0) - tt) + ' ms');
         });
     } else if (temp.count() > 5) {
         console.log(sn + " adds fail . System busy");
