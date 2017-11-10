@@ -293,17 +293,17 @@ var doLocationPost = function (req, res, next) {
     if (!temp.items(sn) && temp.count() <= 3) {
         temp.add(sn, new Date().getTime());
         startCalcMileage(sn, myUtil.GetSecond(), function () {
+            var tt = temp.items(sn);
             temp.remove(sn);
-            // var tt = temp.items(sn);
-            // var mid = (new Date().getTime() || 0) - tt;
-            // if (mid > 1000) console.log(sn + ' usr time : ' + mid + ' ms');
+            var mid = (new Date().getTime() || 0) - tt;
+            if (mid > 1000) console.log(sn + ' usr time : ' + mid + ' ms');
         });
         res.send("1");
     } else if (temp.count() > 3) {
         res.send("-2");
         // console.log(sn + " adds fail . System busy");
     } else {
-        console.log(sn + " adding");
+        // console.log(sn + " adding");
         res.send("-3");
     }
 }
