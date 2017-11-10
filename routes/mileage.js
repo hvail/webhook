@@ -121,7 +121,7 @@ var _calc_pack_mileage = function (pack_hash) {
         for (var i = 1; i < ps.length; i++) {
             if (ps[i].Speed > _maxSpeed) _maxSpeed = ps[i].Speed;
         }
-        if (pe.Mileage > 0 && pe.Mileage % 1 == 0) {
+        if (pe.Mileage > 0 && (pe.Mileage % 1 == 0) && pe.Mileage > 0) {
             dis = top_end_point ? Math.round((pe.Mileage - top_end_point.Mileage) * 1000) : Math.round((pe.Mileage - pf.Mileage) * 1000);
             top_end_point = pe;
         }
