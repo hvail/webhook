@@ -3,7 +3,7 @@
  */
 
 var express = require('express');
-var request = require('./../my_modules/request');
+const request = require('request');
 var gpsUtil = require('./../my_modules/gpsutils');
 var myUtil = require('./../my_modules/utils');
 var util = require('util');
@@ -77,12 +77,16 @@ var _location = function (req, res, next) {
     pos = _pos;
     var sn = pos[0].SerialNumber;
     var getFenceUrl = fenceUrl + sn;
-    request.Get(getFenceUrl, function (err, result) {
-        // console.log(getFenceUrl + " : " + result);
-        var fences = JSON.parse(result);
-        if (fences.length < 1 || pos.length < 2) return;
-        for (var i = 0; i < fences.length; i++) {
-            trigger(pos, fences[i]);
+    request(getFenceUrl, function (err, response, result) {
+        try {
+            var fences = JSON.parse(result);
+            if (fences.length < 1 || pos.length < 2) return;
+            for (var i = 0; i < fences.length; i++) {
+                trigger(pos, fences[i]);
+            }
+        } catch (e) {
+            console.log(e);
+            console.log(response.statusCode);
         }
     });
     res.send("1");
