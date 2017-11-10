@@ -67,6 +67,7 @@ var _readMileageRange = function (sn, last, cb) {
                     cb && cb(score, end, __body);
                 } catch (e) {
                     console.log(e);
+                    console.log(url);
                     console.log(body);
                     cb && cb(0, 0, []);
                     // _readMileageRange(sn, last, cb);
@@ -296,7 +297,8 @@ var doLocationPost = function (req, res, next) {
         startCalcMileage(sn, myUtil.GetSecond(), function () {
             var tt = temp.items(sn);
             temp.remove(sn);
-            console.log(sn + ' usr time : ' + ((new Date().getTime() || 0) - tt) + ' ms');
+            var mid = (new Date().getTime() || 0) - tt;
+            if (mid > 1000) console.log(sn + ' usr time : ' + mid + ' ms');
         });
     } else if (temp.count() > 5) {
         // console.log(sn + " adds fail . System busy");
