@@ -30,10 +30,10 @@ var getWebHooks = function (sn, lis, cb) {
         var arr = [];
         // console.log(data);
         for (var i = 2; i > -1; i--) {
-            console.log(data[i]);
+            // console.log(data[i]);
             if (!!data[i] || data[i] == 'null') arr.push(JSON.parse(data[i]));
         }
-        console.log(arr.length);
+        // console.log(arr.length);
         cb && cb(err, arr);
     });
 }
@@ -161,22 +161,20 @@ var _event = function (req, res, next) {
             body = {};
         }
         getWebHooks(sn, "GPSEvent", function (err, data) {
-            if (!!data) {
-                console.log("GPSEvent : " + data);
-                for (var i = 0; i < eve.length; i++) {
-                    if (!eve[i].AlarmType && eve[i].EventType)
-                        eve[i].AlarmType = eve[i].EventType;
-                    if (body.GPSTime && Math.abs(body.GPSTime - eve[i].UpTime) < 60) {
-                        eve[i].Lat = body.Lat;
-                        eve[i].Lng = body.Lng;
-                        eve[i].Lat_Gg = body.Lat_Gg;
-                        eve[i].Lat_Bd = body.Lat_Bd;
-                        eve[i].Lng_Gg = body.Lng_Gg;
-                        eve[i].Lng_Bd = body.Lng_Bd;
-                    }
+            console.log("GPSEvent : " + data + " LEN : " + data.length);
+            for (var i = 0; i < eve.length; i++) {
+                if (!eve[i].AlarmType && eve[i].EventType)
+                    eve[i].AlarmType = eve[i].EventType;
+                if (body.GPSTime && Math.abs(body.GPSTime - eve[i].UpTime) < 60) {
+                    eve[i].Lat = body.Lat;
+                    eve[i].Lng = body.Lng;
+                    eve[i].Lat_Gg = body.Lat_Gg;
+                    eve[i].Lat_Bd = body.Lat_Bd;
+                    eve[i].Lng_Gg = body.Lng_Gg;
+                    eve[i].Lng_Bd = body.Lng_Bd;
                 }
-                doWebPush(data, eve);
             }
+            doWebPush(data, eve);
             res.send("1");
         });
     });
