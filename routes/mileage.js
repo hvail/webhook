@@ -295,6 +295,7 @@ var doLocationPost = function (req, res, next) {
             res.send("-4");
             return;
         }
+        data = _data;
     }
     var sn = data.SerialNumber;
     if (!temp.items(sn) && temp.count() <= 3) {
