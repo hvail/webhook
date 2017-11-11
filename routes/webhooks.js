@@ -36,6 +36,16 @@ var getWebHooks = function (sn, lis, cb) {
     });
 }
 
+var getWebHooksAll = function (cb) {
+    redis.HGETALL(function (err, data) {
+        var arr = [];
+        for (var i = 2; i > -1; i--) {
+            if (!!data[i]) arr.push(JSON.parse(data[i]));
+        }
+        cb && cb(err, arr);
+    });
+}
+
 var totalPush = function (url, data, status) {
     var ds = new Date().toISOString().split("T")[0];
     var totalKey = SetSendStatusTotalKey + ds;
@@ -61,10 +71,15 @@ var _getByListenerSn = function (req, res, next) {
     });
 }
 
+var _getAllListener = function (req, res, next) {
+    getWebHooksAll(function (err, data) {
+        res.send(data);
+    });
+}
+
 var _doPost = function (req, res, next) {
     var data = _util.ClassClone(__Demo_Class, req.body, res);
     if (data == null) next();
-
     var key = data.Listener + "_" + data.TargetDevice;
     redis.HGET(HashWebHooks, key, function (err, result) {
         if (err) {
@@ -155,6 +170,7 @@ var _event = function (req, res, next) {
 /* GET users listing. */
 router.get('/', _default);
 router.get('/lis/:lis/:sn', _getByListenerSn);
+router.get('/all', _getAllListener);
 
 router.post('/', _doPost);
 router.post('/location', _location);
