@@ -121,7 +121,7 @@ var _calc_pack_mileage = function (pack_hash) {
         for (var i = 1; i < ps.length; i++) {
             if (ps[i].Speed > _maxSpeed) _maxSpeed = ps[i].Speed;
         }
-        if (pe.Mileage > 0 && (pe.Mileage % 1 == 0) && pe.Mileage > 0) {
+        if (pe.Mileage > 10 && (pe.Mileage % 1 == 0)) {
             if (!top_end_point) top_end_point = pf;
             dis = Math.round((pe.Mileage - top_end_point.Mileage) * 1000);
             if (dis < 0) {
@@ -243,6 +243,7 @@ var startCalcMileage = function (sn, lt, cb) {
                 if (calc_obj.count() < 1 && data.length > 400) {
                     console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + "/" + data.length + " : " + new Date(start * 1000).FormatDate(4));
                     console.log(readUrl + sn + "/" + start + "/" + end);
+                    // 交给链路复查
                 }
                 _do_save_mileage(calc_obj, sn, calc_mid);
             }
@@ -253,10 +254,10 @@ var startCalcMileage = function (sn, lt, cb) {
     });
 }
 
-// var testUrl = "http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/6193911606100053/1503057300/1503100800";
-// _calcUrlMileage(testUrl, function (result) {
-//     console.log(result);
-// });
+var testUrl = "http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/3180381609270039/1504367700/1504432800";
+_calcUrlMileage(testUrl, function (result) {
+    console.log(result);
+});
 // var arr = ["0026231709300026"]
 // var buildMileage = function (sn, cb) {
 //     startCalcMileage(sn, myUtil.GetSecond(), cb);
@@ -299,8 +300,8 @@ var doLocationPost = function (req, res, next) {
         startCalcMileage(sn, myUtil.GetSecond(), function () {
             var tt = temp.items(sn);
             temp.remove(sn);
-            var mid = (new Date().getTime() || 0) - tt;
-            if (mid > 1000) console.log(sn + ' usr time : ' + mid + ' ms');
+            // var mid = (new Date().getTime() || 0) - tt;
+            // if (mid > 1000) console.log(sn + ' usr time : ' + mid + ' ms');
         });
         res.send("1");
     } else if (temp.count() > 3) {

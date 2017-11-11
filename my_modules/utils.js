@@ -142,11 +142,7 @@ router.SendMqObject = function (exchage, obj, target) {
         MsgTag: tag,
         Context: JSON.stringify(obj)
     };
-
-
-    request(getHttpOptions(MqSendUrl, push), function (err, res, body) {
-        console.log(body);
-    });
+    request(getHttpOptions(MqSendUrl, push));
 }
 
 router.GetSecond = function () {

@@ -32,7 +32,7 @@ var TriggerFenceAlarm = function (sn, fence, x) {
     be.UpTime = time();
     be.SerialNumber = sn;
     be.Description = "By Web Hooks";
-    console.log(be);
+    console.log(be.Message);
     // 利用MQ进行消息中转
     myUtil.SendMqObject(ExchangeName, [be], sn);
 }
