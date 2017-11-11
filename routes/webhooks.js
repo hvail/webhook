@@ -28,10 +28,12 @@ var getWebHooks = function (sn, lis, cb) {
     var key_c = lis + "_" + sn;
     redis.HMGET(HashWebHooks, key_a, key_b, key_c, function (err, data) {
         var arr = [];
-        console.log(data);
+        // console.log(data);
         for (var i = 2; i > -1; i--) {
-            if (!!data[i]) arr.push(JSON.parse(data[i]));
+            console.log(data[i]);
+            if (!!data[i] || data[i] == 'null') arr.push(JSON.parse(data[i]));
         }
+        console.log(arr.length);
         cb && cb(err, arr);
     });
 }
