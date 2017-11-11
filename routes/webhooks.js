@@ -8,7 +8,6 @@ var _util = require('./../my_modules/utils');
 var util = require('util');
 var area = process.env.DATAAREA || "zh-cn";
 var redis = require('./../my_modules/redishelp');
-
 const HashWebHooks = "web-hook-listener-hash";
 const SetSendStatusTotalKey = "web-hook-send-total-";
 const SetSendStatusSuccessKey = "web-hook-send-success-";
@@ -41,10 +40,13 @@ var getWebHooksAll = function (cb) {
         var arr = [];
         if (err) {
             console.log(err);
-        } else if (data)
+        } else if (data) {
+            console.log(data);
             for (var i = 0; i > data.length; i++) {
-                if (!!data[i]) arr.push(JSON.parse(data[i]));
+                if (!!data[i])
+                    arr.push(JSON.parse(data[i]));
             }
+        }
         cb && cb(err, arr);
     });
 }
