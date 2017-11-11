@@ -89,6 +89,7 @@ var _doPost = function (req, res, next) {
             res.send(505, err.Message);
             return;
         }
+        console.log(result);
         var arr = result != null ? JSON.parse(result) : [];
         if (!result || result.indexOf(JSON.stringify(data)) < 0) {
             arr.push(data);
