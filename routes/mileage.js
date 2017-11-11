@@ -307,13 +307,8 @@ var doLocationPost = function (req, res, next) {
             // if (mid > 1000) console.log(sn + ' usr time : ' + mid + ' ms');
         });
         res.send("1");
-    } else if (temp.count() > 3) {
-        res.send("-2");
-        // console.log(sn + " adds fail . System busy");
-    } else {
-        // console.log(sn + " adding");
-        res.send("-3");
-    }
+    } else if (temp.count() > 3) res.send("-2");
+    else res.send("-3");
 }
 
 /* GET users listing. */

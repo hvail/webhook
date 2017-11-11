@@ -53,6 +53,7 @@ Array.prototype.max = function (field) {
     var arr = this;
     if (!Array.isArray(arr)) return 0;
     var max = -999999999;
+    var l = arr.length;
     for (var i = 0; i < l; i++) {
         var _max = arr[i][field] || 0;
         max = _max > max ? _max : max;
@@ -65,6 +66,7 @@ Array.prototype.min = function (field) {
     var arr = this;
     if (!Array.isArray(arr)) return 0;
     var min = 999999999;
+    var l = arr.length;
     for (var i = 0; i < l; i++) {
         var _min = arr[i][field] || 0;
         min = _min < min ? _min : min;
