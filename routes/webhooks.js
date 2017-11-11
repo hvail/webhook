@@ -37,7 +37,7 @@ var getWebHooks = function (sn, lis, cb) {
 }
 
 var getWebHooksAll = function (cb) {
-    redis.HGETALL(function (err, data) {
+    redis.HGETALL(HashWebHooks, function (err, data) {
         var arr = [];
         for (var i = 0; i > data.length; i++) {
             if (!!data[i]) arr.push(JSON.parse(data[i]));
