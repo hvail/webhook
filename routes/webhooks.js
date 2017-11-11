@@ -28,6 +28,7 @@ var getWebHooks = function (sn, lis, cb) {
     var key_c = lis + "_" + sn;
     redis.HMGET(HashWebHooks, key_a, key_b, key_c, function (err, data) {
         var arr = [];
+        console.log(data);
         for (var i = 2; i > -1; i--) {
             if (!!data[i]) arr.push(JSON.parse(data[i]));
         }
@@ -158,7 +159,7 @@ var _event = function (req, res, next) {
             body = {};
         }
         getWebHooks(sn, "GPSEvent", function (err, data) {
-            if (data) {
+            if (!!data) {
                 console.log("GPSEvent : " + data);
                 for (var i = 0; i < eve.length; i++) {
                     if (!eve[i].AlarmType && eve[i].EventType)
