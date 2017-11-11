@@ -162,7 +162,7 @@ var _event = function (req, res, next) {
         }
         getWebHooks(sn, "GPSEvent", function (err, data) {
             if (data.length > 0) {
-                console.log("GPSEvent : " + data + " LEN : " + data.length);
+                console.log(sn + " GPSEvent : " + data + " LEN : " + data.length);
                 for (var i = 0; i < eve.length; i++) {
                     if (!eve[i].AlarmType && eve[i].EventType)
                         eve[i].AlarmType = eve[i].EventType;

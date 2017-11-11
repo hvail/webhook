@@ -186,7 +186,7 @@ router.ClassClone = function (src, tar, res) {
 router.DoPushPost = function (url, data, cb) {
     request(getHttpOptions(url, data), function (err, res, body) {
         if (url.indexOf("sky1088") < 0)
-            console.log(url + " : " + res.statusCode);
+            console.log(url + " : " + res.statusCode + " ( " + body + " ) ");
         cb && cb(url, data, res.statusCode < 400 ? 1 : -1, body);
     })
 }
