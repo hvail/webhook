@@ -41,11 +41,14 @@ var getWebHooksAll = function (cb) {
         if (err) {
             console.log(err);
         } else if (data) {
-            console.log(data);
-            for (var i = 0; i > data.length; i++) {
-                if (!!data[i])
-                    arr.push(JSON.parse(data[i]));
+            // console.log(data);
+            for (var k in data) {
+                arr.push(data[k]);
             }
+            // for (var i = 0; i > data.length; i++) {
+            //     if (!!data[i])
+            //         arr.push(JSON.parse(data[i]));
+            // }
         }
         cb && cb(err, arr);
     });
@@ -155,6 +158,7 @@ var _event = function (req, res, next) {
             body = {};
         }
         getWebHooks(sn, "GPSEvent", function (err, data) {
+            console.log("GPSEvent : " + data);
             for (var i = 0; i < eve.length; i++) {
                 if (!eve[i].AlarmType && eve[i].EventType)
                     eve[i].AlarmType = eve[i].EventType;
