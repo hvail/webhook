@@ -251,10 +251,10 @@ var startCalcMileage = function (sn, lt, cb) {
     });
 }
 
-// var testUrl = "http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/3180381609270039/1504367700/1504432800";
-// _calcUrlMileage(testUrl, function (result) {
-//     console.log(result);
-// });
+var testUrl = "http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/0090081604020253/1509825300/1509948000";
+_calcUrlMileage(testUrl, function (result) {
+    console.log(result);
+});
 // var arr = ["0026231709300026"]
 // var buildMileage = function (sn, cb) {
 //     startCalcMileage(sn, myUtil.GetSecond(), cb);
