@@ -2,6 +2,7 @@
  * Created by hvail on 2017/9/15.
  */
 const request = require('request');
+const util = require('util');
 const REQUIRED = "required";
 var area = process.env.DATAAREA || "zh-cn";
 const MqSendUrl = "http://v3.mq-rabbit.server." + area + ".sky1088.com/mq/send";
@@ -29,6 +30,57 @@ Array.prototype.last = function () {
 Array.prototype.first = function () {
     var me = this;
     return me[0];
+}
+
+// 跟据字段值查询数组
+Array.prototype.findByField = function (field, val) {
+
+}
+
+// 查询字段的总和
+Array.prototype.sum = function (field) {
+    var arr = this;
+    if (!Array.isArray(arr)) return 0;
+    var sum = 0, l = arr.length;
+    for (var i = 0; i < l; i++) {
+        sum += (arr[i][field]) || 0;
+    }
+    return sum;
+}
+
+// 查询最高值
+Array.prototype.max = function (field) {
+    var arr = this;
+    if (!Array.isArray(arr)) return 0;
+    var max = -999999999;
+    for (var i = 0; i < l; i++) {
+        var _max = arr[i][field] || 0;
+        max = _max > max ? _max : max;
+    }
+    return max;
+}
+
+// 查询最低值
+Array.prototype.min = function (field) {
+    var arr = this;
+    if (!Array.isArray(arr)) return 0;
+    var min = 999999999;
+    for (var i = 0; i < l; i++) {
+        var _min = arr[i][field] || 0;
+        min = _min < min ? _min : min;
+    }
+    return min;
+}
+
+// 查询平均数
+Array.prototype.ave = function (field) {
+    var arr = this;
+    if (!Array.isArray(arr)) return 0;
+    var sum = 0, l = arr.length;
+    for (var i = 0; i < l; i++) {
+        sum += (arr[i][field]) || 0;
+    }
+    return sum / l;
 }
 
 Date.prototype.FormatDate = function (format) {

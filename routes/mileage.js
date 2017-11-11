@@ -117,15 +117,14 @@ var _calc_pack_mileage = function (pack_hash) {
         var dis = 0;
         var pf = ps.first(), pe = ps.last();
         var sn = pf.SerialNumber;
-        var _maxSpeed = pf.Speed;
-        for (var i = 1; i < ps.length; i++) {
-            if (ps[i].Speed > _maxSpeed) _maxSpeed = ps[i].Speed;
-        }
+        var _maxSpeed = ps.max('Speed');
+        var _aveMileage = ps.ave('Mileage');
         if (pe.Mileage > 10 && (pe.Mileage % 1 == 0)) {
             if (!top_end_point) top_end_point = pf;
             dis = Math.round((pe.Mileage - top_end_point.Mileage) * 1000);
             if (dis < 0) {
                 console.log(sn + " : " + dis + " start : " + top_end_point.Mileage + " -t " + top_end_point.GPSTime + " : end " + pe.Mileage + " -t " + pe.GPSTime);
+                console.log(sn + " -> Max Speed : " + _maxSpeed + " , Ave Speed : " + _aveMileage);
             }
             top_end_point = pe;
         }
@@ -163,8 +162,6 @@ var _calc_pack_mileage = function (pack_hash) {
                 __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
                 obj.add(key, __obj);
             }
-            // } else if (dis < 0) {
-            //     if (dis) console.log(sn + " : " + dis);
         }
         top_key = key;
         top_end_point = pe;
@@ -288,8 +285,13 @@ var startCalcMileage = function (sn, lt, cb) {
 var doLocationPost = function (req, res, next) {
     var data = req.body;
     if (util.isArray(req.body)) {
-        if (data.length > 0) data = data[0];
-        else {
+        var _data;
+        var i = 0;
+        while (!_data) {
+            _data = data[i];
+            i++;
+        }
+        if (!_data) {
             res.send("-4");
             return;
         }
