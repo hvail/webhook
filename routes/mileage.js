@@ -284,6 +284,7 @@ var __loop = function () {
         startCalcMileage(sn, myUtil.GetSecond(), __loop);
     } else {
         __loop__run = false;
+        console.log('全部运行已经完成，等待新的任务');
     }
 }
 
@@ -314,30 +315,23 @@ var doLocationPost = function (req, res, next) {
         data = _data;
     }
     var sn = data.SerialNumber;
-    if (!temp.items(sn) && temp.count() <= 3) {
-        temp.add(sn, new Date().getTime());
-        startCalcMileage(sn, myUtil.GetSecond(), function () {
-            var tt = temp.items(sn);
-            temp.remove(sn);
-            // var mid = (new Date().getTime() || 0) - tt;
-            // if (mid > 1000) console.log(sn + ' usr time : ' + mid + ' ms');
-        });
-        res.send("1");
-    } else if (temp.count() > 3) res.send("-2");
-    else res.send("-3");
+    res.send(_add_temp(sn));
 }
 
 var doSingle = function (req, res, next) {
     var sn = req.params.sn;
+    res.send(_add_temp(sn));
+}
+
+var _add_temp = function (sn) {
     if (tempArrays.length > 10) {
-        res.send("-2");
+        return "-2";
     } else if (tempArrays.indexOf(sn) == -1) {
         tempArrays.push(sn);
         if (!__loop__run) __loop();
-        res.send("1");
-
+        return "1";
     } else {
-        res.send("-1");
+        return "-1";
     }
 }
 
