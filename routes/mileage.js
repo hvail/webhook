@@ -240,6 +240,8 @@ var startCalcMileage = function (sn, lt, cb) {
                 if (calc_obj.count() < 1 && data.length > 400) {
                     console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + "/" + data.length + " : " + new Date(start * 1000).FormatDate(4));
                     console.log(readUrl + sn + "/" + start + "/" + end);
+
+
                     // 交给链路复查
                 }
                 _do_save_mileage(calc_obj, sn, calc_mid);
@@ -311,8 +313,13 @@ var doLocationPost = function (req, res, next) {
     else res.send("-3");
 }
 
+var doSingle = function (req, res, next) {
+    var sn = req.params.sn;
+}
+
 /* GET users listing. */
 router.get('/', demo);
 router.post('/', doLocationPost);
+router.post('/single/:sn', doSingle);
 
 module.exports = router;
