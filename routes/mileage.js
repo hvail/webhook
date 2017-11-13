@@ -18,6 +18,7 @@ var readUrl = "http://v3.res-ots.server." + area + ".sky1088.com/track/range-mil
 var post_url = "http://v3.res-mongo.server." + area + ".sky1088.com/mileage";
 
 var temp = new myUtil.Hash();
+var failUrlList = "LIST-range-mileage-None";
 
 var tempArrays = [];
 
@@ -126,7 +127,7 @@ var _calc_pack_mileage = function (pack_hash) {
             dis = Math.round((pe.Mileage - top_end_point.Mileage) * 1000);
             if (dis < 0) {
                 console.log(sn + " : " + dis + " start : " + top_end_point.Mileage + " -t " + top_end_point.GPSTime + " : end " + pe.Mileage + " -t " + pe.GPSTime);
-                console.log(sn + " -> Max Speed : " + _maxSpeed + " , Ave Speed : " + _aveMileage);
+                console.log(sn + " -> Max Speed : " + _maxSpeed + " , Ave Mileage : " + _aveMileage);
             }
             top_end_point = pe;
         }
@@ -240,11 +241,11 @@ var startCalcMileage = function (sn, lt, cb) {
             if (obj.count() > 0) {
                 var calc_obj = _calc_pack_mileage(obj);
                 if (calc_obj.count() < 1 && data.length > 400) {
-                    console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + "/" + data.length + " : " + new Date(start * 1000).FormatDate(4));
-                    console.log(readUrl + sn + "/" + start + "/" + end);
-
-
+                    var url = readUrl + sn + "/" + start + "/" + end;
+                    // console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + "/" + data.length + " : " + new Date(start * 1000).FormatDate(4));
+                    // console.log(readUrl + sn + "/" + start + "/" + end);
                     // 交给链路复查
+                    redis.RPUSH(failUrlList, url);
                 }
                 _do_save_mileage(calc_obj, sn, calc_mid);
             }
