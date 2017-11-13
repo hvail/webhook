@@ -275,11 +275,15 @@ var startCalcMileage = function (sn, lt, cb) {
 // }
 // pool(0);
 
+var __loop__run = false;
 var __loop = function () {
     if (tempArrays.length > 0) {
+        __loop__run = true;
         var sn = tempArrays.shift();
-        console.log('开始计算 ' + sn + ' 的里程统计');
+        console.log('开始计算 ' + sn + ' 的里程统计 余 ' + tempArrays.length + ' 台设备未处理');
         startCalcMileage(sn, myUtil.GetSecond(), __loop);
+    } else {
+        __loop__run = false;
     }
 }
 
@@ -329,7 +333,9 @@ var doSingle = function (req, res, next) {
         res.send("-2");
     } else if (tempArrays.indexOf(sn) == -1) {
         tempArrays.push(sn);
+        if (!__loop__run) __loop();
         res.send("1");
+
     } else {
         res.send("-1");
     }
