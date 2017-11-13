@@ -19,6 +19,8 @@ var post_url = "http://v3.res-mongo.server." + area + ".sky1088.com/mileage";
 
 var temp = new myUtil.Hash();
 
+var tempArrays = [];
+
 var demo = function (req, res, next) {
     res.send('mileage v1.1.0');
 }
@@ -273,6 +275,14 @@ var startCalcMileage = function (sn, lt, cb) {
 // }
 // pool(0);
 
+var __loop = function () {
+    if (tempArrays.length > 0) {
+        var sn = tempArrays.shift();
+        console.log('开始计算 ' + sn + ' 的里程统计');
+        startCalcMileage(sn, myUtil.GetSecond(), __loop);
+    }
+}
+
 /***
  * localmileage demo
  * SerialNumber
@@ -315,6 +325,14 @@ var doLocationPost = function (req, res, next) {
 
 var doSingle = function (req, res, next) {
     var sn = req.params.sn;
+    if (tempArrays.length > 10) {
+        res.send("-2");
+    } else if (tempArrays.indexOf(sn) == -1) {
+        tempArrays.push(sn);
+        res.send("1");
+    } else {
+        res.send("-1");
+    }
 }
 
 /* GET users listing. */
