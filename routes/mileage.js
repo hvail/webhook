@@ -117,21 +117,14 @@ var _calc_pack_mileage = function (pack_hash) {
     for (var key in pack_hash._hash) {
         var ps = pack_hash._hash[key];
         if (ps.length < 2) continue;
-        var dis = 0;
         var pf = ps.first(), pe = ps.last();
         var sn = pf.SerialNumber;
         var _maxSpeed = ps.max('Speed');
         var _aveMileage = ps.ave('Mileage');
-        if (pe.Mileage > 10 && (pe.Mileage % 1 == 0)) {
-            if (!top_end_point) top_end_point = pf;
-            dis = Math.round((pe.Mileage - top_end_point.Mileage) * 1000);
-            if (dis < 0) {
-                console.log(sn + " : " + dis + " start : " + top_end_point.Mileage + " -t " + top_end_point.GPSTime + " : end " + pe.Mileage + " -t " + pe.GPSTime);
-                console.log(sn + " -> Max Speed : " + _maxSpeed + " , Ave Mileage : " + _aveMileage);
-            }
-            top_end_point = pe;
-        }
-        else if (top_end_point && key * 1 - top_end_point.GPSTime < calc_mid) {
+        if (!top_end_point) top_end_point = pf;
+        var dis = Math.round((pe.Mileage - top_end_point.Mileage) * 1000);
+        if (dis < 0 || dis > 20000 || pe.Mileage < 10 || pe.Mileage % 1 != 0) {
+            // 如果量程小于0，距离大于20公里，总里程小于10，总里程不是整数，则取全部的距离
             var middle_time = pf.GPSTime - top_end_point.GPSTime;
             // 如果有上一个点并且和此次时间相差小于静止间隔，则按比例分配两点间的距离
             var mid_distance = gpsUtil.GetDistance(top_end_point.Lat, top_end_point.Lng, pf.Lat, pf.Lng) || 0;
@@ -143,28 +136,49 @@ var _calc_pack_mileage = function (pack_hash) {
                 dis = right;
             }
             dis = Math.round(dis + gpsUtil.GetLineDistance(ps));
-        } else if (!top_end_point) {
-            dis = gpsUtil.GetLineDistance(ps);
         }
+
+        // if (pe.Mileage > 10 && (pe.Mileage % 1 == 0) && 0 > (pe.Mileage - top_end_point.Mileage) < 20) {
+        // 最后点的里程大于10 , 是个整数 ,
+        // dis = Math.round((pe.Mileage - top_end_point.Mileage) * 1000);
+        // if (dis < 0) {
+        //     console.log(sn + " : " + dis + " start : " + top_end_point.Mileage + " -t " + top_end_point.GPSTime + " : end " + pe.Mileage + " -t " + pe.GPSTime);
+        //     console.log(sn + " -> Max Speed : " + _maxSpeed + " , Ave Mileage : " + _aveMileage);
+        // }
+        // top_end_point = pe;
+        // }
+        // else if (top_end_point && (key * 1 - top_end_point.GPSTime) < calc_mid) {
+        //     var middle_time = pf.GPSTime - top_end_point.GPSTime;
+        //     // 如果有上一个点并且和此次时间相差小于静止间隔，则按比例分配两点间的距离
+        //     var mid_distance = gpsUtil.GetDistance(top_end_point.Lat, top_end_point.Lng, pf.Lat, pf.Lng) || 0;
+        //     if (middle_time > 0 && middle_time < calc_mid && mid_distance > 10) {
+        //         var ut = mid_distance / middle_time;
+        //         var ft = _format_gt(pf.GPSTime, calc_mid);
+        //         var left = Math.round((ft - top_end_point.GPSTime) * ut), right = Math.round((pf.GPSTime - ft) * ut);
+        //         obj._hash[top_key] && (obj._hash[top_key].Distance += left);
+        //         dis = right;
+        //     }
+        //     dis = Math.round(dis + gpsUtil.GetLineDistance(ps));
+        // } else if (!top_end_point) {
+        //     dis = gpsUtil.GetLineDistance(ps);
+        // }
         // 暂时先放弃(设备提供的里程精度太低) 17-11-6
         // 优先使用设备里程。 17-11-7
         // if (pe.Mileage > pf.Mileage) dis = Math.round((pe.Mileage - pf.Mileage) * 1000);
-        if (dis > 0) {
-            var __obj = {
-                Distance: dis,
-                PointCount: ps.length,
-                GPSTime: key * 1,
-                MileageBegin: pf.Mileage,
-                MileageEnd: pe.Mileage,
-                MaxSpeed: _maxSpeed.toFixed(3) + " km/h",
-                Speed: (dis / (pe.GPSTime - pf.GPSTime)).toFixed(3),
-            };
-            var os = __obj.Speed * 3.6;
-            if ((os < _maxSpeed * 1.5) || (_maxSpeed == 0 && os < 240)) {
-                if (_maxSpeed < os) __obj.MaxSpeed = (os * 1.2).toFixed(3) + " km/h";
-                __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
-                obj.add(key, __obj);
-            }
+        var __obj = {
+            Distance: dis,
+            PointCount: ps.length,
+            GPSTime: key * 1,
+            MileageBegin: pf.Mileage,
+            MileageEnd: pe.Mileage,
+            MaxSpeed: _maxSpeed.toFixed(3) + " km/h",
+            Speed: (dis / (pe.GPSTime - pf.GPSTime)).toFixed(3),
+        };
+        var os = __obj.Speed * 3.6;
+        if ((os < _maxSpeed * 1.5) || (_maxSpeed == 0 && os < 240)) {
+            if (_maxSpeed < os) __obj.MaxSpeed = (os * 1.2).toFixed(3) + " km/h";
+            __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
+            obj.add(key, __obj);
         }
         top_key = key;
         top_end_point = pe;
@@ -183,7 +197,10 @@ var _do_save_mileage = function (data, sn, middleTime) {
     }
     if (push_obj.length > 0)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
-            // console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
+            if (status != 1) {
+                console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
+                console.log(push_obj);
+            }
         });
 }
 
