@@ -342,7 +342,7 @@ var doSingle = function (req, res, next) {
 }
 
 var _add_temp = function (sn) {
-    if (tempArrays.length > 10) {
+    if (tempArrays.length > 50) {
         return "-2";
     } else if (tempArrays.indexOf(sn) == -1) {
         tempArrays.push(sn);
