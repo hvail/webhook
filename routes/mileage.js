@@ -66,40 +66,40 @@ var _getSaveMiddleTime = function (sn, cb) {
     });
 }
 
-var _readMileageRange = function (sn, last, cb) {
-    redis.ZSCORE(key_mileage_calc, sn, function (err, score) {
-        if (!score) {
-            _getNextGPSTime(sn, first_data, function (score) {
-                var start = _format_gt(score, calc_length), end = start * 1 + calc_length;
-                url = readUrl + sn + "/" + start + "/" + end;
-                request(url, function (err, response, body) {
-                    cb && cb(start, end, JSON.parse(body));
-                });
-            });
-        } else {
-            if (score >= (last)) {
-                // console.log(score);
-                redis.RPUSH(failUrlList, sn + " the score >= last score : " + score + " / last : " + last + " : " + new Date().FormatDate(4));
-                cb && cb(0, 0, []);
-                return;
-            }
-            end = score * 1 + calc_length + calc_mid;
-            var url = readUrl + sn + "/" + score + "/" + end;
-            // console.log(url);
-            request(url, function (err, response, body) {
-                try {
-                    var __body = JSON.parse(body);
-                    cb && cb(score, end, __body);
-                } catch (e) {
-                    console.log(e);
-                    console.log(url);
-                    console.log(body);
-                    cb && cb(0, 0, []);
-                }
-            });
-        }
-    });
-}
+// var _readMileageRange = function (sn, last, cb) {
+//     redis.ZSCORE(key_mileage_calc, sn, function (err, score) {
+//         if (!score) {
+//             _getNextGPSTime(sn, first_data, function (score) {
+//                 var start = _format_gt(score, calc_length), end = start * 1 + calc_length;
+//                 url = readUrl + sn + "/" + start + "/" + end;
+//                 request(url, function (err, response, body) {
+//                     cb && cb(start, end, JSON.parse(body));
+//                 });
+//             });
+//         } else {
+//             if (score >= (last)) {
+//                 // console.log(score);
+//                 redis.RPUSH(failUrlList, sn + " the score >= last score : " + score + " / last : " + last + " : " + new Date().FormatDate(4));
+//                 cb && cb(0, 0, []);
+//                 return;
+//             }
+//             end = score * 1 + calc_length + calc_mid;
+//             var url = readUrl + sn + "/" + score + "/" + end;
+//             // console.log(url);
+//             request(url, function (err, response, body) {
+//                 try {
+//                     var __body = JSON.parse(body);
+//                     cb && cb(score, end, __body);
+//                 } catch (e) {
+//                     console.log(e);
+//                     console.log(url);
+//                     console.log(body);
+//                     cb && cb(0, 0, []);
+//                 }
+//             });
+//         }
+//     });
+// }
 
 /***
  * 对里程进行时间分段
@@ -109,26 +109,26 @@ var _readMileageRange = function (sn, last, cb) {
  * @returns {{}}
  * @private
  */
-var _middle_mileage = function (start, end, data) {
-    var _start = start, i = 0;
-    var obj = new myUtil.Hash();
-    while (_start < end) {
-        var dt = data[i].GPSTime, _m = _start * 1 + calc_mid;
-        var key = _format_gt(dt, calc_mid);
-        var das = [];
-        if (dt < _m) {
-            while (data[i].GPSTime < _m) {
-                das.push(data[i]);
-                i++;
-                if (i == data.length) break;
-            }
-        }
-        _start = _m;
-        obj.add(key, das);
-        if (i == data.length) break;
-    }
-    return obj;
-}
+// var _middle_mileage = function (start, end, data) {
+//     var _start = start, i = 0;
+//     var obj = new myUtil.Hash();
+//     while (_start < end) {
+//         var dt = data[i].GPSTime, _m = _start * 1 + calc_mid;
+//         var key = _format_gt(dt, calc_mid);
+//         var das = [];
+//         if (dt < _m) {
+//             while (data[i].GPSTime < _m) {
+//                 das.push(data[i]);
+//                 i++;
+//                 if (i == data.length) break;
+//             }
+//         }
+//         _start = _m;
+//         obj.add(key, das);
+//         if (i == data.length) break;
+//     }
+//     return obj;
+// }
 
 var _calc_pack_mileage = function (pack_hash) {
     var top_end_point = null;
