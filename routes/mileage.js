@@ -66,7 +66,7 @@ var _readMileageRange = function (sn, last, cb) {
             }
             end = score * 1 + calc_length + calc_mid;
             var url = readUrl + sn + "/" + score + "/" + end;
-            console.log(url);
+            // console.log(url);
             request(url, function (err, response, body) {
                 try {
                     var __body = JSON.parse(body);
@@ -217,6 +217,7 @@ var _calcUrlMileage = function (url, cb) {
         cb && cb(calc_obj);
     });
 }
+
 // _calcUrlMileage("http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/0500231710270148/1509084000/1509091200", function (data) {
 //     _do_save_mileage(data, '0500231710270148', 300);
 // console.log(data);
