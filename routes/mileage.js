@@ -60,7 +60,7 @@ var _readMileageRange = function (sn, last, cb) {
         } else {
             if (score >= (last)) {
                 // console.log(score);
-                redis.RPUSH(failUrlList, sn + " the score >= last score : " + score + " / last : " + last);
+                redis.RPUSH(failUrlList, sn + " the score >= last score : " + score + " / last : " + last + " : " + new Date(start * 1000).FormatDate(4));
                 cb && cb(0, 0, []);
                 return;
             }
@@ -276,7 +276,7 @@ var startCalcMileage = function (sn, lt, cb) {
         var dd = end - calc_mid;
         redis.ZADD(key_mileage_calc, dd, sn);
         if (end < (_last_time)) {
-            redis.RPUSH(failUrlList, sn + " the end < _last_time end : " + end + " / _last_time : " + _last_time);
+            redis.RPUSH(failUrlList, sn + " the end < _last_time end : " + end + " / _last_time : " + _last_time + " : " + new Date(start * 1000).FormatDate(4));
             startCalcMileage(sn, lt, cb);
         } else {
             cb && cb();
