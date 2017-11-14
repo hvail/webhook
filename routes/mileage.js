@@ -257,7 +257,7 @@ var startCalcMileage = function (sn, lt, cb) {
             var obj = _middle_mileage(start, end, data);
             if (obj.count() > 0) {
                 var calc_obj = _calc_pack_mileage(obj);
-                if (calc_obj.count() < 1 && data.length > 400) {
+                if (calc_obj.count() < 1 && data.length > 10) {
                     var url = readUrl + sn + "/" + start + "/" + end;
                     // console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + "/" + data.length + " : " + new Date(start * 1000).FormatDate(4));
                     // console.log(readUrl + sn + "/" + start + "/" + end);
@@ -272,26 +272,6 @@ var startCalcMileage = function (sn, lt, cb) {
         end < _last_time ? startCalcMileage(sn, lt, cb) : cb && cb();
     });
 }
-
-// var testUrl = "http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/0090081604020253/1509825300/1509948000";
-// _calcUrlMileage(testUrl, function (result) {
-//     console.log(result);
-// });
-// var arr = ["0026231709300026"]
-// var buildMileage = function (sn, cb) {
-//     startCalcMileage(sn, myUtil.GetSecond(), cb);
-// }
-// var pool = function (m) {
-//     if (m >= arr.length) {
-//         console.log('done');
-//         return;
-//     }
-//     buildMileage(arr[m], function () {
-//         m++;
-//         pool(m);
-//     })
-// }
-// pool(0);
 
 var __loop__run = false;
 var __loop = function () {
