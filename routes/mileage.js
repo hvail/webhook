@@ -23,7 +23,7 @@ var failUrlList = "LIST-range-mileage-None";
 var tempArrays = [];
 
 var demo = function (req, res, next) {
-    res.send('mileage v1.1.0');
+    res.send('mileage v1.2.0');
 }
 
 var _format_gt = function (time, mid) {
@@ -58,12 +58,15 @@ var _readMileageRange = function (sn, last, cb) {
                 });
             });
         } else {
-            if (score >= last) {
+            if (score >= (last)) {
+                // console.log(score);
+                redis.RPUSH(failUrlList, sn + " the score >= last score : " + score + " / last : " + last);
                 cb && cb(0, 0, []);
                 return;
             }
             end = score * 1 + calc_length + calc_mid;
             var url = readUrl + sn + "/" + score + "/" + end;
+            console.log(url);
             request(url, function (err, response, body) {
                 try {
                     var __body = JSON.parse(body);
@@ -73,7 +76,6 @@ var _readMileageRange = function (sn, last, cb) {
                     console.log(url);
                     console.log(body);
                     cb && cb(0, 0, []);
-                    // _readMileageRange(sn, last, cb);
                 }
             });
         }
@@ -273,7 +275,12 @@ var startCalcMileage = function (sn, lt, cb) {
         }
         var dd = end - calc_mid;
         redis.ZADD(key_mileage_calc, dd, sn);
-        end < _last_time ? startCalcMileage(sn, lt, cb) : cb && cb();
+        if (end < (_last_time)) {
+            redis.RPUSH(failUrlList, sn + " the end < _last_time end : " + end + " / _last_time : " + _last_time);
+            startCalcMileage(sn, lt, cb);
+        } else {
+            cb && cb();
+        }
     });
 }
 
@@ -282,11 +289,11 @@ var __loop = function () {
     if (tempArrays.length > 0) {
         __loop__run = true;
         var sn = tempArrays.shift();
-        // console.log('开始计算 ' + sn + ' 的里程统计 余 ' + tempArrays.length + ' 台设备未处理');
+        console.log('开始计算 ' + sn + ' 的里程统计 余 ' + tempArrays.length + ' 台设备未处理');
         startCalcMileage(sn, myUtil.GetSecond(), __loop);
     } else {
         __loop__run = false;
-        // console.log('全部运行已经完成，等待新的任务');
+        console.log('全部运行已经完成，等待新的任务');
     }
 }
 
