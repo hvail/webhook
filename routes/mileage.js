@@ -60,7 +60,7 @@ var _readMileageRange = function (sn, last, cb) {
         } else {
             if (score >= (last)) {
                 // console.log(score);
-                redis.RPUSH(failUrlList, sn + " the score >= last score : " + score + " / last : " + last + " : " + new Date(start * 1000).FormatDate(4));
+                redis.RPUSH(failUrlList, sn + " the score >= last score : " + score + " / last : " + last + " : " + new Date().FormatDate(4));
                 cb && cb(0, 0, []);
                 return;
             }
@@ -276,7 +276,7 @@ var startCalcMileage = function (sn, lt, cb) {
         var dd = end - calc_mid;
         redis.ZADD(key_mileage_calc, dd, sn);
         if (end < (_last_time)) {
-            redis.RPUSH(failUrlList, sn + " the end < _last_time end : " + end + " / _last_time : " + _last_time + " : " + new Date(start * 1000).FormatDate(4));
+            redis.RPUSH(failUrlList, sn + " the end < _last_time end : " + end + " / _last_time : " + _last_time + " : " + new Date().FormatDate(4));
             startCalcMileage(sn, lt, cb);
         } else {
             cb && cb();
@@ -289,11 +289,11 @@ var __loop = function () {
     if (tempArrays.length > 0) {
         __loop__run = true;
         var sn = tempArrays.shift();
-        console.log('开始计算 ' + sn + ' 的里程统计 余 ' + tempArrays.length + ' 台设备未处理');
+        // console.log('开始计算 ' + sn + ' 的里程统计 余 ' + tempArrays.length + ' 台设备未处理');
         startCalcMileage(sn, myUtil.GetSecond(), __loop);
     } else {
         __loop__run = false;
-        console.log('全部运行已经完成，等待新的任务');
+        // console.log('全部运行已经完成，等待新的任务');
     }
 }
 
