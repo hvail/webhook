@@ -215,6 +215,10 @@ var _calcUrlMileage = function (url, cb) {
         cb && cb(calc_obj);
     });
 }
+// _calcUrlMileage("http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/0500231710270148/1509084000/1509091200", function (data) {
+//     _do_save_mileage(data, '0500231710270148', 300);
+// console.log(data);
+// });
 
 var _calcMiddleMileage = function (data) {
     var df = data.first(), de = data.last();
@@ -258,7 +262,7 @@ var startCalcMileage = function (sn, lt, cb) {
             if (obj.count() > 0) {
                 var calc_obj = _calc_pack_mileage(obj);
                 if (calc_obj.count() < 1 && data.length > 10) {
-                    var url = readUrl + sn + "/" + start + "/" + end;
+                    var url = readUrl + sn + "/" + start + "/" + end + "  -  " + _last_time + ":" + new Date().FormatDate(4);
                     // console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + "/" + data.length + " : " + new Date(start * 1000).FormatDate(4));
                     // console.log(readUrl + sn + "/" + start + "/" + end);
                     // 交给链路复查

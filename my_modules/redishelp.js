@@ -1,4 +1,5 @@
-var redis_host = process.env.REDIS_HOST || "112.74.51.81";
+var redis_host = process.env.REDIS_HOST || "112.74.57.39";
+var redis_host = "112.74.57.39";
 var redis_pwd = process.env.REDIS_PASSWORD || "892df215f8684736:HvailCom2015";
 var redis_port = process.env.REDIS_PORT || 6379;
 // var redis_port = 6380;
