@@ -214,7 +214,7 @@ var _do_save_mileage = function (data, sn, middleTime) {
         obj.SerialNumber = sn;
         obj.MiddleTime = middleTime;
         obj.TimeString = new Date(k * 1000).FormatDate(4);
-        push_obj.push(obj);
+        if (obj.Distance > 0) push_obj.push(obj);
     }
     if (push_obj.length > 0)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
@@ -332,8 +332,6 @@ var startCalcMileage = function (sn, lt, cb, __start) {
     //             _do_save_mileage(calc_obj, sn, calc_mid);
     //         }
     //     }
-    //
-    //
     //     var dd = end - calc_mid;
     //     redis.ZADD(key_mileage_calc, dd, sn);
     //     // 这里的结束传到另外作为下一次的开始
