@@ -2,11 +2,77 @@
  * Created by hvail on 2017/9/15.
  */
 const request = require('request');
+const https = require('https');
 const util = require('util');
+const fs = require('fs');
 const REQUIRED = "required";
 var area = process.env.DATAAREA || "zh-cn";
 const MqSendUrl = "http://v3.mq-rabbit.server." + area + ".sky1088.com/mq/send";
 var router = {};
+
+var __cert = "-----BEGIN CERTIFICATE-----\n" +
+    "MIIC0zCCAjygAwIBAgIDAlmUMA0GCSqGSIb3DQEBCwUAMGoxKjAoBgNVBAoTIWM2\n" +
+    "MDY3MjU5NTExYTc0OTc0OWQ0ZjFiZjljNmU2ZWRlMDEQMA4GA1UECxMHZGVmYXVs\n" +
+    "dDEqMCgGA1UEAxMhYzYwNjcyNTk1MTFhNzQ5NzQ5ZDRmMWJmOWM2ZTZlZGUwMB4X\n" +
+    "DTE3MDYwOTAzNTYwMFoXDTIwMDUyNDAzNTYwMFowOzEqMCgGA1UEChMhYzYwNjcy\n" +
+    "NTk1MTFhNzQ5NzQ5ZDRmMWJmOWM2ZTZlZGUwMQ0wCwYDVQQLEwR1c2VyMIGfMA0G\n" +
+    "CSqGSIb3DQEBAQUAA4GNADCBiQKBgQDU3tVhXz5kf2c2lTL+Cy1oyLSPRNJsJ9HA\n" +
+    "K79u9gU58of2F9ouNkg2jQZCvqgwdwhYNgKm5bR/B2TfTK+jKqrm0cLqWlTUb01u\n" +
+    "SitVxfVHfBcrzT91tq++yXgrjHeQKf1v2jmWRGK3bxJPXMAhp1fJ1pwp9P+vb1bi\n" +
+    "NLz6+PHm6QIDAQABo4G1MIGyMA4GA1UdDwEB/wQEAwIDqDAdBgNVHSUEFjAUBggr\n" +
+    "BgEFBQcDAgYIKwYBBQUHAwEwDAYDVR0TAQH/BAIwADA8BggrBgEFBQcBAQQwMC4w\n" +
+    "LAYIKwYBBQUHMAGGIGh0dHA6Ly9jZXJ0cy5hY3MuYWxpeXVuLmNvbS9vY3NwMDUG\n" +
+    "A1UdHwQuMCwwKqAooCaGJGh0dHA6Ly9jZXJ0cy5hY3MuYWxpeXVuLmNvbS9yb290\n" +
+    "LmNybDANBgkqhkiG9w0BAQsFAAOBgQCATi0Mz2yB0OM4Ll/Ju5PTpRaIBUZWJ0I6\n" +
+    "X8p1oSZ06lQVqv8AtslYfdOoys9aZdOeZczfIA82A6mOFq/zO2aIXUJbZ5ECWJzi\n" +
+    "kLNNMG4Zsul7iXhzXtjLsjhXAQsF//myK4z449jclRKTZOeIecNjgmM3NkYcwU/n\n" +
+    "XDeacT4qyQ==\n" +
+    "-----END CERTIFICATE-----";
+
+var __key = "-----BEGIN RSA PRIVATE KEY-----\n" +
+    "MIICWwIBAAKBgQDU3tVhXz5kf2c2lTL+Cy1oyLSPRNJsJ9HAK79u9gU58of2F9ou\n" +
+    "Nkg2jQZCvqgwdwhYNgKm5bR/B2TfTK+jKqrm0cLqWlTUb01uSitVxfVHfBcrzT91\n" +
+    "tq++yXgrjHeQKf1v2jmWRGK3bxJPXMAhp1fJ1pwp9P+vb1biNLz6+PHm6QIDAQAB\n" +
+    "AoGAKFdikOV/6YPLh6iW1VZA8M64iT49somJUqX3zYuKSgUQhy7WBlP7M3teaF/B\n" +
+    "eA3W4wC5V+/IWRqJn1flIUMAyA0GYVQTBwn4s5ZE9br9DeGTSYkfvujYgJUapIGN\n" +
+    "NSbVUcjxn84c4s8m9CGkCUcqFr+YEUJS0fZ9WGi1hPcuNkECQQDyJNO+XFF6jAea\n" +
+    "0yUmObX/pyXWyxOOp+pYg5kFfHTsfNM1KW5UWee2cMpXkfggL0QBdfWhu/seasrY\n" +
+    "kWvYwsxtAkEA4Q0t5DAEYNmGsiLtwoz3qr/EvPZR/AQCAG4mRPzINvAmnZKSoV13\n" +
+    "VibvSHRD2GHd7zojnx1cPCjgvMJSQ9F+7QJARrqZGwaOSjRy2DeKp2K+FaH2PIpu\n" +
+    "+QF1Q0uVO/QBlz5S1zl136+vLiw9/lxF1OjZfW++QvLMxDK/c4juro8f9QJATmaX\n" +
+    "+SmdLNw6523xpFgVo79g2294SjJfPCUjYd8qJLFu0nAQcvSrsTCpJXWTeRtHBKMd\n" +
+    "a73/ttmKyVds70FZVQJAKLvLe8zh1XyyoJr+KwjqKgc5X7OzBuLxrBIvkSgIz3ew\n" +
+    "aIzvgP2/fH4FewsVbRwm0J0u3zNWJI9vY1vaGvSstQ==\n" +
+    "-----END RSA PRIVATE KEY-----";
+
+var getHttpsOption = function (url, key, cert) {
+    var options = {
+        hostname: "master1g3.cs-cn-shenzhen.aliyun.com",
+        port: 13880,
+        path: '/services/web-interface_resources-master/stop',
+        method: 'POST',
+        rejectUnauthorized: false,
+        key: fs.readFileSync('E:\\Project\\JavaJars\\cert\\cert-files-hyz\\key.pem'),
+        cert: fs.readFileSync('E:\\Project\\JavaJars\\cert\\cert-files-hyz\\cert.pem'),
+        ca: fs.readFileSync('E:\\Project\\JavaJars\\cert\\cert-files-hyz\\ca.pem'),
+        // agent: false
+    };
+    return options;
+}
+
+// var __opt = getHttpsOption("https://master1g3.cs-cn-shenzhen.aliyun.com:13880/services/web-interface_resources-master/stop", __key, __cert);
+// console.log(__opt.key.toString());
+// console.log(__opt.cert.toString());
+// console.log(__opt.ca.toString());
+// __opt.agent = new https.Agent(__opt);
+//
+// https.request(__opt,
+//     function (res, a, b) {
+//         console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+//         console.log(a);
+//         console.log(b);
+//         console.log(res);
+//     });
 
 var getHttpOptions = function (url, data) {
     var http_options = {
@@ -15,7 +81,6 @@ var getHttpOptions = function (url, data) {
         json: true,
         headers: {
             'User-Agent': 'Data-Push HYZ hjjhvail@gmail.com'
-            // 'Content-Type': 'application/json'
         },
         body: data
     };
