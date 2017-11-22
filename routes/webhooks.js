@@ -208,10 +208,10 @@ var _doPositionPost = function (req, res, next) {
 router.get('/', _default);
 router.get('/lis/:lis/:sn', _getByListenerSn);
 router.get('/all', _getAllListener);
-router.get('/push/position/{sn}', _doPositionPost);
+router.get('/push/position/:sn', _doPositionPost);
 
 router.post('/', _doPost);
-router.post('/push/position/{sn}', _doPositionPost);
+router.post('/push/position/:sn', _doPositionPost);
 router.post('/location', _location);
 router.post('/power', _power);
 router.post('/event', _event);
