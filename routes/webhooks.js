@@ -238,8 +238,8 @@ router.get('/push/power/:sn', _doPowerPost);
 
 router.post('/', _doPost);
 router.post('/push/position/:sn', _doPositionPost);
-router.get('/push/event/:sn', _doEventPost);
-router.get('/push/power/:sn', _doPowerPost);
+router.post('/push/event/:sn', _doEventPost);
+router.post('/push/power/:sn', _doPowerPost);
 router.post('/location', _location);
 router.post('/power', _power);
 router.post('/event', _event);
