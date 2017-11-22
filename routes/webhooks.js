@@ -195,37 +195,49 @@ var _doPost = function (req, res, next) {
 var _doPositionPost = function (req, res, next) {
     var sn = req.params.sn, url = req.query.url;
     var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPosition"};
-    _addListen(data, function (err, msg) {
-        if (err) {
-            res.send(505, err.Message);
-        } else {
-            res.send(msg);
-        }
-    });
+    if (url) {
+        _addListen(data, function (err, msg) {
+            if (err) {
+                res.send(505, err.Message);
+            } else {
+                res.send(msg);
+            }
+        });
+    } else {
+        res.send('no');
+    }
 }
 
 var _doEventPost = function (req, res, next) {
     var sn = req.params.sn, url = req.query.url;
     var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSEvent"};
-    _addListen(data, function (err, msg) {
-        if (err) {
-            res.send(505, err.Message);
-        } else {
-            res.send(msg);
-        }
-    });
+    if (url) {
+        _addListen(data, function (err, msg) {
+            if (err) {
+                res.send(505, err.Message);
+            } else {
+                res.send(msg);
+            }
+        });
+    } else {
+        res.send('no');
+    }
 }
 
 var _doPowerPost = function (req, res, next) {
     var sn = req.params.sn, url = req.query.url;
-    var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPower"};
-    _addListen(data, function (err, msg) {
-        if (err) {
-            res.send(505, err.Message);
-        } else {
-            res.send(msg);
-        }
-    });
+    if (url) {
+        var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPower"};
+        _addListen(data, function (err, msg) {
+            if (err) {
+                res.send(505, err.Message);
+            } else {
+                res.send(msg);
+            }
+        });
+    } else {
+        res.send('no');
+    }
 }
 
 /* GET users listing. */
