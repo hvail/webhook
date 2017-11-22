@@ -164,7 +164,7 @@ var _event = function (req, res, next) {
 var _addListen = function (data, cb) {
     var key = data.TargetDevice;
     var lis = data.Listener;
-    getWebHooks(sn, lis, function (err, result) {
+    getWebHooks(key, lis, function (err, result) {
         if (err) {
             cb && cb(err);
             return;
