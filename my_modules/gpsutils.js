@@ -179,7 +179,7 @@ GPSUtils.IsPointInRect = function (Fps, lat, lng) {
 GPSUtils.IsPointInPolygon = function (Fps, lat, lng) {
     var pPoint = {Lat: lat, Lng: lng};
     //首先判断点是否在多边形的外包矩形内，如果在，则进一步判断，否则返回false
-    var polygonBounds = this.getPolygonBound(Fps);
+    var polygonBounds = GPSUtils.getPolygonBound(Fps);
     if (!this.IsPointInRect(pPoint, polygonBounds)) {
         return false;
     }
