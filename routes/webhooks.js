@@ -201,7 +201,31 @@ var _doPositionPost = function (req, res, next) {
         } else {
             res.send(msg);
         }
-    })
+    });
+}
+
+var _doEventPost = function (req, res, next) {
+    var sn = req.params.sn, url = req.query.url;
+    var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSEvent"};
+    _addListen(data, function (err, msg) {
+        if (err) {
+            res.send(505, err.Message);
+        } else {
+            res.send(msg);
+        }
+    });
+}
+
+var _doPowerPost = function (req, res, next) {
+    var sn = req.params.sn, url = req.query.url;
+    var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPower"};
+    _addListen(data, function (err, msg) {
+        if (err) {
+            res.send(505, err.Message);
+        } else {
+            res.send(msg);
+        }
+    });
 }
 
 /* GET users listing. */
@@ -209,9 +233,13 @@ router.get('/', _default);
 router.get('/lis/:lis/:sn', _getByListenerSn);
 router.get('/all', _getAllListener);
 router.get('/push/position/:sn', _doPositionPost);
+router.get('/push/event/:sn', _doEventPost);
+router.get('/push/power/:sn', _doPowerPost);
 
 router.post('/', _doPost);
 router.post('/push/position/:sn', _doPositionPost);
+router.get('/push/event/:sn', _doEventPost);
+router.get('/push/power/:sn', _doPowerPost);
 router.post('/location', _location);
 router.post('/power', _power);
 router.post('/event', _event);
