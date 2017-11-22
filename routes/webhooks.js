@@ -31,7 +31,6 @@ var getWebHooks = function (sn, lis, cb) {
         for (var i = 2; i > -1; i--) {
             if (!!data[i] || data[i] == 'null') arr.push(data[i]);
         }
-        // console.log(arr.length);
         cb && cb(err, arr);
     });
 }
