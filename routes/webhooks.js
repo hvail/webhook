@@ -13,13 +13,13 @@ const SetSendStatusTotalKey = "web-hook-send-total-";
 const SetSendStatusSuccessKey = "web-hook-send-success-";
 const SetSendStatusFailureKey = "web-hook-send-failure-";
 
-const GetLastPositionUrl = "http://v3.res-redis.server." + area + ".sky1088.com/track/single/";
+const GetLastPositionUrl = "http://v3.res.server." + area + ".sky1088.com/track/single/";
 
 var __Demo_Class = {
     TargetUrl: _util.REQUIRED,
     TargetDevice: "0000000000000000",
     Listener: "GPSPosition"
-}
+};
 
 // key = Listener+TargetDevice
 var getWebHooks = function (sn, lis, cb) {
@@ -36,7 +36,7 @@ var getWebHooks = function (sn, lis, cb) {
     });
 }
 
-var getWebHooksAll = function (cb) {
+var getWebHooksAll = function (lis, cb) {
     redis.HGETALL(HashWebHooks + lis, function (err, data) {
         var arr = [];
         if (err) {
@@ -46,10 +46,6 @@ var getWebHooksAll = function (cb) {
             for (var k in data) {
                 arr.push(data[k]);
             }
-            // for (var i = 0; i > data.length; i++) {
-            //     if (!!data[i])
-            //         arr.push(JSON.parse(data[i]));
-            // }
         }
         cb && cb(err, arr);
     });
@@ -61,7 +57,7 @@ var totalPush = function (url, data, status) {
     var statusKey = (status > 0 ? SetSendStatusSuccessKey : SetSendStatusFailureKey) + ds;
     redis.ZINCRBY(totalKey, 1, url);
     redis.ZINCRBY(statusKey, 1, url);
-}
+};
 
 var doWebPush = function (arr, data) {
     for (var i = 0; i < arr.length; i++)
@@ -81,7 +77,8 @@ var _getByListenerSn = function (req, res, next) {
 }
 
 var _getAllListener = function (req, res, next) {
-    getWebHooksAll(function (err, data) {
+    var lis = req.params.lis;
+    getWebHooksAll(lis, function (err, data) {
         res.send(data);
     });
 }
@@ -244,7 +241,7 @@ var _doPowerPost = function (req, res, next) {
 /* GET users listing. */
 router.get('/', _default);
 router.get('/lis/:lis/:sn', _getByListenerSn);
-router.get('/all', _getAllListener);
+router.get('/all/:lis', _getAllListener);
 router.get('/push/position/:sn', _doPositionPost);
 router.get('/push/event/:sn', _doEventPost);
 router.get('/push/power/:sn', _doPowerPost);
