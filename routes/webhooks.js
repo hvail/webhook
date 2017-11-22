@@ -88,25 +88,6 @@ var _getAllListener = function (req, res, next) {
     });
 }
 
-var _doPost = function (req, res, next) {
-    var data = _util.ClassClone(__Demo_Class, req.body, res);
-    if (data == null) next();
-    var key = data.Listener + "_" + data.TargetDevice;
-    redis.HGET(HashWebHooks, key, function (err, result) {
-        if (err) {
-            res.send(505, err.Message);
-            return;
-        }
-        console.log(result);
-        var arr = result != null ? JSON.parse(result) : [];
-        if (!result || result.indexOf(JSON.stringify(data)) < 0) {
-            arr.push(data);
-            redis.HSET(HashWebHooks, key, JSON.stringify(data));
-        } else console.log("重复不添加");
-        res.send("ok");
-    });
-}
-
 var _location = function (req, res, next) {
     var pos = req.body;
     if (!pos) {
@@ -182,12 +163,55 @@ var _event = function (req, res, next) {
     });
 }
 
+var _addListen = function (data, cb) {
+    var key = data.Listener + "_" + data.TargetDevice;
+    redis.HGET(HashWebHooks, key, function (err, result) {
+        if (err) {
+            cb && cb(err);
+            return;
+        }
+        console.log(result);
+        // var arr = result != null ? JSON.parse(result) : [];
+        if (!result || result.indexOf(JSON.stringify(data)) < 0) {
+            // arr.push(data);
+            redis.HSET(HashWebHooks, key, JSON.stringify(data));
+        } else console.log("重复不添加");
+        cb && cb(null, "ok");
+    });
+}
+
+var _doPost = function (req, res, next) {
+    var data = _util.ClassClone(__Demo_Class, req.body, res);
+    if (data == null) next();
+    _addListen(data, function (err, msg) {
+        if (err) {
+            res.send(505, err.Message);
+        } else {
+            res.send(msg);
+        }
+    })
+}
+
+var _doPositionPost = function (req, res, next) {
+    var sn = req.params.sn, url = req.query.url;
+    var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPosition"};
+    _addListen(data, function (err, msg) {
+        if (err) {
+            res.send(505, err.Message);
+        } else {
+            res.send(msg);
+        }
+    })
+}
+
 /* GET users listing. */
 router.get('/', _default);
 router.get('/lis/:lis/:sn', _getByListenerSn);
 router.get('/all', _getAllListener);
+router.get('/push/position/{sn}', _doPositionPost);
 
 router.post('/', _doPost);
+router.post('/push/position/{sn}', _doPositionPost);
 router.post('/location', _location);
 router.post('/power', _power);
 router.post('/event', _event);
