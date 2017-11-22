@@ -180,7 +180,7 @@ GPSUtils.IsPointInPolygon = function (Fps, lat, lng) {
     var pPoint = {Lat: lat, Lng: lng};
     //首先判断点是否在多边形的外包矩形内，如果在，则进一步判断，否则返回false
     var polygonBounds = GPSUtils.getPolygonBound(Fps);
-    if (!this.IsPointInRect(pPoint, polygonBounds)) {
+    if (!GPSUtils.IsPointInRect(pPoint, polygonBounds)) {
         return false;
     }
 
@@ -200,7 +200,7 @@ GPSUtils.IsPointInPolygon = function (Fps, lat, lng) {
     p1 = pts[0];//left vertex
     for (var i = 1; i <= N; ++i) {
         //check all rays
-        if (this.equalPoint(p, p1)) {
+        if (GPSUtils.equalPoint(p, p1)) {
             return boundOrVertex;
             //p is an vertex
         }
