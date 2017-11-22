@@ -8,7 +8,7 @@ var _util = require('./../my_modules/utils');
 var util = require('util');
 var area = process.env.DATAAREA || "zh-cn";
 var redis = require('./../my_modules/redishelp');
-const HashWebHooks = "web-hook-listener-hash";
+const HashWebHooks = "web-hook-listener-hash-";
 const SetSendStatusTotalKey = "web-hook-send-total-";
 const SetSendStatusSuccessKey = "web-hook-send-success-";
 const SetSendStatusFailureKey = "web-hook-send-failure-";
@@ -23,14 +23,12 @@ var __Demo_Class = {
 
 // key = Listener+TargetDevice
 var getWebHooks = function (sn, lis, cb) {
-    var key_a = lis + "_0000000000000000";
-    var key_b = lis + "_" + sn.substring(0, 6) + "0000000000";
-    var key_c = lis + "_" + sn;
-    redis.HMGET(HashWebHooks, key_a, key_b, key_c, function (err, data) {
+    var key_a = "0000000000000000";
+    var key_b = sn.substring(0, 6) + "0000000000";
+    var key_c = sn;
+    redis.HMGET(HashWebHooks + lis, key_a, key_b, key_c, function (err, data) {
         var arr = [];
-        // console.log(data);
         for (var i = 2; i > -1; i--) {
-            // console.log(data[i]);
             if (!!data[i] || data[i] == 'null') arr.push(JSON.parse(data[i]));
         }
         // console.log(arr.length);
@@ -39,7 +37,7 @@ var getWebHooks = function (sn, lis, cb) {
 }
 
 var getWebHooksAll = function (cb) {
-    redis.HGETALL(HashWebHooks, function (err, data) {
+    redis.HGETALL(HashWebHooks + lis, function (err, data) {
         var arr = [];
         if (err) {
             console.log(err);
@@ -68,7 +66,7 @@ var totalPush = function (url, data, status) {
 var doWebPush = function (arr, data) {
     for (var i = 0; i < arr.length; i++)
         for (var j = 0; j < data.length; j++)
-            _util.DoPushPost(arr[i].TargetUrl, data[j], totalPush);
+            _util.DoPushPost(arr[i], data[j], totalPush);
 }
 
 // webHooks 信息存放于redis . 回执采用0 | 1
@@ -164,17 +162,15 @@ var _event = function (req, res, next) {
 }
 
 var _addListen = function (data, cb) {
-    var key = data.Listener + "_" + data.TargetDevice;
-    redis.HGET(HashWebHooks, key, function (err, result) {
+    var key = data.TargetDevice;
+    var lis = data.Listener;
+    getWebHooks(sn, lis, function (err, result) {
         if (err) {
             cb && cb(err);
             return;
         }
-        console.log(result);
-        // var arr = result != null ? JSON.parse(result) : [];
-        if (!result || result.indexOf(JSON.stringify(data)) < 0) {
-            // arr.push(data);
-            redis.HSET(HashWebHooks, key, JSON.stringify(data));
+        if (!result || result.indexOf(data.TargetUrl) < 0) {
+            redis.HSET(HashWebHooks + lis, key, data.TargetUrl);
         } else console.log("重复不添加");
         cb && cb(null, "ok");
     });
