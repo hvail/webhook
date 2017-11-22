@@ -180,13 +180,17 @@ var _addListen = function (data, cb) {
 var _doPost = function (req, res, next) {
     var data = _util.ClassClone(__Demo_Class, req.body, res);
     if (data == null) next();
-    _addListen(data, function (err, msg) {
-        if (err) {
-            res.send(505, err.Message);
-        } else {
-            res.send(msg);
-        }
-    })
+    if (url) {
+        _addListen(data, function (err, msg) {
+            if (err) {
+                res.send(505, err.Message);
+            } else {
+                res.send(msg);
+            }
+        })
+    } else {
+        res.send('NO');
+    }
 }
 
 var _doPositionPost = function (req, res, next) {
@@ -201,7 +205,7 @@ var _doPositionPost = function (req, res, next) {
             }
         });
     } else {
-        res.send('no');
+        res.send('NO');
     }
 }
 
@@ -217,7 +221,7 @@ var _doEventPost = function (req, res, next) {
             }
         });
     } else {
-        res.send('no');
+        res.send('NO');
     }
 }
 
