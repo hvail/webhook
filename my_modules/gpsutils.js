@@ -170,6 +170,7 @@ GPSUtils.IsPointInCircle = function (Fps, lat, lng) {
 GPSUtils.IsPointInRect = function (Fps, lat, lng) {
     var sw = Fps[0];
     var ne = Fps[1];
+    console.log(Fps);
     return (lng >= sw.Lng && lng <= ne.Lng && lat >= sw.Lat && lat <= ne.Lat);
 }
 
