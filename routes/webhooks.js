@@ -169,6 +169,7 @@ var _addListen = function (data, cb) {
             cb && cb(err);
             return;
         }
+        console.log(data.TargetUrl);
         if (!result || result.indexOf(data.TargetUrl) < 0) {
             redis.HSET(HashWebHooks + lis, key, data.TargetUrl);
         } else console.log("重复不添加");
