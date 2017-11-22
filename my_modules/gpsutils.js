@@ -181,7 +181,7 @@ GPSUtils.IsPointInPolygon = function (Fps, lat, lng) {
     var pPoint = {Lat: lat, Lng: lng};
     //首先判断点是否在多边形的外包矩形内，如果在，则进一步判断，否则返回false
     var polygonBounds = GPSUtils.getPolygonBound(Fps);
-    if (!GPSUtils.IsPointInRect(pPoint, polygonBounds)) {
+    if (!GPSUtils.IsPointInRect(polygonBounds,pPoint.Lat, pPoint.Lng)) {
         return false;
     }
 
