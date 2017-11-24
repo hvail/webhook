@@ -30,7 +30,7 @@ var calcMidPowers = function (sn, start, end, cb) {
     if (!end) end = Math.round(new Date().getTime() / 1000);
     var url = util.format(getRangePower, sn, start, end);
     request(url, function (err, res, body) {
-        if (res.statusCode == 200) {
+        if (res.statusCode == 200 && (body[0] == '[' || body[0] == '{')) {
             var data = JSON.parse(body);
             if (start == first_data) {
                 start = data[0].PowerTime - data[0].PowerTime % calc_mid;
@@ -81,6 +81,7 @@ var calcMidPowers = function (sn, start, end, cb) {
             }
         } else {
             console.log("calcMidPowers -> " + url + " : " + res.statusCode);
+            console.log(body);
             cb && cb(res.statusCode);
         }
     });
