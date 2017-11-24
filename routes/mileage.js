@@ -64,71 +64,7 @@ var _getSaveMiddleTime = function (sn, cb) {
             cb && cb(score);
         }
     });
-}
-
-// var _readMileageRange = function (sn, last, cb) {
-//     redis.ZSCORE(key_mileage_calc, sn, function (err, score) {
-//         if (!score) {
-//             _getNextGPSTime(sn, first_data, function (score) {
-//                 var start = _format_gt(score, calc_length), end = start * 1 + calc_length;
-//                 url = readUrl + sn + "/" + start + "/" + end;
-//                 request(url, function (err, response, body) {
-//                     cb && cb(start, end, JSON.parse(body));
-//                 });
-//             });
-//         } else {
-//             if (score >= (last)) {
-//                 // console.log(score);
-//                 redis.RPUSH(failUrlList, sn + " the score >= last score : " + score + " / last : " + last + " : " + new Date().FormatDate(4));
-//                 cb && cb(0, 0, []);
-//                 return;
-//             }
-//             end = score * 1 + calc_length + calc_mid;
-//             var url = readUrl + sn + "/" + score + "/" + end;
-//             // console.log(url);
-//             request(url, function (err, response, body) {
-//                 try {
-//                     var __body = JSON.parse(body);
-//                     cb && cb(score, end, __body);
-//                 } catch (e) {
-//                     console.log(e);
-//                     console.log(url);
-//                     console.log(body);
-//                     cb && cb(0, 0, []);
-//                 }
-//             });
-//         }
-//     });
-// }
-
-/***
- * 对里程进行时间分段
- * @param start
- * @param end
- * @param data
- * @returns {{}}
- * @private
- */
-// var _middle_mileage = function (start, end, data) {
-//     var _start = start, i = 0;
-//     var obj = new myUtil.Hash();
-//     while (_start < end) {
-//         var dt = data[i].GPSTime, _m = _start * 1 + calc_mid;
-//         var key = _format_gt(dt, calc_mid);
-//         var das = [];
-//         if (dt < _m) {
-//             while (data[i].GPSTime < _m) {
-//                 das.push(data[i]);
-//                 i++;
-//                 if (i == data.length) break;
-//             }
-//         }
-//         _start = _m;
-//         obj.add(key, das);
-//         if (i == data.length) break;
-//     }
-//     return obj;
-// }
+};
 
 var _calc_pack_mileage = function (pack_hash) {
     var top_end_point = null;
@@ -158,34 +94,8 @@ var _calc_pack_mileage = function (pack_hash) {
             }
             dis = Math.round(dis + gpsUtil.GetLineDistance(ps));
         }
-
-        // if (pe.Mileage > 10 && (pe.Mileage % 1 == 0) && 0 > (pe.Mileage - top_end_point.Mileage) < 20) {
-        // 最后点的里程大于10 , 是个整数 ,
-        // dis = Math.round((pe.Mileage - top_end_point.Mileage) * 1000);
-        // if (dis < 0) {
-        //     console.log(sn + " : " + dis + " start : " + top_end_point.Mileage + " -t " + top_end_point.GPSTime + " : end " + pe.Mileage + " -t " + pe.GPSTime);
-        //     console.log(sn + " -> Max Speed : " + _maxSpeed + " , Ave Mileage : " + _aveMileage);
-        // }
-        // top_end_point = pe;
-        // }
-        // else if (top_end_point && (key * 1 - top_end_point.GPSTime) < calc_mid) {
-        //     var middle_time = pf.GPSTime - top_end_point.GPSTime;
-        //     // 如果有上一个点并且和此次时间相差小于静止间隔，则按比例分配两点间的距离
-        //     var mid_distance = gpsUtil.GetDistance(top_end_point.Lat, top_end_point.Lng, pf.Lat, pf.Lng) || 0;
-        //     if (middle_time > 0 && middle_time < calc_mid && mid_distance > 10) {
-        //         var ut = mid_distance / middle_time;
-        //         var ft = _format_gt(pf.GPSTime, calc_mid);
-        //         var left = Math.round((ft - top_end_point.GPSTime) * ut), right = Math.round((pf.GPSTime - ft) * ut);
-        //         obj._hash[top_key] && (obj._hash[top_key].Distance += left);
-        //         dis = right;
-        //     }
-        //     dis = Math.round(dis + gpsUtil.GetLineDistance(ps));
-        // } else if (!top_end_point) {
-        //     dis = gpsUtil.GetLineDistance(ps);
-        // }
         // 暂时先放弃(设备提供的里程精度太低) 17-11-6
         // 优先使用设备里程。 17-11-7
-        // if (pe.Mileage > pf.Mileage) dis = Math.round((pe.Mileage - pf.Mileage) * 1000);
         var __obj = {
             Distance: dis,
             PointCount: ps.length,
@@ -227,26 +137,25 @@ var _do_save_mileage = function (data, sn, middleTime) {
 
 var _calcUrlMileage = function (url, cb) {
     request(url, function (err, response, body) {
-        var _body = JSON.parse(body);
-        var obj = _calcMiddleMileage(_body);
-        if (obj == null) {
-            cb && cb();
-            return;
+        if (response.statusCode == 200) {
+            var _body = JSON.parse(body);
+            var obj = _calcMiddleMileage(_body);
+            if (obj == null) {
+                cb && cb();
+                return;
+            }
+            for (var k in obj._hash) {
+                if (obj._hash[k].length < 2) obj.remove(k);
+            }
+            var calc_obj = _calc_pack_mileage(obj);
+            var log = url + " - length : " + _body.length + " - valid : " + calc_obj.count() + " - invalid : " + obj.count();
+            redis.RPUSH(failUrlList, log);
+            cb && cb(calc_obj);
+        } else {
+            cb && cb(0);
         }
-        for (var k in obj._hash) {
-            if (obj._hash[k].length < 2) obj.remove(k);
-        }
-        var calc_obj = _calc_pack_mileage(obj);
-        var log = url + " - length : " + _body.length + " - valid : " + calc_obj.count() + " - invalid : " + obj.count();
-        redis.RPUSH(failUrlList, log);
-        cb && cb(calc_obj);
     });
 }
-
-// _calcUrlMileage("http://v3.res-ots.server.zh-cn.sky1088.com/track/range-mileage/0500231710270148/1509084000/1509091200", function (data) {
-//     _do_save_mileage(data, '0500231710270148', 300);
-// console.log(data);
-// });
 
 var _calcMiddleMileage = function (data) {
     if (data.length < 1) {
@@ -284,7 +193,6 @@ var _calcMiddleMileage = function (data) {
 var startCalcMileage = function (sn, lt, cb, __start) {
     // 格式化最后时间(最后的一次计算间隔时间点，如当前是2小时的计算间隔，现在是12:33 ，即最后计算的间隔为 09:55 - 12:00)
     var _last_time = _format_gt(lt, calc_length);
-    // console.log(new Date(_last_time * 1000).FormatDate(4));
     var _start = __start * 1;
     if (_start && _start > (_last_time - calc_length - calc_mid)) {
         // 如果开始时间大于或等于最后时间的前一个计算间隔，则计算中止
@@ -302,41 +210,15 @@ var startCalcMileage = function (sn, lt, cb, __start) {
     // 组装此次请求的url
     var end = _format_gt(_start + calc_length + calc_mid, calc_length);
     var url = readUrl + sn + "/" + _start + "/" + end;
-    // console.log(url);
     _calcUrlMileage(url, function (result) {
-        var dd = end - calc_mid;
-        redis.ZADD(key_mileage_calc, dd, sn);
         // 此处的result 是这个区间的数据集
         if (result) {
+            var dd = end - calc_mid;
+            redis.ZADD(key_mileage_calc, dd, sn);
             _do_save_mileage(result, sn, calc_mid);
         }
         startCalcMileage(sn, lt, cb, dd);
     });
-
-    // _readMileageRange(sn, _last_time, function (start, end, data) {
-    //     if (start == 0) {
-    //         cb && cb();
-    //         return;
-    //     }
-    //     if (data && data.length > 0) {
-    //         var obj = _middle_mileage(start, end, data);
-    //         if (obj.count() > 0) {
-    //             var calc_obj = _calc_pack_mileage(obj);
-    //             if (calc_obj.count() < 1 && data.length > 10) {
-    //                 var url = readUrl + sn + "/" + start + "/" + end + "  -  " + _last_time + ":" + new Date().FormatDate(4);
-    //                 // console.log(sn + " -> " + calc_obj.count() + "/" + obj.count() + "/" + data.length + " : " + new Date(start * 1000).FormatDate(4));
-    //                 // console.log(readUrl + sn + "/" + start + "/" + end);
-    //                 // 交给链路复查
-    //                 redis.RPUSH(failUrlList, url);
-    //             }
-    //             _do_save_mileage(calc_obj, sn, calc_mid);
-    //         }
-    //     }
-    //     var dd = end - calc_mid;
-    //     redis.ZADD(key_mileage_calc, dd, sn);
-    //     // 这里的结束传到另外作为下一次的开始
-    //     startCalcMileage(sn, lt, cb, dd);
-    // });
 }
 
 var __loop__run = false;

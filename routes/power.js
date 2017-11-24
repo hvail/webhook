@@ -30,55 +30,58 @@ var calcMidPowers = function (sn, start, end, cb) {
     if (!end) end = Math.round(new Date().getTime() / 1000);
     var url = util.format(getRangePower, sn, start, end);
     request(url, function (err, res, body) {
-
-        var data = JSON.parse(body);
-        // console.log(url + ": length " + data.length);
-        if (start == first_data) {
-            start = data[0].PowerTime - data[0].PowerTime % calc_mid;
-            // console.log(sn + " init power timer format start is " + start)
-            calcMidPowers(sn, start, end, cb);
-        } else {
-            // var clen = end - start;
-            var _st = start - start % calc_mid;
-            var _et = end - end % calc_mid;
-            for (var i = 0; i < data.length; i++) {
-                data[i] = formatPower(data[i]);
-            }
-            // var sn = data[0].SerialNumber;
-            var res_calc = powerArgSearch(data);
-            if (res_calc == null) {
-                calcMidPowers(sn, start, end + calc_length, cb);
-                return;
-            }
-
-            i = 0;
-            var result = [];
-            while (i < data.length) {
-                var ps = [];
-                // _ptst : _pa 的前一个格式时间, _ptet : _pa 的后一个格式时间
-                var _pa = data[i], _ptst = _pa.PowerTime - _pa.PowerTime % calc_mid, _ptet = _ptst + calc_mid;
-                ps.push(_pa);
-                while (i++ < data.length - 1) {
-                    var _pb = data[i];
-                    if (_pb.PowerTime < _ptet) ps.push(_pb);
-                    else break;
+        if (res.statusCode == 200) {
+            var data = JSON.parse(body);
+            if (start == first_data) {
+                start = data[0].PowerTime - data[0].PowerTime % calc_mid;
+                // console.log(sn + " init power timer format start is " + start)
+                calcMidPowers(sn, start, end, cb);
+            } else {
+                // var clen = end - start;
+                var _st = start - start % calc_mid;
+                var _et = end - end % calc_mid;
+                for (var i = 0; i < data.length; i++) {
+                    data[i] = formatPower(data[i]);
                 }
-                // 此时间段内的平台电压
-                var ave = powersAverage(ps);
-                result.push({SerialNumber: _pa.SerialNumber, PowerValue: ave, PowerTime: _ptst});
+                // var sn = data[0].SerialNumber;
+                var res_calc = powerArgSearch(data);
+                if (res_calc == null) {
+                    calcMidPowers(sn, start, end + calc_length, cb);
+                    return;
+                }
+
+                i = 0;
+                var result = [];
+                while (i < data.length) {
+                    var ps = [];
+                    // _ptst : _pa 的前一个格式时间, _ptet : _pa 的后一个格式时间
+                    var _pa = data[i], _ptst = _pa.PowerTime - _pa.PowerTime % calc_mid, _ptet = _ptst + calc_mid;
+                    ps.push(_pa);
+                    while (i++ < data.length - 1) {
+                        var _pb = data[i];
+                        if (_pb.PowerTime < _ptet) ps.push(_pb);
+                        else break;
+                    }
+                    // 此时间段内的平台电压
+                    var ave = powersAverage(ps);
+                    result.push({SerialNumber: _pa.SerialNumber, PowerValue: ave, PowerTime: _ptst});
+                }
+                var i = 0, limit = 200;
+                var sendCount = 0;
+                var mss = [];
+                while (i < result.length) {
+                    var endPoi = i + limit < result.length ? i + limit : result.length;
+                    var _sub_ps = result.slice(i, endPoi);
+                    mss.push(_sub_ps);
+                    i = i + limit;
+                }
+                poolPost(mss, function () {
+                    cb && cb(err, result[result.length - 1].PowerTime);
+                });
             }
-            var i = 0, limit = 200;
-            var sendCount = 0;
-            var mss = [];
-            while (i < result.length) {
-                var endPoi = i + limit < result.length ? i + limit : result.length;
-                var _sub_ps = result.slice(i, endPoi);
-                mss.push(_sub_ps);
-                i = i + limit;
-            }
-            poolPost(mss, function () {
-                cb && cb(err, result[result.length - 1].PowerTime);
-            });
+        } else {
+            console.log("calcMidPowers -> " + url + " : " + res.statusCode);
+            cb && cb(res.statusCode);
         }
     });
 };
@@ -192,9 +195,13 @@ var doPostPower = function (req, res, next) {
     redis.ZSCORE(key_power_calc, sn, function (err, score) {
         score = score || first_data;
         calcMidPowers(sn, score, end, function (err, lastTime) {
-            // 最大的上传条数为200
-            redis.ZADD(key_power_calc, lastTime, sn);
-            res.status(200).send('' + lastTime);
+            if (err) {
+                res.status(200).send('' + err);
+            } else {
+                // 最大的上传条数为200
+                redis.ZADD(key_power_calc, lastTime, sn);
+                res.status(200).send('' + lastTime);
+            }
         });
     });
 }
