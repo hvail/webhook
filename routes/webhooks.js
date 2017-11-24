@@ -144,6 +144,7 @@ var _event = function (req, res, next) {
                     if (body.GPSTime && Math.abs(body.GPSTime - eve[i].UpTime) < 60) {
                         eve[i].Lat = body.Lat;
                         eve[i].Lng = body.Lng;
+                        eve[i].EventTime = eve[i].UpTime;
                         eve[i].Lat_Gg = body.Lat_Gg;
                         eve[i].Lat_Bd = body.Lat_Bd;
                         eve[i].Lng_Gg = body.Lng_Gg;
