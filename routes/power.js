@@ -17,12 +17,6 @@ var key_power_calc = "SET-spark-end-time";
 var host = util.format("http://v3.res-ots.server.%s.sky1088.com", area);
 var batch_host = util.format("http://v3.res-ots.server.%s.sky1088.com/power-timer/batch", area);
 
-/* GET users listing. */
-// router.get('/', function (req, res, next) {
-//     res.send('respond with a resource');
-// });
-// Demo http://v3.res-ots.server.zh-cn.sky1088.com/power/range/0503041708260062/0/1507349366
-
 var getRangePower = host + "/power/range/%s/%s/%s";
 
 var calcMidPowers = function (sn, start, end, cb) {
@@ -43,7 +37,6 @@ var calcMidPowers = function (sn, start, end, cb) {
                 for (var i = 0; i < data.length; i++) {
                     data[i] = formatPower(data[i]);
                 }
-                // var sn = data[0].SerialNumber;
                 var res_calc = powerArgSearch(data);
                 if (res_calc == null) {
                     calcMidPowers(sn, start, end + calc_length, cb);
@@ -81,7 +74,7 @@ var calcMidPowers = function (sn, start, end, cb) {
             }
         } else {
             console.log("calcMidPowers -> " + url + " : " + res.statusCode);
-            console.log(body);
+            // console.log(body);
             cb && cb(res.statusCode);
         }
     });

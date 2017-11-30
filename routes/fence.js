@@ -32,7 +32,7 @@ var TriggerFenceAlarm = function (sn, fence, x) {
     be.UpTime = time();
     be.SerialNumber = sn;
     be.Description = "By Web Hooks";
-    console.log(be.Message);
+    // console.log(be.Message);
     // 利用MQ进行消息中转
     myUtil.SendMqObject(ExchangeName, [be], sn);
 }
@@ -86,8 +86,8 @@ var _location = function (req, res, next) {
                 trigger(pos, fences[i]);
             }
         } catch (e) {
-            console.log(e);
-            console.log("GET " + getFenceUrl + " : " + response.statusCode);
+            // console.log(e);
+            // console.log("GET " + getFenceUrl + " : " + response.statusCode);
         }
     });
     res.send("1");

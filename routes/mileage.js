@@ -226,7 +226,6 @@ var __loop = function () {
     if (tempArrays.length > 0) {
         __loop__run = true;
         var sn = tempArrays.shift();
-        // console.log('开始计算 ' + sn + ' 的里程统计 余 ' + tempArrays.length + ' 台设备未处理');
         startCalcMileage(sn, myUtil.GetSecond(), __loop);
     } else {
         __loop__run = false;
