@@ -24,7 +24,7 @@ app.set('view engine', 'ejs');
 log4js.configure({
     appenders: {
         cheese: {
-            type: 'DateFile',
+            type: 'dateFile',
             filename: 'logger',
             pattern: '-yyyy-MM-dd.log',
             alwaysIncludePattern: true
