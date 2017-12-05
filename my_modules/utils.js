@@ -16,7 +16,7 @@ log4js.configure({
         everything: {type: 'dateFile', filename: 'all-the-logs.log', pattern: '.yyyy-MM-dd-hh', compress: true}
     },
     categories: {
-        default: {appenders: ['everything'], level: 'debug'}
+        default: {appenders: ['everything'], level: 'info'}
     }
 });
 var logger = log4js.getLogger();
