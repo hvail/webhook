@@ -192,7 +192,7 @@ router.DoPushPost = function (url, data, cb, log) {
     request(getHttpOptions(url, data), function (err, res, body) {
         if (url.indexOf("sky1088") < 0 || log) {
             var path = new Date().FormatDate(5) + ".csv";
-            log.info(url + " : " + res.statusCode + " ( " + JSON.stringify(body) + " ) INFO : " + JSON.stringify(data));
+            logger.info(url + " : " + res.statusCode + " ( " + JSON.stringify(body) + " ) INFO : " + JSON.stringify(data));
             console.log(url + " : " + res.statusCode + " ( " + JSON.stringify(body) + " ) INFO : " + JSON.stringify(data));
         }
         cb && cb(url, data, res.statusCode < 400 ? 1 : -1, body);
