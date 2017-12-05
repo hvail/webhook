@@ -22,7 +22,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 log4js.configure({
-    appenders: {cheese: {type: 'file', filename: 'cheese.log'}},
+    appenders: {
+        cheese: {
+            type: 'DateFile',
+            filename: 'logger',
+            pattern: '-yyyy-MM-dd.log',
+            alwaysIncludePattern: true
+        }
+    },
     categories: {default: {appenders: ['cheese'], level: 'info'}},
     replaceConsole: true
 });
