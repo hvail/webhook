@@ -5,7 +5,6 @@ const request = require('request');
 const https = require('https');
 const util = require('util');
 var log4js = require('log4js');
-const fs = require('fs');
 const REQUIRED = "required";
 var area = process.env.DATAAREA || "zh-cn";
 const MqSendUrl = "http://v3.mq-rabbit.server." + area + ".sky1088.com/mq/send";
