@@ -10,15 +10,16 @@ var area = process.env.DATAAREA || "zh-cn";
 const MqSendUrl = "http://v3.mq-rabbit.server." + area + ".sky1088.com/mq/send";
 var router = {};
 
-log4js.configure({
-    appenders: {
-        everything: {type: 'dateFile', filename: 'all-the-logs.log', pattern: '.yyyy-MM-dd-hh', compress: true}
-    },
-    categories: {
-        default: {appenders: ['everything'], level: 'info'}
-    }
-});
+// log4js.configure({
+//     appenders: {
+//         everything: {type: 'dateFile', filename: 'all-the-logs.log', pattern: '.yyyy-MM-dd-hh', compress: true}
+//     },
+//     categories: {
+//         default: {appenders: ['everything'], level: 'info'}
+//     }
+// });
 var logger = log4js.getLogger();
+logger.level = 'info';
 
 var getHttpOptions = function (url, data) {
     var http_options = {
