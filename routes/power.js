@@ -74,7 +74,6 @@ var calcMidPowers = function (sn, start, end, cb) {
             }
         } else {
             console.log("calcMidPowers -> " + url + " : " + res.statusCode);
-            // console.log(body);
             cb && cb(res.statusCode);
         }
     });

@@ -60,8 +60,10 @@ var totalPush = function (url, data, status) {
 
 var doWebPush = function (arr, data) {
     for (var i = 0; i < arr.length; i++)
-        for (var j = 0; j < data.length; j++)
+        for (var j = 0; j < data.length; j++) {
             _util.DoPushPost(arr[i], data[j], totalPush);
+
+        }
 }
 
 // webHooks 信息存放于redis . 回执采用0 | 1
