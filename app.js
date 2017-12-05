@@ -25,8 +25,8 @@ log4js.configure({
     appenders: {
         cheese: {
             type: 'dateFile',
-            filename: 'logger',
-            pattern: '-yyyy-MM-dd.log',
+            filename: '/usr/log/webhook/logger',
+            pattern: '-yyMMdd.log',
             alwaysIncludePattern: true
         }
     },
