@@ -171,7 +171,7 @@ router.Hash = function Hashtable() {
         this._count = 0;
     };
     this.indexof = function (key) {
-        return this._hash.hasOwnProperty(key) ? true : false;
+        return this._hash.hasOwnProperty(key);
     };
 };
 
@@ -190,6 +190,13 @@ router.ClassClone = function (src, tar, res) {
 
 router.DoPushPost = function (url, data, cb, log) {
     request(getHttpOptions(url, data), function (err, res, body) {
+        if (err) {
+            console.log(url);
+            console.log(err);
+            logger.info(msg);
+            cb && cb(url, data, 0);
+            return;
+        }
         if (url.indexOf("sky1088") < 0 || log) {
             var msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
             logger.info(msg);

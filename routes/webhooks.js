@@ -139,7 +139,6 @@ var _event = function (req, res, next) {
         }
         getWebHooks(sn, "GPSEvent", function (err, data) {
             if (data.length > 0) {
-                console.log(sn + " GPSEvent : " + data + " LEN : " + data.length);
                 for (var i = 0; i < eve.length; i++) {
                     if (!eve[i].AlarmType && eve[i].EventType)
                         eve[i].AlarmType = eve[i].EventType;
@@ -177,6 +176,7 @@ var _addListen = function (data, cb) {
 }
 
 var _doPost = function (req, res, next) {
+    var sn = req.params.sn, url = req.query.url;
     var data = _util.ClassClone(__Demo_Class, req.body, res);
     if (data == null) next();
     if (url) {
