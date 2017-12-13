@@ -21,7 +21,7 @@ const ExchangeName = "hyz.protocol.BaseEvent";
 
 var time = function () {
     return Math.round(new Date().getTime() / 1000);
-}
+};
 
 var TriggerFenceAlarm = function (sn, fence, x) {
     var io_type = x ? EnterTitle : LeaveTitle;
@@ -38,11 +38,11 @@ var TriggerFenceAlarm = function (sn, fence, x) {
 }
 
 var toCoordPoi = function (fence, p) {
-    if (!fence.Coord || fence.Coord == "WGS84") {
+    if (!fence.Coord || fence.Coord === "WGS84") {
         return {Lat: p.Lat, Lng: p.Lng};
-    } else if (fence.Coord == "GCJ02") {
+    } else if (fence.Coord === "GCJ02") {
         return {Lat: p.Lat_Gg || p.Lat, Lng: p.Lng_Gg || p.Lng};
-    } else if (fence.Coord == "BD09") {
+    } else if (fence.Coord === "BD09") {
         return {Lat: p.Lat_Bd || p.Lat, Lng: p.Lng_Bd || p.Lng};
     } else {
         return {Lat: p.Lat, Lng: p.Lng};
@@ -57,7 +57,7 @@ var trigger = function (ps, fence) {
     for (var i = 1; i < ps.length; i++) {
         poi = toCoordPoi(fence, ps[i]);
         var _tio = _fenceCalc(fence.Points, poi.Lat, poi.Lng);
-        if (_tio != _io_f) {
+        if (_tio !== _io_f) {
             // 触发围栏报警
             TriggerFenceAlarm(fp.SerialNumber, fence, _tio);
         }
@@ -73,12 +73,12 @@ var _location = function (req, res, next) {
         return;
     }
     var _pos = [];
-    for (var i = 0; i < pos.length; i++) if (pos[i] && pos[i] != "null") _pos.push(pos[i]);
+    for (var i = 0; i < pos.length; i++) if (pos[i] && pos[i] !== "null") _pos.push(pos[i]);
     pos = _pos;
     var sn = pos[0].SerialNumber;
     var getFenceUrl = fenceUrl + sn;
     request(getFenceUrl, function (err, response, result) {
-        if (response.statusCode != 200) return;
+        if (response.statusCode !== 200) return;
         try {
             var fences = JSON.parse(result);
             if (fences.length < 1 || pos.length < 2) return;

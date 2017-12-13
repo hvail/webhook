@@ -6,9 +6,9 @@ var redis = require('redis');
 var redisClient;
 var isConnection = false;
 
-console.log(redis_host);
-console.log(redis_pwd);
-console.log(redis_port);
+// console.log(redis_host);
+// console.log(redis_pwd);
+// console.log(redis_port);
 
 redisClient = redis.createClient(redis_port, redis_host, {});
 redisClient.auth(redis_pwd);

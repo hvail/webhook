@@ -129,7 +129,7 @@ var _event = function (req, res, next) {
         res.send('0');
         return;
     }
-    var sn = eve[0].SerialNumber;
+    let sn = eve[0].SerialNumber;
     var url = GetLastPositionUrl + sn;
     request(url, function (err, response, body) {
         try {
@@ -140,8 +140,10 @@ var _event = function (req, res, next) {
         getWebHooks(sn, "GPSEvent", function (err, data) {
             if (data.length > 0) {
                 for (var i = 0; i < eve.length; i++) {
-                    if (!eve[i].AlarmType && eve[i].EventType)
+                    if (!eve[i].AlarmType && eve[i].EventType) {
                         eve[i].AlarmType = eve[i].EventType;
+                        eve[i].EventTime = eve[i].UpTime;
+                    }
                     if (body.GPSTime && Math.abs(body.GPSTime - eve[i].UpTime) < 60) {
                         eve[i].Lat = body.Lat;
                         eve[i].Lng = body.Lng;
@@ -159,9 +161,9 @@ var _event = function (req, res, next) {
     });
 }
 
-var _addListen = function (data, cb) {
-    var key = data.TargetDevice;
-    var lis = data.Listener;
+let _addListen = function (data, cb) {
+    let key = data.TargetDevice;
+    let lis = data.Listener;
     getWebHooks(key, lis, function (err, result) {
         if (err) {
             cb && cb(err);
@@ -206,11 +208,11 @@ var _doPositionPost = function (req, res, next) {
     } else {
         res.send('NO');
     }
-}
+};
 
-var _doEventPost = function (req, res, next) {
-    var sn = req.params.sn, url = req.query.url;
-    var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSEvent"};
+let _doEventPost = function (req, res, next) {
+    let {sn, url} = req.params;
+    let data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSEvent"};
     if (url) {
         _addListen(data, function (err, msg) {
             if (err) {
@@ -225,9 +227,9 @@ var _doEventPost = function (req, res, next) {
 }
 
 var _doPowerPost = function (req, res, next) {
-    var sn = req.params.sn, url = req.query.url;
+    let {sn, url} = req.params;
     if (url) {
-        var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPower"};
+        let data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPower"};
         _addListen(data, function (err, msg) {
             if (err) {
                 res.send(505, err.Message);
