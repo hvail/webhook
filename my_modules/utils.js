@@ -198,16 +198,17 @@ router.DoPushPost = function (url, data, cb, log) {
             return;
         }
         if (url.indexOf("sky1088") < 0 || log) {
-            var msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
+            let msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
             logger.info(msg);
+            console.log(msg);
         }
         cb && cb(url, data, res.statusCode < 400 ? 1 : -1, body);
     });
 };
 
 router.SendMqObject = function (exchage, obj, target) {
-    var tag = exchage + "." + target;
-    var push = {
+    let tag = exchage + "." + target;
+    let push = {
         Exchange: exchage,
         MsgTag: tag,
         Context: JSON.stringify(obj)
@@ -215,6 +216,9 @@ router.SendMqObject = function (exchage, obj, target) {
     request(getHttpOptions(MqSendUrl, push));
 };
 
+/**
+ * @return {number}
+ */
 router.GetSecond = function () {
     return Math.round(new Date().getTime() / 1000);
 };
