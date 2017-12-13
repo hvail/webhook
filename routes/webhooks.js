@@ -37,12 +37,12 @@ var getWebHooks = function (sn, lis, cb) {
 
 var getWebHooksAll = function (lis, cb) {
     redis.HGETALL(HashWebHooks + lis, function (err, data) {
-        var arr = [];
+        let arr = [];
         if (err) {
             console.log(err);
         } else if (data) {
             // console.log(data);
-            for (var k in data) {
+            for (let k in data) {
                 arr.push(data[k]);
             }
         }
@@ -51,16 +51,16 @@ var getWebHooksAll = function (lis, cb) {
 }
 
 var totalPush = function (url, data, status) {
-    var ds = new Date().toISOString().split("T")[0];
-    var totalKey = SetSendStatusTotalKey + ds;
-    var statusKey = (status > 0 ? SetSendStatusSuccessKey : SetSendStatusFailureKey) + ds;
+    let ds = new Date().toISOString().split("T")[0];
+    let totalKey = SetSendStatusTotalKey + ds;
+    let statusKey = (status > 0 ? SetSendStatusSuccessKey : SetSendStatusFailureKey) + ds;
     redis.ZINCRBY(totalKey, 1, url);
     redis.ZINCRBY(statusKey, 1, url);
 };
 
 var doWebPush = function (arr, data) {
-    for (var i = 0; i < arr.length; i++)
-        for (var j = 0; j < data.length; j++) {
+    for (let i = 0; i < arr.length; i++)
+        for (let j = 0; j < data.length; j++) {
             _util.DoPushPost(arr[i], data[j], totalPush);
 
         }
@@ -78,27 +78,27 @@ var _getByListenerSn = function (req, res, next) {
 }
 
 var _getAllListener = function (req, res, next) {
-    var lis = req.params.lis;
+    let lis = req.params.lis;
     getWebHooksAll(lis, function (err, data) {
         res.send(data);
     });
 }
 
 var _location = function (req, res, next) {
-    var pos = req.body;
+    let pos = req.body;
     if (!pos) {
         res.send('0');
         return;
     }
-    var _pos = [];
-    for (var i = 1; i < pos.length; i++) {
-        if (pos[i] && pos[i] != "null") {
+    let _pos = [];
+    for (let i = 1; i < pos.length; i++) {
+        if (pos[i] && pos[i] !== "null") {
             _pos.push(pos[i]);
         }
     }
     if (_pos.length < 1) return;
     pos = _pos;
-    var sn = pos[0].SerialNumber;
+    let sn = pos[0].SerialNumber;
     getWebHooks(sn, "GPSPosition", function (err, data) {
         doWebPush(data, pos);
     });
@@ -106,17 +106,17 @@ var _location = function (req, res, next) {
 }
 
 var _power = function (req, res, next) {
-    var pow = req.body;
+    let pow = req.body;
     if (!pow) {
         res.send('0');
         return;
     }
     if (!util.isArray(pow)) {
-        var _pow = [];
+        let _pow = [];
         _pow.push(pow);
         pow = _pow;
     }
-    var sn = pow[0].SerialNumber;
+    let sn = pow[0].SerialNumber;
     getWebHooks(sn, "GPSPower", function (err, data) {
         doWebPush(data, pow);
         res.send("1");
@@ -124,13 +124,13 @@ var _power = function (req, res, next) {
 }
 
 var _event = function (req, res, next) {
-    var eve = req.body;
+    let eve = req.body;
     if (!eve) {
         res.send('0');
         return;
     }
     let sn = eve[0].SerialNumber;
-    var url = GetLastPositionUrl + sn;
+    let url = GetLastPositionUrl + sn;
     request(url, function (err, response, body) {
         try {
             body = JSON.parse(body);
@@ -139,7 +139,7 @@ var _event = function (req, res, next) {
         }
         getWebHooks(sn, "GPSEvent", function (err, data) {
             if (data.length > 0) {
-                for (var i = 0; i < eve.length; i++) {
+                for (let i = 0; i < eve.length; i++) {
                     if (!eve[i].AlarmType && eve[i].EventType) {
                         eve[i].AlarmType = eve[i].EventType;
                         eve[i].EventTime = eve[i].UpTime;
@@ -152,6 +152,9 @@ var _event = function (req, res, next) {
                         eve[i].Lat_Bd = body.Lat_Bd;
                         eve[i].Lng_Gg = body.Lng_Gg;
                         eve[i].Lng_Bd = body.Lng_Bd;
+                    }
+                    if (eve[i].AlarmType === 51) {
+                        eve[i].Message = "指纹录入成功";
                     }
                 }
                 doWebPush(data, eve);
@@ -178,9 +181,9 @@ let _addListen = function (data, cb) {
 }
 
 var _doPost = function (req, res, next) {
-    var sn = req.params.sn, url = req.query.url;
-    var data = _util.ClassClone(__Demo_Class, req.body, res);
-    if (data == null) next();
+    let sn = req.params.sn, url = req.query.url;
+    let data = _util.ClassClone(__Demo_Class, req.body, res);
+    if (data === null) next();
     if (url) {
         _addListen(data, function (err, msg) {
             if (err) {
@@ -195,8 +198,8 @@ var _doPost = function (req, res, next) {
 }
 
 var _doPositionPost = function (req, res, next) {
-    var sn = req.params.sn, url = req.query.url;
-    var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPosition"};
+    let sn = req.params.sn, url = req.query.url;
+    let data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPosition"};
     if (url) {
         _addListen(data, function (err, msg) {
             if (err) {
@@ -224,9 +227,9 @@ let _doEventPost = function (req, res, next) {
     } else {
         res.send('NO');
     }
-}
+};
 
-var _doPowerPost = function (req, res, next) {
+let _doPowerPost = function (req, res, next) {
     let {sn, url} = req.params;
     if (url) {
         let data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPower"};
@@ -240,7 +243,7 @@ var _doPowerPost = function (req, res, next) {
     } else {
         res.send('no');
     }
-}
+};
 
 /* GET users listing. */
 router.get('/', _default);
