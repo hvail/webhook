@@ -85,13 +85,13 @@ var _getAllListener = function (req, res, next) {
 }
 
 var _location = function (req, res, next) {
-    var pos = req.body;
+    let pos = req.body;
     if (!pos) {
         res.send('0');
         return;
     }
-    var _pos = [];
-    for (var i = 1; i < pos.length; i++) {
+    let _pos = [];
+    for (let i = 1; i < pos.length; i++) {
         if (pos[i] && pos[i] != "null") {
             _pos.push(pos[i]);
         }
@@ -175,12 +175,12 @@ let _addListen = function (data, cb) {
         } else console.log("重复不添加");
         cb && cb(null, "ok");
     });
-}
+};
 
-var _doPost = function (req, res, next) {
-    var sn = req.params.sn, url = req.query.url;
-    var data = _util.ClassClone(__Demo_Class, req.body, res);
-    if (data == null) next();
+let _doPost = function (req, res, next) {
+    let sn = req.params.sn, url = req.query.url;
+    let data = _util.ClassClone(__Demo_Class, req.body, res);
+    if (data === null) next();
     if (url) {
         _addListen(data, function (err, msg) {
             if (err) {
@@ -192,11 +192,11 @@ var _doPost = function (req, res, next) {
     } else {
         res.send('NO');
     }
-}
+};
 
-var _doPositionPost = function (req, res, next) {
-    var sn = req.params.sn, url = req.query.url;
-    var data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPosition"};
+let _doPositionPost = function (req, res, next) {
+    let sn = req.params.sn, url = req.query.url;
+    let data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPosition"};
     if (url) {
         _addListen(data, function (err, msg) {
             if (err) {
@@ -224,9 +224,9 @@ let _doEventPost = function (req, res, next) {
     } else {
         res.send('NO');
     }
-}
+};
 
-var _doPowerPost = function (req, res, next) {
+let _doPowerPost = function (req, res, next) {
     let {sn, url} = req.params;
     if (url) {
         let data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPower"};
@@ -240,7 +240,7 @@ var _doPowerPost = function (req, res, next) {
     } else {
         res.send('no');
     }
-}
+};
 
 /* GET users listing. */
 router.get('/', _default);
