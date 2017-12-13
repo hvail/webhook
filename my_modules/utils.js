@@ -200,6 +200,7 @@ router.DoPushPost = function (url, data, cb, log) {
         if (url.indexOf("sky1088") < 0 || log) {
             var msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
             logger.info(msg);
+            console.log(msg);
         }
         cb && cb(url, data, res.statusCode < 400 ? 1 : -1, body);
     });
