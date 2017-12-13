@@ -96,13 +96,13 @@ var _location = function (req, res, next) {
             _pos.push(pos[i]);
         }
     }
-    if (_pos.length < 1)return;
+    if (_pos.length < 1) return;
     pos = _pos;
     var sn = pos[0].SerialNumber;
     getWebHooks(sn, "GPSPosition", function (err, data) {
         doWebPush(data, pos);
-        res.send("1");
     });
+    res.send("1");
 }
 
 var _power = function (req, res, next) {
