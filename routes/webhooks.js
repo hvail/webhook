@@ -96,6 +96,9 @@ let _location = function (req, res, next) {
         }
     }
     console.log("pos type is " + (typeof pos));
+    console.log("pos type is " + (typeof _pos));
+    console.log("pos type isArray " + util.isArray(pos));
+    console.log("pos type isArray " + util.isArray(_pos));
     if (_pos.length < 1) return;
     pos = _pos;
     let sn = pos[0].SerialNumber;
