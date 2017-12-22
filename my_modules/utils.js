@@ -179,7 +179,7 @@ router.ClassClone = function (src, tar, res) {
     let clone = {};
     for (let k in src) {
         let m = src[k];
-        if (m == REQUIRED && !tar[k]) {
+        if (m === REQUIRED && !tar[k]) {
             res.send(204, k + "is required");
             return null;
         }
@@ -201,7 +201,7 @@ router.DoPushPost = function (url, data, cb, log) {
             if (url.indexOf("sky1088") < 0 || log) {
                 let msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
                 logger.info(msg);
-                console.log(msg);
+                // console.log(msg);
             }
         } catch (e) {
             console.log(e);

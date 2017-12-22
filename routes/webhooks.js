@@ -99,6 +99,7 @@ let _location = function (req, res, next) {
     pos = _pos;
     let sn = pos[0].SerialNumber;
     getWebHooks(sn, "GPSPosition", function (err, data) {
+        console.log(data);
         doWebPush(data, pos);
     });
     res.send("1");
