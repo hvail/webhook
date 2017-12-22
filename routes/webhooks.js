@@ -90,20 +90,20 @@ let _location = function (req, res, next) {
         return;
     }
     let _pos = [];
-    for (let i = 1; i < pos.length; i++) {
+    for (let i = 0; i < pos.length; i++) {
         if (pos[i] && pos[i] !== "null") {
             _pos.push(pos[i]);
         }
     }
     if (_pos.length < 1) {
-        console.log(pos);
+        // console.log(pos);
         res.send('-1');
         return;
     }
     pos = _pos;
     let sn = pos[0].SerialNumber;
     getWebHooks(sn, "GPSPosition", function (err, data) {
-        console.log(data);
+        // console.log(data);
         doWebPush(data, pos);
     });
     res.send("1");
