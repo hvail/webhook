@@ -1,13 +1,13 @@
 /***
  * Created by hvail on 2017/9/23.
  */
-var express = require('express');
-var request = require('request');
-var router = express.Router();
-var _util = require('./../my_modules/utils');
-var util = require('util');
-var area = process.env.DATAAREA || "zh-cn";
-var redis = require('./../my_modules/redishelp');
+let express = require('express');
+let request = require('request');
+let router = express.Router();
+let _util = require('./../my_modules/utils');
+let util = require('util');
+let area = process.env.DATAAREA || "zh-cn";
+let redis = require('./../my_modules/redishelp');
 const HashWebHooks = "web-hook-listener-hash-";
 const SetSendStatusTotalKey = "web-hook-send-total-";
 const SetSendStatusSuccessKey = "web-hook-send-success-";
@@ -15,27 +15,27 @@ const SetSendStatusFailureKey = "web-hook-send-failure-";
 
 const GetLastPositionUrl = "http://v3.res.server." + area + ".sky1088.com/track/single/";
 
-var __Demo_Class = {
+let __Demo_Class = {
     TargetUrl: _util.REQUIRED,
     TargetDevice: "0000000000000000",
     Listener: "GPSPosition"
 };
 
 // key = Listener+TargetDevice
-var getWebHooks = function (sn, lis, cb) {
-    var key_a = "0000000000000000";
-    var key_b = sn.substring(0, 6) + "0000000000";
-    var key_c = sn;
+let getWebHooks = function (sn, lis, cb) {
+    let key_a = "0000000000000000";
+    let key_b = sn.substring(0, 6) + "0000000000";
+    let key_c = sn;
     redis.HMGET(HashWebHooks + lis, key_a, key_b, key_c, function (err, data) {
-        var arr = [];
-        for (var i = 2; i > -1; i--) {
+        let arr = [];
+        for (let i = 2; i > -1; i--) {
             if (!!data[i] || data[i] == 'null') arr.push(data[i]);
         }
         cb && cb(err, arr);
     });
 }
 
-var getWebHooksAll = function (lis, cb) {
+let getWebHooksAll = function (lis, cb) {
     redis.HGETALL(HashWebHooks + lis, function (err, data) {
         let arr = [];
         if (err) {
@@ -50,7 +50,7 @@ var getWebHooksAll = function (lis, cb) {
     });
 }
 
-var totalPush = function (url, data, status) {
+let totalPush = function (url, data, status) {
     let ds = new Date().toISOString().split("T")[0];
     let totalKey = SetSendStatusTotalKey + ds;
     let statusKey = (status > 0 ? SetSendStatusSuccessKey : SetSendStatusFailureKey) + ds;
@@ -58,33 +58,32 @@ var totalPush = function (url, data, status) {
     redis.ZINCRBY(statusKey, 1, url);
 };
 
-var doWebPush = function (arr, data) {
+let doWebPush = function (arr, data) {
     for (let i = 0; i < arr.length; i++)
         for (let j = 0; j < data.length; j++) {
             _util.DoPushPost(arr[i], data[j], totalPush);
-
         }
-}
+};
 
 // webHooks 信息存放于redis . 回执采用0 | 1
-var _default = function (req, res, next) {
+let _default = function (req, res, next) {
     res.send('v1.0.0.0');
-}
+};
 
-var _getByListenerSn = function (req, res, next) {
+let _getByListenerSn = function (req, res, next) {
     getWebHooks(req.params.sn, req.params.lis, function (err, data) {
         res.send(data);
     });
-}
+};
 
-var _getAllListener = function (req, res, next) {
+let _getAllListener = function (req, res, next) {
     let lis = req.params.lis;
     getWebHooksAll(lis, function (err, data) {
         res.send(data);
     });
-}
+};
 
-var _location = function (req, res, next) {
+let _location = function (req, res, next) {
     let pos = req.body;
     if (!pos) {
         res.send('0');
@@ -103,9 +102,9 @@ var _location = function (req, res, next) {
         doWebPush(data, pos);
     });
     res.send("1");
-}
+};
 
-var _power = function (req, res, next) {
+let _power = function (req, res, next) {
     let pow = req.body;
     if (!pow) {
         res.send('0');
@@ -121,9 +120,9 @@ var _power = function (req, res, next) {
         doWebPush(data, pow);
         res.send("1");
     });
-}
+};
 
-var _event = function (req, res, next) {
+let _event = function (req, res, next) {
     let eve = req.body;
     if (!eve) {
         res.send('0');
@@ -162,7 +161,7 @@ var _event = function (req, res, next) {
             res.send("1");
         });
     });
-}
+};
 
 let _addListen = function (data, cb) {
     let key = data.TargetDevice;
@@ -178,9 +177,9 @@ let _addListen = function (data, cb) {
         } else console.log("重复不添加");
         cb && cb(null, "ok");
     });
-}
+};
 
-var _doPost = function (req, res, next) {
+let _doPost = function (req, res, next) {
     let sn = req.params.sn, url = req.query.url;
     let data = _util.ClassClone(__Demo_Class, req.body, res);
     if (data === null) next();
@@ -195,9 +194,9 @@ var _doPost = function (req, res, next) {
     } else {
         res.send('NO');
     }
-}
+};
 
-var _doPositionPost = function (req, res, next) {
+let _doPositionPost = function (req, res, next) {
     let sn = req.params.sn, url = req.query.url;
     let data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPosition"};
     if (url) {
