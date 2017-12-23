@@ -1,10 +1,10 @@
-var redis_host = process.env.REDIS_HOST || "112.74.57.39";
-var redis_pwd = process.env.REDIS_PASSWORD || "892df215f8684736:HvailCom2015";
-var redis_port = process.env.REDIS_PORT || 6379;
-// var redis_port = 6380;
-var redis = require('redis');
-var redisClient;
-var isConnection = false;
+const redis_host = process.env.REDIS_HOST || "112.74.57.39";
+const redis_pwd = process.env.REDIS_PASSWORD || "892df215f8684736:HvailCom2015";
+const redis_port = process.env.REDIS_PORT || 6379;
+// const redis_port = 6380;
+const redis = require('redis');
+let redisClient;
+let isConnection = false;
 
 // console.log(redis_host);
 // console.log(redis_pwd);

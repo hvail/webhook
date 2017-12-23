@@ -1,28 +1,28 @@
 /**
  * Created by hvail on 2017/10/17.
  */
-var express = require('express');
-var request = require('request');
-var util = require('util');
-var myUtil = require('./../my_modules/utils');
-var area = process.env.DATAAREA || "zh-cn";
-var router = express.Router();
+let express = require('express');
+let request = require('request');
+let util = require('util');
+let myUtil = require('./../my_modules/utils');
+let area = process.env.DATAAREA || "zh-cn";
+let router = express.Router();
 
-var Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/phone/";
-var DeviceAttr = util.format("http://v3.local-manager-mongo.%s.sky1088.com/custom/device-attr/single/", area);
-var GetPhoneNumber = util.format("http://v3.local-manager-redis.%s.sky1088.com/custom/account/single/", area);
-var GetPhoneAlarmUrl = util.format("http://v3.local-manager-mongo.%s.sky1088.com/custom/push-phone/bind/", area);
+let Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/phone/";
+let DeviceAttr = util.format("http://v3.local-manager-mongo.%s.sky1088.com/custom/device-attr/single/", area);
+let GetPhoneNumber = util.format("http://v3.local-manager-redis.%s.sky1088.com/custom/account/single/", area);
+let GetPhoneAlarmUrl = util.format("http://v3.local-manager-mongo.%s.sky1088.com/custom/push-phone/bind/", area);
 
 // 接收到报警，开始推送判断
-var _beginPush = function (bind, eve, display) {
+let _beginPush = function (bind, eve, display) {
     if (!bind.AlarmPhonePush) return;
-    var date = new Date().getTime() / 1000;
-    var _url = GetPhoneAlarmUrl + bind.UId + "/" + eve.SerialNumber;
-    var url = GetPhoneNumber + bind.UId;
+    let date = new Date().getTime() / 1000;
+    let _url = GetPhoneAlarmUrl + bind.UId + "/" + eve.SerialNumber;
+    let url = GetPhoneNumber + bind.UId;
     request(_url, function (err, response, dat) {
         if (!dat) return;
-        var data = JSON.parse(dat);
-        var _eve = {};
+        let data = JSON.parse(dat);
+        let _eve = {};
         _eve.DisplayName = display;
         _eve.AlarmType = eve.EventType;
         _eve.EventTime = eve.UpTime;
@@ -34,8 +34,8 @@ var _beginPush = function (bind, eve, display) {
 }
 
 // 向后台发送语音报警请求
-var _doPush = function (phone, eve) {
-    var url = Trigger + phone;
+let _doPush = function (phone, eve) {
+    let url = Trigger + phone;
     myUtil.DoPushPost(url, eve, function (url, data, success, result) {
         console.log(result + "=" + eve.AlarmType + ":" + url);
     });
@@ -44,12 +44,12 @@ var _doPush = function (phone, eve) {
     // });
 }
 
-var getDemo = function (req, res, next) {
+let getDemo = function (req, res, next) {
     res.send('alarm phone push system 1.0.0.0');
 }
 
-var doPostAlarm = function (req, res, next) {
-    var data = req.body;
+let doPostAlarm = function (req, res, next) {
+    let data = req.body;
 }
 
 /* GET users listing. */

@@ -29,7 +29,7 @@ let getWebHooks = function (sn, lis, cb) {
     redis.HMGET(HashWebHooks + lis, key_a, key_b, key_c, function (err, data) {
         let arr = [];
         for (let i = 2; i > -1; i--) {
-            if (!!data[i] || data[i] == 'null') arr.push(data[i]);
+            if (!!data[i] || data[i] === 'null') arr.push(data[i]);
         }
         cb && cb(err, arr);
     });

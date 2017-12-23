@@ -22,7 +22,7 @@ let logger = log4js.getLogger();
 logger.level = 'info';
 
 let getHttpOptions = function (url, data) {
-    let http_options = {
+    return {
         url: url,
         method: "POST",
         json: true,
@@ -31,23 +31,22 @@ let getHttpOptions = function (url, data) {
         },
         body: data
     };
-    return http_options;
-}
+};
 
 Array.prototype.last = function () {
     let me = this;
     return me[me.length - 1];
-}
+};
 
 Array.prototype.first = function () {
     let me = this;
     return me[0];
-}
+};
 
 // 跟据字段值查询数组
 Array.prototype.findByField = function (field, val) {
 
-}
+};
 
 // 查询字段的总和
 Array.prototype.sum = function (field) {
@@ -58,7 +57,7 @@ Array.prototype.sum = function (field) {
         sum += (arr[i][field]) || 0;
     }
     return sum;
-}
+};
 
 // 查询最高值
 Array.prototype.max = function (field) {
@@ -97,6 +96,9 @@ Array.prototype.ave = function (field) {
     return sum / l;
 };
 
+/**
+ * @return {string}
+ */
 Date.prototype.FormatDate = function (format) {
     let dateObj = this;
     let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -110,18 +112,18 @@ Date.prototype.FormatDate = function (format) {
     if (curr_date < 10) curr_date = '0' + curr_date;
     if (curr_hr < 10) curr_hr = '0' + curr_hr;
     if (curr_min < 10) curr_min = '0' + curr_min;
-    if (format == 1)// dd-mm-yyyy
+    if (format === 1)// dd-mm-yyyy
         return curr_date + "-" + curr_month + "-" + curr_year;
-    else if (format == 2)// yyyy-mm-dd
+    else if (format === 2)// yyyy-mm-dd
         return curr_year + "-" + curr_month + "-" + curr_date;
-    else if (format == 3)// dd/mm/yyyy
+    else if (format === 3)// dd/mm/yyyy
         return curr_date + "/" + curr_month + "/" + curr_year;
-    else if (format == 4)// MM/dd/yyyy HH:mm:ss
+    else if (format === 4)// MM/dd/yyyy HH:mm:ss
         return curr_month + "/" + curr_date + "/" + curr_year + " " + curr_hr + ":" + curr_min + ":" + curr_sc;
-    else if (format == 5)
+    else if (format === 5)
         return curr_year + curr_month + curr_date;
     return curr_year + "-" + curr_month + "-" + curr_date + " " + curr_hr + ":" + curr_min + ":" + curr_sc;
-}
+};
 
 /***
  * 从SRC复制到TAR
@@ -133,14 +135,14 @@ router.Clone = function (src, tar) {
     let clone = {};
     if (!tar) return null;
     for (let k in src) {
-        if (!!tar[k] && typeof(src[k]) == 'number') {
+        if (!!tar[k] && typeof(src[k]) === 'number') {
             clone[k] = isNaN(tar[k]) ? 0 : tar[k];
         } else {
             clone[k] = tar[k] || src[k];
         }
     }
     return clone;
-}
+};
 
 router.Hash = function Hashtable() {
     this._hash = {};
