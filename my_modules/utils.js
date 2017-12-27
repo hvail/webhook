@@ -196,7 +196,6 @@ router.DoPushPost = function (url, data, cb, log) {
             if (err) {
                 console.log(url);
                 console.log(err);
-                logger.info(msg);
                 cb && cb(url, data, 0);
                 return;
             }
