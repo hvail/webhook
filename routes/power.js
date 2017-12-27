@@ -80,15 +80,15 @@ let calcMidPowers = function (sn, start, end, cb) {
 };
 
 let poolPost = function (subs, cb, i) {
-    let i = i || 0;
-    if (i >= subs.length) {
+    let _i = i || 0;
+    if (_i >= subs.length) {
         cb && cb();
         return;
     }
-    myUtil.DoPushPost(batch_host, subs[i], function (url, data, status, body) {
+    myUtil.DoPushPost(batch_host, subs[_i], function (url, data, status, body) {
         // console.log("POST : " + batch_host + " Length : " + body);
-        i++;
-        poolPost(subs, cb, i);
+        _i++;
+        poolPost(subs, cb, _i);
     });
 }
 
