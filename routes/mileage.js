@@ -259,6 +259,8 @@ let __loop = function () {
  * @param next
  */
 let doLocationPost = function (req, res, next) {
+    logger.info(`/ : ${JSON.stringify(req.body)}`);
+    console.log(`/ : ${JSON.stringify(req.body)}`);
     let data = req.body;
     if (util.isArray(req.body)) {
         let _data;
