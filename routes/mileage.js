@@ -130,8 +130,8 @@ let _do_save_mileage = function (data, sn, middleTime) {
     if (push_obj.length > 0)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
             if (status !== 1) {
-                console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
-                console.log(push_obj);
+                // console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
+                // console.log(push_obj);
             }
         });
 };
