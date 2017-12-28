@@ -35,8 +35,8 @@ log4js.configure({
     categories: {default: {appenders: ['cheese'], level: 'info'}},
     replaceConsole: true
 });
-let logger = log4js.getLogger();
-logger.level = 'info';
+let logger = log4js.getLogger("normal");
+logger.level = 'all';
 
 let demo = function (req, res, next) {
     res.send('mileage v1.2.0');
