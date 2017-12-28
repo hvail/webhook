@@ -1,13 +1,13 @@
 /***
  * Created by hvail on 2017/9/23.
  */
-var express = require('express');
-var request = require('request');
-var router = express.Router();
-var _util = require('./../my_modules/utils');
-var util = require('util');
-var area = process.env.DATAAREA || "zh-cn";
-var redis = require('./../my_modules/redishelp');
+let express = require('express');
+let request = require('request');
+let router = express.Router();
+let _util = require('./../my_modules/utils');
+let util = require('util');
+let area = process.env.DATAAREA || "zh-cn";
+let redis = require('./../my_modules/redishelp');
 const HashWebHooks = "web-hook-listener-hash-";
 const SetSendStatusTotalKey = "web-hook-send-total-";
 const SetSendStatusSuccessKey = "web-hook-send-success-";
@@ -15,17 +15,17 @@ const SetSendStatusFailureKey = "web-hook-send-failure-";
 
 const GetLastPositionUrl = "http://v3.res.server." + area + ".sky1088.com/track/single/";
 
-var __Demo_Class = {
+let __Demo_Class = {
     TargetUrl: _util.REQUIRED,
     TargetDevice: "0000000000000000",
     Listener: "GPSPosition"
 };
 
 // key = Listener+TargetDevice
-var getWebHooks = function (sn, lis, cb) {
-    var key_a = "0000000000000000";
-    var key_b = sn.substring(0, 6) + "0000000000";
-    var key_c = sn;
+let getWebHooks = function (sn, lis, cb) {
+    let key_a = "0000000000000000";
+    let key_b = sn.substring(0, 6) + "0000000000";
+    let key_c = sn;
     redis.HMGET(HashWebHooks + lis, key_a, key_b, key_c, function (err, data) {
         let arr = [];
         for (let i = 2; i > -1; i--) {
@@ -62,7 +62,6 @@ let doWebPush = function (arr, data) {
     for (let i = 0; i < arr.length; i++)
         for (let j = 0; j < data.length; j++) {
             _util.DoPushPost(arr[i], data[j], totalPush);
-
         }
 };
 
@@ -91,15 +90,20 @@ let _location = function (req, res, next) {
         return;
     }
     let _pos = [];
-    for (let i = 1; i < pos.length; i++) {
+    for (let i = 0; i < pos.length; i++) {
         if (pos[i] && pos[i] !== "null") {
             _pos.push(pos[i]);
         }
     }
-    if (_pos.length < 1) return;
+    if (_pos.length < 1) {
+        // console.log(pos);
+        res.send('-1');
+        return;
+    }
     pos = _pos;
     let sn = pos[0].SerialNumber;
     getWebHooks(sn, "GPSPosition", function (err, data) {
+        // console.log(data);
         doWebPush(data, pos);
     });
     res.send("1");

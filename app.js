@@ -1,21 +1,20 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var log4js = require('log4js');
-var fs = require('fs');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const log4js = require('log4js');
+const fs = require('fs');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
-var fence = require('./routes/fence');
-var power = require('./routes/power');
-var mileage = require('./routes/mileage');
-var alarm_push_phone = require('./routes/push-alarm-phone');
-var webhooks = require('./routes/webhooks');
+const index = require('./routes/index');
+const users = require('./routes/users');
+const fence = require('./routes/fence');
+const power = require('./routes/power');
+const mileage = require('./routes/mileage');
+const alarm_push_phone = require('./routes/push-alarm-phone');
+const webhooks = require('./routes/webhooks');
 
-var app = express();
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,7 +33,7 @@ log4js.configure({
     replaceConsole: true
 });
 
-var logger = log4js.getLogger('normal');
+let logger = log4js.getLogger('normal');
 // logger.setLevel('DEBUG')
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

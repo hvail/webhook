@@ -1,44 +1,44 @@
 const URL = require('url');
 const http = require('http');
-var _index = 0;
-var requestGetUrl = function (url, cb) {
-    var option = URL.parse(url);
+let _index = 0;
+let requestGetUrl = function (url, cb) {
+    let option = URL.parse(url);
     option.method = "GET";
-    var req = http.request(option, function (httpRes) {
-        var buffers = [];
+    let req = http.request(option, function (httpRes) {
+        let buffers = [];
         httpRes.on('data', function (chunk, x, y) {
             buffers.push(chunk);
         });
 
         httpRes.on('end', function (chunk) {
-            var wholeData = Buffer.concat(buffers);
-            var dataStr = wholeData.toString('utf8');
+            let wholeData = Buffer.concat(buffers);
+            let dataStr = wholeData.toString('utf8');
             cb && cb(null, dataStr);
         });
     }).on('error', cb);
     req.end();
 }
 
-var requestPostUrl = function (url, data, cb) {
-    var option = URL.parse(url);
+let requestPostUrl = function (url, data, cb) {
+    let option = URL.parse(url);
     option.method = "POST";
     option.headers = {
         'Content-Type': 'application/json',
     }
-    var req = http.request(option, function (httpRes) {
+    let req = http.request(option, function (httpRes) {
         _index++;
-        if (httpRes.statusCode == 204) {
+        if (httpRes.statusCode === 204) {
             cb && cb(null);
             return;
         }
-        var buffers = [];
+        let buffers = [];
         httpRes.on('data', function (chunk) {
             buffers.push(chunk);
         });
 
         httpRes.on('end', function (chunk) {
-            var wholeData = Buffer.concat(buffers);
-            var dataStr = wholeData.toString('utf8');
+            let wholeData = Buffer.concat(buffers);
+            let dataStr = wholeData.toString('utf8');
             cb && cb(null, dataStr);
         });
     }).on('error', function (err) {
