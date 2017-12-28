@@ -7,6 +7,7 @@ let gpsUtil = require('./../my_modules/gpsutils');
 let redis = require('./../my_modules/redishelp');
 let request = require('request');
 let express = require('express');
+let log4js = require('log4js');
 let util = require('util');
 let router = express.Router();
 let area = process.env.DATAAREA || "zh-cn";
@@ -16,7 +17,8 @@ let first_data = 1504195200;    // 里程统计从 UTC: 2017-08-01 开始算起
 let key_mileage_calc = "SET-spark-mileage-end-time"; // 记录最后计算的时间
 let readUrl = `http://v3.res.server.${area}.sky1088.com/mileage/range/`;
 let post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
-
+let logger = log4js.getLogger();
+logger.level = 'info';
 let temp = new myUtil.Hash();
 let failUrlList = "LIST-range-mileage-None";
 
@@ -110,6 +112,8 @@ let _calc_pack_mileage = function (pack_hash) {
             MaxSpeed: _maxSpeed.toFixed(3) + " km/h",
             Speed: (dis / (pe.GPSTime - pf.GPSTime)).toFixed(3),
         };
+        logger.info(JSON.stringify(__obj));
+        console.log(JSON.stringify(__obj));
         let os = __obj.Speed * 3.6;
         if ((os < _maxSpeed * 1.5) || (_maxSpeed === 0 && os < 240)) {
             if (_maxSpeed < os) __obj.MaxSpeed = (os * 1.2).toFixed(3) + " km/h";

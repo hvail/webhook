@@ -10,14 +10,6 @@ let area = process.env.DATAAREA || "zh-cn";
 const MqSendUrl = "http://v3.mq-rabbit.server." + area + ".sky1088.com/mq/send";
 let router = {};
 
-// log4js.configure({
-//     appenders: {
-//         everything: {type: 'dateFile', filename: 'all-the-logs.log', pattern: '.yyyy-MM-dd-hh', compress: true}
-//     },
-//     categories: {
-//         default: {appenders: ['everything'], level: 'info'}
-//     }
-// });
 let logger = log4js.getLogger();
 logger.level = 'info';
 
