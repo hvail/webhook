@@ -23,6 +23,18 @@ let failUrlList = "LIST-range-mileage-None";
 
 let tempArrays = [];
 
+log4js.configure({
+    appenders: {
+        cheese: {
+            type: 'dateFile',
+            filename: '/usr/log/webhook/logger',
+            pattern: '-yyMMdd.log',
+            alwaysIncludePattern: true
+        }
+    },
+    categories: {default: {appenders: ['cheese'], level: 'info'}},
+    replaceConsole: true
+});
 let logger = log4js.getLogger();
 logger.level = 'info';
 
