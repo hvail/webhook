@@ -7,7 +7,6 @@ let gpsUtil = require('./../my_modules/gpsutils');
 let redis = require('./../my_modules/redishelp');
 let request = require('request');
 let express = require('express');
-let log4js = require('log4js');
 let util = require('util');
 let router = express.Router();
 let area = process.env.DATAAREA || "zh-cn";
@@ -22,21 +21,6 @@ let temp = new myUtil.Hash();
 let failUrlList = "LIST-range-mileage-None";
 
 let tempArrays = [];
-
-log4js.configure({
-    appenders: {
-        cheese: {
-            type: 'dateFile',
-            filename: '/usr/log/webhook/logger',
-            pattern: '-yyMMdd.log',
-            alwaysIncludePattern: true
-        }
-    },
-    categories: {default: {appenders: ['cheese'], level: 'info'}},
-    replaceConsole: true
-});
-let logger = log4js.getLogger("normal");
-logger.level = 'all';
 
 let demo = function (req, res, next) {
     res.send('mileage v1.2.0');
@@ -126,8 +110,7 @@ let _calc_pack_mileage = function (pack_hash) {
             MaxSpeed: _maxSpeed.toFixed(3) + " km/h",
             Speed: (dis / (pe.GPSTime - pf.GPSTime)).toFixed(3),
         };
-        logger.info(JSON.stringify(__obj));
-        console.log(JSON.stringify(__obj));
+        myUtil.logger(JSON.stringify(__obj));
         let os = __obj.Speed * 3.6;
         if ((os < _maxSpeed * 1.5) || (_maxSpeed === 0 && os < 240)) {
             if (_maxSpeed < os) __obj.MaxSpeed = (os * 1.2).toFixed(3) + " km/h";
@@ -153,9 +136,8 @@ let _do_save_mileage = function (data, sn, middleTime) {
     if (push_obj.length > 0)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
             if (status !== 1) {
-                console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
                 console.log(push_obj);
-                logger.info(`${post_url}, ${sn}, ${push_obj.length}, ${status} `)
+                myUtil.logger(`${post_url}, ${sn}, ${push_obj.length}, ${status} `)
             }
         });
 };
@@ -174,9 +156,7 @@ let _calcUrlMileage = function (url, cb) {
                 if (obj._hash[k].length < 2) obj.remove(k);
             }
             let calc_obj = _calc_pack_mileage(obj);
-            let log = `${url} - length :  ${_body.length} - valid : ${calc_obj.count()} - invalid : ${obj.count()}`;
-            console.log(log);
-            logger.info(log);
+            myUtil.logger(`${url} - length :  ${_body.length} - valid : ${calc_obj.count()} - invalid : ${obj.count()}`);
             // redis.RPUSH(failUrlList, log);
             cb && cb(calc_obj);
         } else {
@@ -273,8 +253,7 @@ let __loop = function () {
  * @param next
  */
 let doLocationPost = function (req, res, next) {
-    logger.info(`/ : ${JSON.stringify(req.body)}`);
-    console.log(`/ : ${JSON.stringify(req.body)}`);
+    myUtil.logger(`mileage post : ${JSON.stringify(req.body)}`);
     let data = req.body;
     if (util.isArray(req.body)) {
         let _data;
