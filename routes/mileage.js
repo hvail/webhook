@@ -24,11 +24,11 @@ let tempArrays = [];
 
 let demo = function (req, res, next) {
     res.send('mileage v1.2.0');
-}
+};
 
 let _format_gt = function (time, mid) {
     return time - (time % mid);
-}
+};
 
 let _getNextGPSTime = function (sn, start, cb) {
     let _now = _format_gt(Math.round(new Date().getTime() / 1000), calc_length);
@@ -72,6 +72,7 @@ let _calc_pack_mileage = function (pack_hash) {
     let sn;
     let obj = new myUtil.Hash();
     for (let key in pack_hash._hash) {
+        if (!pack_hash._hash.hasOwnProperty(key)) continue;
         let ps = pack_hash._hash[key];
         if (ps.length < 2) continue;
         let pf = ps.first(), pe = ps.last();
@@ -115,7 +116,7 @@ let _calc_pack_mileage = function (pack_hash) {
         top_end_point = pe;
     }
     return obj;
-}
+};
 
 let _do_save_mileage = function (data, sn, middleTime) {
     let push_obj = [];
@@ -133,7 +134,7 @@ let _do_save_mileage = function (data, sn, middleTime) {
                 console.log(push_obj);
             }
         });
-}
+};
 
 let _calcUrlMileage = function (url, cb) {
     request(url, function (err, response, body) {
@@ -155,7 +156,7 @@ let _calcUrlMileage = function (url, cb) {
             cb && cb(0);
         }
     });
-}
+};
 
 let _calcMiddleMileage = function (data) {
     if (data.length < 1) {
@@ -181,7 +182,7 @@ let _calcMiddleMileage = function (data) {
         if (i === data.length) break;
     }
     return obj;
-}
+};
 
 /***
  * 开始计算里程到指定时间
@@ -220,7 +221,7 @@ let startCalcMileage = function (sn, lt, cb, __start) {
         }
         startCalcMileage(sn, lt, cb, dd);
     });
-}
+};
 
 let __loop__run = false;
 let __loop = function () {
@@ -231,7 +232,7 @@ let __loop = function () {
     } else {
         __loop__run = false;
     }
-}
+};
 
 /***
  * localmileage demo
@@ -261,12 +262,12 @@ let doLocationPost = function (req, res, next) {
     }
     let sn = data.SerialNumber;
     res.send(_add_temp(sn));
-}
+};
 
 let doSingle = function (req, res, next) {
     let sn = req.params.sn;
     res.send(_add_temp(sn));
-}
+};
 
 let _add_temp = function (sn) {
     if (tempArrays.length > 50) {
@@ -278,7 +279,7 @@ let _add_temp = function (sn) {
     } else {
         return "-1";
     }
-}
+};
 
 /* GET users listing. */
 router.get('/', demo);

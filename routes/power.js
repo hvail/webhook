@@ -90,7 +90,7 @@ let poolPost = function (subs, cb, i) {
         _i++;
         poolPost(subs, cb, _i);
     });
-}
+};
 
 // 具体算法
 let powerRight = function (p1, p2, io) {
@@ -99,7 +99,7 @@ let powerRight = function (p1, p2, io) {
     let pv1 = p1[kn], pv2 = p2[kn];
     if (pv1 === pv2) return "HOLD";
     return pv1 < pv2 ? "UP" : "DOWN";
-}
+};
 
 let powersAverage = function (ps) {
     if (ps === null || ps.length < 1) return null;
@@ -108,7 +108,7 @@ let powersAverage = function (ps) {
         aveSum += ps[i].PowerValue;
     }
     return Math.round(aveSum / ps.length);
-}
+};
 
 // 找出最高值，最低值，初始值，结束值
 let powerArgSearch = function (ps) {
@@ -163,7 +163,7 @@ let powerMidTime = function (data, start, end) {
 
         }
     }
-}
+};
 
 let formatPower = function (pw) {
     let kn = pw.BatPo === 0 ? "BatInside" : "BatOutside";
@@ -189,14 +189,15 @@ let doPostPower = function (req, res, next) {
         score = score || first_data;
         calcMidPowers(sn, score, end, function (err, lastTime) {
             if (err) {
-                res.status(200).send('' + err);
+                // res.status(200).send('' + err);
             } else {
                 // 最大的上传条数为200
                 redis.ZADD(key_power_calc, lastTime, sn);
-                res.status(200).send('' + lastTime);
+                // res.status(200).send('' + lastTime);
             }
         });
     });
+    res.status(200).send('1');
 }
 
 let getDemo = function (req, res, next) {
