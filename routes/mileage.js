@@ -38,6 +38,10 @@ let _getNextGPSTime = function (sn, start, cb) {
     }
     let url = readUrl + sn + "/" + start + "/" + _now + '?count=1';
     request(url, function (err, response, body) {
+        if (err) {
+            console.log("LINE:42 : " + url);
+            console.log(err);
+        }
         body = JSON.parse(body);
         if (body.length < 1) {
             cb && cb(_now);
