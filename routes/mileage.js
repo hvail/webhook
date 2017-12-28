@@ -14,8 +14,8 @@ let calc_length = 2 * 3600;     // 单次读取长度
 let calc_mid = 5 * 60;          // 计算间隔5分钟
 let first_data = 1504195200;    // 里程统计从 UTC: 2017-08-01 开始算起
 let key_mileage_calc = "SET-spark-mileage-end-time"; // 记录最后计算的时间
-let readUrl = "http://v3.res-ots.server." + area + ".sky1088.com/track/range-mileage/";
-let post_url = "http://v3.res-mongo.server." + area + ".sky1088.com/mileage";
+let readUrl = `http://v3.res.server.${area}.sky1088.com/track/range-mileage/`;
+let post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
 
 let temp = new myUtil.Hash();
 let failUrlList = "LIST-range-mileage-None";
@@ -121,6 +121,7 @@ let _calc_pack_mileage = function (pack_hash) {
 let _do_save_mileage = function (data, sn, middleTime) {
     let push_obj = [];
     for (let k in data._hash) {
+        if (!data._hash.hasOwnProperty(k)) continue;
         let obj = data._hash[k];
         obj.SerialNumber = sn;
         obj.MiddleTime = middleTime;
@@ -146,6 +147,7 @@ let _calcUrlMileage = function (url, cb) {
                 return;
             }
             for (let k in obj._hash) {
+                if (!obj._hash.hasOwnProperty(k)) continue;
                 if (obj._hash[k].length < 2) obj.remove(k);
             }
             let calc_obj = _calc_pack_mileage(obj);

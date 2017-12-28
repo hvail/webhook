@@ -135,11 +135,12 @@ router.Clone = function (src, tar) {
     let clone = {};
     if (!tar) return null;
     for (let k in src) {
-        if (!!tar[k] && typeof(src[k]) === 'number') {
-            clone[k] = isNaN(tar[k]) ? 0 : tar[k];
-        } else {
-            clone[k] = tar[k] || src[k];
-        }
+        if (src.hasOwnProperty(k))
+            if (!!tar[k] && typeof(src[k]) === 'number') {
+                clone[k] = isNaN(tar[k]) ? 0 : tar[k];
+            } else {
+                clone[k] = tar[k] || src[k];
+            }
     }
     return clone;
 };
