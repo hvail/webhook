@@ -253,7 +253,7 @@ let __loop = function () {
  * @param next
  */
 let doLocationPost = function (req, res, next) {
-    myUtil.logger(`mileage post : ${JSON.stringify(req.body)}`);
+    // myUtil.logger(`mileage post : ${JSON.stringify(req.body)}`);
     let data = req.body;
     if (util.isArray(req.body)) {
         let _data;

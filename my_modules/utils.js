@@ -213,7 +213,7 @@ router.DoPushPost = function (url, data, cb, log) {
 
 router.logger = function (log) {
     logger.info(log);
-    console.log(log);
+    // console.log(log);
 };
 
 router.SendMqObject = function (exchage, obj, target) {
