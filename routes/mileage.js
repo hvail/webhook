@@ -17,12 +17,14 @@ let first_data = 1504195200;    // 里程统计从 UTC: 2017-08-01 开始算起
 let key_mileage_calc = "SET-spark-mileage-end-time"; // 记录最后计算的时间
 let readUrl = `http://v3.res.server.${area}.sky1088.com/mileage/range/`;
 let post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
-let logger = log4js.getLogger();
-logger.level = 'info';
+
 let temp = new myUtil.Hash();
 let failUrlList = "LIST-range-mileage-None";
 
 let tempArrays = [];
+
+let logger = log4js.getLogger();
+logger.level = 'info';
 
 let demo = function (req, res, next) {
     res.send('mileage v1.2.0');
