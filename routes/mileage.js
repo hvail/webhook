@@ -139,8 +139,9 @@ let _do_save_mileage = function (data, sn, middleTime) {
     if (push_obj.length > 0)
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
             if (status !== 1) {
-                // console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
-                // console.log(push_obj);
+                console.log(post_url + " " + sn + " ( " + push_obj.length + " ) : " + status + " -- ");
+                console.log(push_obj);
+                logger.info(`${post_url}, ${sn}, ${push_obj.length}, ${status} `)
             }
         });
 };
@@ -159,8 +160,10 @@ let _calcUrlMileage = function (url, cb) {
                 if (obj._hash[k].length < 2) obj.remove(k);
             }
             let calc_obj = _calc_pack_mileage(obj);
-            let log = url + " - length : " + _body.length + " - valid : " + calc_obj.count() + " - invalid : " + obj.count();
-            redis.RPUSH(failUrlList, log);
+            let log = `${url} - length :  ${_body.length} - valid : ${calc_obj.count()} - invalid : ${obj.count()}`;
+            console.log(log);
+            logger.info(log);
+            // redis.RPUSH(failUrlList, log);
             cb && cb(calc_obj);
         } else {
             cb && cb(0);
