@@ -180,12 +180,14 @@ router.Hash = function Hashtable() {
 router.ClassClone = function (src, tar, res) {
     let clone = {};
     for (let k in src) {
-        let m = src[k];
-        if (m === REQUIRED && !tar[k]) {
-            res.send(204, k + "is required");
-            return null;
+        if (src.hasOwnProperty(k)) {
+            let m = src[k];
+            if (m === REQUIRED && !tar[k]) {
+                res.send(204, k + "is required");
+                return null;
+            }
+            clone[k] = tar[k] || src[k];
         }
-        clone[k] = tar[k] || src[k];
     }
     return clone;
 };
@@ -204,6 +206,7 @@ router.DoPushPost = function (url, data, cb, log) {
                 logger.info(msg);
             }
             if (res && res.statusCode > 400) {
+                console.log(url + " : " + res.statusCode);
                 console.log(body);
             }
         } catch (e) {
