@@ -214,8 +214,8 @@ let startCalcMileage = function (sn, lt, cb, __start) {
     let url = readUrl + sn + "/" + _start + "/" + end;
     _calcUrlMileage(url, function (result) {
         // 此处的result 是这个区间的数据集
+        let dd = end - calc_mid;
         if (result) {
-            let dd = end - calc_mid;
             redis.ZADD(key_mileage_calc, dd, sn);
             _do_save_mileage(result, sn, calc_mid);
         }
