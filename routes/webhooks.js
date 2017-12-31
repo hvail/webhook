@@ -25,15 +25,14 @@ let __Demo_Class = {
 let getWebHooks = function (sn, lis, cb) {
     let key_a = "0000000000000000";
     let key_b = sn.substring(0, 6) + "0000000000";
-    let key_c = sn;
-    redis.HMGET(HashWebHooks + lis, key_a, key_b, key_c, function (err, data) {
+    redis.HMGET(HashWebHooks + lis, key_a, key_b, sn, function (err, data) {
         let arr = [];
         for (let i = 2; i > -1; i--) {
             if (!!data[i] || data[i] === 'null') arr.push(data[i]);
         }
         cb && cb(err, arr);
     });
-}
+};
 
 let getWebHooksAll = function (lis, cb) {
     redis.HGETALL(HashWebHooks + lis, function (err, data) {
@@ -43,7 +42,8 @@ let getWebHooksAll = function (lis, cb) {
         } else if (data) {
             // console.log(data);
             for (let k in data) {
-                arr.push(data[k]);
+                if (data.hasOwnProperty(k))
+                    arr.push(data[k]);
             }
         }
         cb && cb(err, arr);
@@ -71,7 +71,8 @@ let _default = function (req, res, next) {
 };
 
 let _getByListenerSn = function (req, res, next) {
-    getWebHooks(req.params.sn, req.params.lis, function (err, data) {
+    let {sn, lis} = req.params;
+    getWebHooks(sn, lis, function (err, data) {
         res.send(data);
     });
 };
@@ -96,14 +97,12 @@ let _location = function (req, res, next) {
         }
     }
     if (_pos.length < 1) {
-        // console.log(pos);
         res.send('-1');
         return;
     }
     pos = _pos;
     let sn = pos[0].SerialNumber;
     getWebHooks(sn, "GPSPosition", function (err, data) {
-        // console.log(data);
         doWebPush(data, pos);
     });
     res.send("1");

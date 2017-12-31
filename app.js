@@ -48,6 +48,7 @@ app.use('/users', users);
 app.use('/fence', fence);
 app.use('/power', power);
 app.use('/push-alarm-phone', alarm_push_phone);
+app.use('/webhook', webhooks);
 app.use('/webhooks', webhooks);
 app.use('/mileage', mileage);
 

@@ -156,7 +156,7 @@ let _calcUrlMileage = function (url, cb) {
                 if (obj._hash[k].length < 2) obj.remove(k);
             }
             let calc_obj = _calc_pack_mileage(obj);
-            myUtil.logger(`${url} - length :  ${_body.length} - valid : ${calc_obj.count()} - invalid : ${obj.count()}`);
+            myUtil.logger(`_calcUrlMileage ${url} - length :  ${_body.length} - valid : ${calc_obj.count()} - invalid : ${obj.count()}`);
             // redis.RPUSH(failUrlList, log);
             cb && cb(calc_obj);
         } else {
@@ -253,7 +253,6 @@ let __loop = function () {
  * @param next
  */
 let doLocationPost = function (req, res, next) {
-    // myUtil.logger(`mileage post : ${JSON.stringify(req.body)}`);
     let data = req.body;
     if (util.isArray(req.body)) {
         let _data;
