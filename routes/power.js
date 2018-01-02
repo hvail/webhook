@@ -26,7 +26,7 @@ let calcMidPowers = function (sn, start, end, cb) {
     request(url, function (err, res, body) {
         if (res.statusCode === 200 && (body[0] === '[' || body[0] === '{')) {
             let data = JSON.parse(body);
-            if (start === first_data) {
+            if (start === first_data && data.length > 0) {
                 start = data[0].PowerTime - data[0].PowerTime % calc_mid;
                 // console.log(sn + " init power timer format start is " + start)
                 calcMidPowers(sn, start, end, cb);
