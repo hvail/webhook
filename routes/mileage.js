@@ -253,27 +253,29 @@ let __loop = function () {
  * @param next
  */
 let doLocationPost = function (req, res, next) {
-    let data = req.body;
-    if (util.isArray(req.body)) {
-        let _data;
-        let i = 0;
-        while (!_data) {
-            _data = data[i];
-            i++;
-        }
-        if (!_data) {
-            res.send("-4");
-            return;
-        }
-        data = _data;
-    }
-    let sn = data.SerialNumber;
-    res.send(_add_temp(sn));
+    res.statusCode(200).send("1");
+    // let data = req.body;
+    // if (util.isArray(req.body)) {
+    //     let _data;
+    //     let i = 0;
+    //     while (!_data) {
+    //         _data = data[i];
+    //         i++;
+    //     }
+    //     if (!_data) {
+    //         res.send("-4");
+    //         return;
+    //     }
+    //     data = _data;
+    // }
+    // let sn = data.SerialNumber;
+    // res.send(_add_temp(sn));
 };
 
 let doSingle = function (req, res, next) {
-    let sn = req.params.sn;
-    res.send(_add_temp(sn));
+    res.statusCode(200).send("1");
+    // let sn = req.params.sn;
+    // res.send(_add_temp(sn));
 };
 
 let _add_temp = function (sn) {
