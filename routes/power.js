@@ -184,6 +184,12 @@ let getLastTime = function (req, res, next) {
 let doPostPower = function (req, res, next) {
     let body = req.body;
     let sn = body.SerialNumber;
+
+    if (sn.indexOf("619044") < 0) {
+        res.status(200).send("1");
+        return
+    }
+
     let end = body.PowerTime;
     redis.ZSCORE(key_power_calc, sn, function (err, score) {
         score = score || first_data;
