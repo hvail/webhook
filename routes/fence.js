@@ -18,6 +18,7 @@ const FenceTriggerTitle = "Device %s has %s fence %s";
 const EnterTitle = "entered";
 const LeaveTitle = "exited";
 
+const key_poi_calc = "HASH-spark-end-point";
 const ExchangeName = "hyz.protocol.BaseEvent";
 
 const time = function () {
@@ -33,8 +34,8 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     be.UpTime = time();
     be.SerialNumber = sn;
     be.Description = "By Web Hooks";
-    // console.log(be.Message);
     // 利用MQ进行消息中转
+    console.log(JSON.stringify(be));
     myUtil.SendMqObject(ExchangeName, [be], sn);
 }
 
@@ -48,7 +49,7 @@ let toCoordPoi = function (fence, p) {
     } else {
         return {Lat: p.Lat, Lng: p.Lng};
     }
-}
+};
 
 let trigger = function (ps, fence) {
     let fp = ps[0];
@@ -64,7 +65,16 @@ let trigger = function (ps, fence) {
         }
         _io_f = _tio;
     }
-}
+};
+
+let _readLastAndSet = function (sn, poi, cb) {
+    redis.hget(key_poi_calc, sn, function (err, rs) {
+        err && console.log(err);
+        console.log(rs);
+        redis.hset(key_poi_calc, sn, poi);
+        cb && cb(null);
+    });
+};
 
 let _location = function (req, res, next) {
     let pos = req.body;
@@ -78,14 +88,17 @@ let _location = function (req, res, next) {
     let sn = pos[0].SerialNumber;
     let getFenceUrl = fenceUrl + sn;
     request(getFenceUrl, function (err, response, result) {
-        if (response.statusCode !== 200) return;
+        if (response.statusCode !== 200 && result === "[]") return;
         try {
-            console.log(result);
             let fences = JSON.parse(result);
-            if (fences.length < 1 || pos.length < 2) return;
-            for (let i = 0; i < fences.length; i++) {
-                trigger(pos, fences[i]);
-            }
+            if (fences.length < 1 || pos.length < 1) return;
+            // 这里读取最后一次记录的轨迹点
+            _readLastAndSet(sn, pos[pos.length - 1], function (poi) {
+                if (poi !== null) pos = pois.concat(pos);
+                for (let i = 0; i < fences.length; i++) {
+                    trigger(pos, fences[i]);
+                }
+            });
         } catch (e) {
             // console.log(e);
             // console.log("GET " + getFenceUrl + " : " + response.statusCode);
