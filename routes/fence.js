@@ -71,7 +71,7 @@ let _readLastAndSet = function (sn, poi, cb) {
     redis.hget(key_poi_calc, sn, function (err, rs) {
         err && console.log(err);
         console.log(rs);
-        redis.hset(key_poi_calc, sn, poi);
+        redis.hset(key_poi_calc, sn, JSON.stringify(poi));
         cb && cb(null);
     });
 };
