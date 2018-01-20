@@ -96,7 +96,7 @@ let _location = function (req, res, next) {
             if (fences.length < 1 || pos.length < 1) return;
             // 这里读取最后一次记录的轨迹点
             _readLastAndSet(sn, pos[pos.length - 1], function (poi) {
-                if (poi !== null) pos = pois.concat(pos);
+                if (poi !== null) pos = poi.concat(pos);
                 for (let i = 0; i < fences.length; i++) {
                     trigger(pos, fences[i]);
                 }
