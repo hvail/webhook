@@ -10,67 +10,20 @@ let express = require('express');
 let util = require('util');
 let router = express.Router();
 let area = process.env.DATAAREA || "zh-cn";
-// let calc_length = 2 * 3600;      // 单次读取长度
+
 let calc_mid = 5 * 60;              // 计算间隔5分钟
 let calc_length = 3 * calc_mid;    // 单次读取长度,3个计算周期 15分钟计算一次以减少系统压力和提高响应速度
-let first_data = 1504195200;    // 里程统计从 UTC: 2017-08-01 开始算起
-let key_mileage_calc = "SET-spark-mileage-end-time"; // 记录最后计算的时间
-let readUrl = `http://v3.res.server.${area}.sky1088.com/mileage/range/`;
 let post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
-
-let temp = new myUtil.Hash();
-let failUrlList = "LIST-range-mileage-None";
 // 存储规则为右进左出
 // RPUSH & LRANGE
 let redisMileageList = "list-run-mileage-";
 
-let tempArrays = [];
-
 let demo = function (req, res, next) {
-    res.send('mileage v1.2.0');
+    res.send('mileage v2.0.0');
 };
 
 let _format_gt = function (time, mid) {
     return time - (time % mid);
-};
-
-let _getNextGPSTime = function (sn, start, cb) {
-    let _now = _format_gt(Math.round(new Date().getTime() / 1000), calc_length);
-    if (_now < start) {
-        cb && cb(_now);
-        return;
-    }
-    let url = readUrl + sn + "/" + start + "/" + _now + '?count=1';
-    request(url, function (err, response, body) {
-        if (err) {
-            console.log("LINE:42 : " + url);
-            console.log(err);
-        }
-        body = JSON.parse(body);
-        if (body.length < 1) {
-            cb && cb(_now);
-            return;
-        }
-        cb && cb(body[0].GPSTime);
-    });
-};
-
-/***
- * 获取数据库中保存的上一次计算起始点
- * @param sn
- * @param cb
- * @private
- */
-let _getSaveMiddleTime = function (sn, cb) {
-    redis.ZSCORE(key_mileage_calc, sn, function (err, score) {
-        if (!score) {
-            _getNextGPSTime(sn, first_data, function (n_score) {
-                cb && cb(_format_gt(n_score, calc_length));
-            });
-        } else {
-            cb && cb(score);
-        }
-    });
 };
 
 let _calc_pack_mileage = function (pack_hash) {
@@ -136,8 +89,6 @@ let _do_save_mileage = function (data, sn, middleTime) {
         obj.TimeString = new Date(k * 1000).FormatDate(4);
         if (obj.Distance > 0) push_obj.push(obj);
     }
-    // console.log(JSON.stringify(push_obj));
-    // console.log(post_url);
     if (push_obj.length > 0) {
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
             if (status !== 1) {
@@ -145,29 +96,6 @@ let _do_save_mileage = function (data, sn, middleTime) {
             }
         });
     }
-};
-
-let _calcUrlMileage = function (url, cb) {
-    request(url, function (err, response, body) {
-        if (response.statusCode === 200) {
-            let _body = JSON.parse(body);
-            let obj = _calcMiddleMileage(_body);
-            if (obj === null) {
-                cb && cb();
-                return;
-            }
-            for (let k in obj._hash) {
-                if (!obj._hash.hasOwnProperty(k)) continue;
-                if (obj._hash[k].length < 2) obj.remove(k);
-            }
-            let calc_obj = _calc_pack_mileage(obj);
-            myUtil.logger(`_calcUrlMileage ${url} - length :  ${_body.length} - valid : ${calc_obj.count()} - invalid : ${obj.count()}`);
-            // redis.RPUSH(failUrlList, log);
-            cb && cb(calc_obj);
-        } else {
-            cb && cb(0);
-        }
-    });
 };
 
 /***
@@ -202,45 +130,6 @@ let _calcMiddleMileage = function (data) {
     return obj;
 };
 
-/***
- * 开始计算里程到指定时间
- * @param sn
- * @param lt
- * @param cb
- * @param __start
- * @constructor
- */
-let startCalcMileage = function (sn, lt, cb, __start) {
-    // 格式化最后时间(最后的一次计算间隔时间点，如当前是2小时的计算间隔，现在是12:33 ，即最后计算的间隔为 09:55 - 12:00)
-    let _last_time = _format_gt(lt, calc_length);
-    let _start = __start * 1;
-    if (_start && _start > (_last_time - calc_length - calc_mid)) {
-        // 如果开始时间大于或等于最后时间的前一个计算间隔，则计算中止
-        cb && cb();
-        return;
-    }
-
-    if (!_start || _start < 1) {
-        _getSaveMiddleTime(sn, function (top_start) {
-            startCalcMileage(sn, lt, cb, top_start);
-        });
-        return;
-    }
-
-    // 组装此次请求的url
-    let end = _format_gt(_start + calc_length + calc_mid, calc_length);
-    let url = readUrl + sn + "/" + _start + "/" + end;
-    _calcUrlMileage(url, function (result) {
-        // 此处的result 是这个区间的数据集
-        let dd = end - calc_mid;
-        if (result) {
-            redis.ZADD(key_mileage_calc, dd, sn);
-            _do_save_mileage(result, sn, calc_mid);
-        }
-        startCalcMileage(sn, lt, cb, dd);
-    });
-};
-
 let _readLeftList = function (key, sn, cb) {
     redis.LRANGE(key, 0, 1, function (err, jsons) {
         // 只有两条以上符合要求才开始计算里程
@@ -257,12 +146,10 @@ let _readLeftList = function (key, sn, cb) {
                 let obj = JSON.parse(jsons[i]);
                 if (obj.GPSTime > calc_time) {
                     cb && cb();
-                    // console.log(`${sn} 没有超过2个点在计算点之前，此次计算放弃`);
                     return;
                 }
             }
 
-            // console.log(`${key} : ${calc_time} - ${obj.GPSTime} - ${mt}`);
             // 开始读取整个区域的里程值，并传送到计算函数中。
             redis.LRANGE(key, 0, -1, function (err, jsonArr) {
                 try {
@@ -275,9 +162,7 @@ let _readLeftList = function (key, sn, cb) {
                             console.log(`${sn} 计算了 ${i} 条数据，从 ${arr[0].GPSTime} 到 ${arr[arr.length - 1].GPSTime} : ${_obj.GPSTime}/${calc_time}`);
                             break;
                         }
-                        if (i === jsonArr.length - 1) {
-                            redis.LTRIM(key, i - 1, -1);
-                        }
+                        if (i === jsonArr.length - 1) redis.LTRIM(key, i - 1, -1);
                     }
 
                     // 将针对arr进行数据处理
