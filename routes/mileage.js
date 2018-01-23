@@ -246,7 +246,7 @@ let _readLeftList = function (key, cb) {
         let obj = util.isObject(json) ? json : JSON.parse(json);
         if (util.isArray(obj)) obj = obj[0];
         let mt = now - obj.GPSTime;
-        console.log(`${key} : ${mt}`);
+        console.log(`${key} : ${now} - ${obj.GPSTime} - ${mt}`);
         if (mt > calc_length) {
             // 开始读取整个区域的里程值，并传送到计算函数中。
             redis.LRANGE(key, 0, -1, function (err, jsonArr) {
