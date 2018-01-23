@@ -247,6 +247,7 @@ let _readLeftList = function (key, cb) {
         if (util.isArray(obj)) {
             obj = obj[0];
             console.log(key + ' : util.isArray true : ' + util.isArray(obj));
+            console.log(obj);
         }
         let mt = now - obj.GPSTime;
         console.log(`${key} : ${now} - ${obj.GPSTime} - ${mt}`);
