@@ -12,7 +12,7 @@ let router = express.Router();
 let area = process.env.DATAAREA || "zh-cn";
 // let calc_length = 2 * 3600;      // 单次读取长度
 let calc_mid = 5 * 60;              // 计算间隔5分钟
-let calc_length = 6 * calc_mid;    // 单次读取长度,12个计算周期
+let calc_length = 3 * calc_mid;    // 单次读取长度,3个计算周期 15分钟计算一次以减少系统压力和提高响应速度
 let first_data = 1504195200;    // 里程统计从 UTC: 2017-08-01 开始算起
 let key_mileage_calc = "SET-spark-mileage-end-time"; // 记录最后计算的时间
 let readUrl = `http://v3.res.server.${area}.sky1088.com/mileage/range/`;
@@ -141,7 +141,6 @@ let _do_save_mileage = function (data, sn, middleTime) {
     if (push_obj.length > 0) {
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
             if (status !== 1) {
-                console.log(push_obj);
                 myUtil.logger(`${post_url}, ${sn}, ${push_obj.length}, ${status} `)
             }
         });
@@ -275,12 +274,12 @@ let _readLeftList = function (key, sn, cb) {
                         let _obj = JSON.parse(jsonArr[i]);
                         if (_obj.GPSTime < calc_time) arr.push(_obj);
                         else {
-                            redis.LTRIM(key, i, -1);
+                            redis.LTRIM(key, i - 1, -1);
                             console.log(`${sn} 计算了 ${i} 条数据，从 ${arr[0].GPSTime} 到 ${arr[arr.length - 1].GPSTime}`);
                             break;
                         }
                         if (i === jsonArr.length - 1) {
-                            redis.DEL(key);
+                            redis.LTRIM(key, i - 1, -1);
                         }
                     }
 
@@ -290,7 +289,6 @@ let _readLeftList = function (key, sn, cb) {
                     cb && cb(null, '1');
                 } catch (e) {
                     redis.DEL(key);
-                    return;
                 }
             });
         }
@@ -324,29 +322,16 @@ let doLocationPost = function (req, res, next) {
             redis.RPUSH(key, JSON.stringify(arr[i]));
         }
         // 左出
-        _readLeftList(key, sn, function () {
-
-        });
+        _readLeftList(key, sn);
     }
     res.status(200).send("1");
 };
 
 let doSingle = function (req, res, next) {
+    let sn = req.params.sn;
+    let key = redisMileageList.concat(sn);
+    _readLeftList(key, sn);
     res.statusCode(200).send("1");
-    // let sn = req.params.sn;
-    // res.send(_add_temp(sn));
-};
-
-let _add_temp = function (sn) {
-    // if (tempArrays.length > 50) {
-    //     return "-2";
-    // } else if (tempArrays.indexOf(sn) === -1) {
-    //     tempArrays.push(sn);
-    //     if (!__loop__run) __loop();
-    //     return "1";
-    // } else {
-    //     return "-1";
-    // }
 };
 
 /* GET users listing. */
