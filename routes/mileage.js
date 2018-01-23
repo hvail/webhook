@@ -136,6 +136,8 @@ let _do_save_mileage = function (data, sn, middleTime) {
         obj.TimeString = new Date(k * 1000).FormatDate(4);
         if (obj.Distance > 0) push_obj.push(obj);
     }
+    console.log(JSON.stringify(push_obj));
+    console.log(post_url);
     if (push_obj.length > 0) {
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
             if (status !== 1) {
