@@ -248,7 +248,7 @@ let _readLeftList = function (key, cb) {
             obj = obj[0];
             if (util.isString(obj)) {
                 if (obj[0] !== '{') {
-                    redis.LPOP(key);
+                    redis.DEL(key);
                     return;
                 }
                 obj = JSON.parse(obj);
