@@ -242,7 +242,7 @@ let startCalcMileage = function (sn, lt, cb, __start) {
 let _readLeftList = function (key, cb) {
     redis.LRANGE(key, 0, 0, function (err, json) {
         // 从左边读取一条，以判断其时间与当前时间是否相差超过calc_length(两小时)
-        let now = Math.round(new Date().getTime() / 1000);
+        let now = _format_gt(Math.round(new Date().getTime() / 1000), calc_length);
         let obj = util.isObject(json) ? json : JSON.parse(json);
         if (util.isArray(obj)) {
             try {
@@ -263,13 +263,18 @@ let _readLeftList = function (key, cb) {
         console.log(`${key} : ${now} - ${obj.GPSTime} - ${mt}`);
         if (mt > calc_length) {
             // 开始读取整个区域的里程值，并传送到计算函数中。
-            redis.LRANGE(key, 0, 49, function (err, jsonArr) {
+            redis.LRANGE(key, 0, -1, function (err, jsonArr) {
                 try {
                     let arr = [];
                     for (let i = 0; i < jsonArr.length; i++) {
-                        arr.push(JSON.parse(jsonArr[i]));
+                        let _obj = JSON.parse(jsonArr[i]);
+                        if (_obj.GPSTime + calc_length < now)
+                            arr.push(_obj);
+                        else
+                            break;
                     }
-                    console.log(arr);
+
+                    // console.log(arr);
                 } catch (e) {
                     redis.DEL(key);
                     return;
