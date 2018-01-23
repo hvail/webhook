@@ -257,6 +257,7 @@ let _readLeftList = function (key, sn, cb) {
                 let obj = JSON.parse(jsons[i]);
                 if (obj.GPSTime > calc_time) {
                     cb && cb();
+                    console.log(`${sn} 没有超过2个点在计算点之前，此次计算放弃`);
                     return;
                 }
             }
