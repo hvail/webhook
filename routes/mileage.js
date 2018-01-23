@@ -245,7 +245,8 @@ let _readLeftList = function (key, cb) {
         let now = new Date().getTime() / 1000;
         console.log(json);
         console.log(util.isObject(json));
-        let obj = JSON.parse(json), mt = now - obj.GPSTime;
+        let obj = util.isObject(json) ? json : JSON.parse(json);
+        let mt = now - obj.GPSTime;
         console.log(util.isArray(obj));
         if (mt > calc_length) {
             // 开始读取整个区域的里程值，并传送到计算函数中。
