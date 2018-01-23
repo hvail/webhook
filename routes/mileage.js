@@ -12,7 +12,7 @@ let router = express.Router();
 let area = process.env.DATAAREA || "zh-cn";
 // let calc_length = 2 * 3600;      // 单次读取长度
 let calc_mid = 5 * 60;              // 计算间隔5分钟
-let calc_length = 12 * calc_mid;    // 单次读取长度,12个计算周期
+let calc_length = 6 * calc_mid;    // 单次读取长度,12个计算周期
 let first_data = 1504195200;    // 里程统计从 UTC: 2017-08-01 开始算起
 let key_mileage_calc = "SET-spark-mileage-end-time"; // 记录最后计算的时间
 let readUrl = `http://v3.res.server.${area}.sky1088.com/mileage/range/`;
@@ -136,13 +136,14 @@ let _do_save_mileage = function (data, sn, middleTime) {
         obj.TimeString = new Date(k * 1000).FormatDate(4);
         if (obj.Distance > 0) push_obj.push(obj);
     }
-    if (push_obj.length > 0)
+    if (push_obj.length > 0) {
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
             if (status !== 1) {
                 console.log(push_obj);
                 myUtil.logger(`${post_url}, ${sn}, ${push_obj.length}, ${status} `)
             }
         });
+    }
 };
 
 let _calcUrlMileage = function (url, cb) {
@@ -260,16 +261,15 @@ let _readLeftList = function (key, cb) {
             }
         }
         let mt = calc_time - obj.GPSTime;
-        console.log(`${key} : ${calc_time} - ${obj.GPSTime} - ${mt}`);
         if (calc_time > obj.GPSTime) {
+            console.log(`${key} : ${calc_time} - ${obj.GPSTime} - ${mt}`);
             // 开始读取整个区域的里程值，并传送到计算函数中。
             redis.LRANGE(key, 0, -1, function (err, jsonArr) {
                 try {
                     let arr = [];
                     for (let i = 0; i < jsonArr.length; i++) {
                         let _obj = JSON.parse(jsonArr[i]);
-                        if (_obj.GPSTime < calc_time)
-                            arr.push(_obj);
+                        if (_obj.GPSTime < calc_time) arr.push(_obj);
                         else {
                             redis.LTRIM(key, i, -1);
                             console.log(`计算了 ${i} 条数据，从 ${arr[0].GPSTime} 到 ${arr[arr.length - 1].GPSTime}`);
@@ -280,14 +280,15 @@ let _readLeftList = function (key, cb) {
                         }
                     }
 
-                    // console.log(arr);
+                    // 将针对arr进行数据处理
+                    let hash = _calcMiddleMileage(arr);
+                    console.log(hash);
                 } catch (e) {
                     redis.DEL(key);
                     return;
                 }
             });
         }
-        // console.log(obj);
     });
     cb && cb();
 };
