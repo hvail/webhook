@@ -19,6 +19,9 @@ let post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
 
 let temp = new myUtil.Hash();
 let failUrlList = "LIST-range-mileage-None";
+// 存储规则为右进左出
+// RPUSH & LRANGE
+let redisMileageList = "list-run-mileage-";
 
 let tempArrays = [];
 
@@ -108,7 +111,7 @@ let _calc_pack_mileage = function (pack_hash) {
             MileageBegin: pf.Mileage,
             MileageEnd: pe.Mileage,
             MaxSpeed: _maxSpeed.toFixed(3) + " km/h",
-            Speed: (dis / (pe.GPSTime - pf.GPSTime)).toFixed(3),
+            Speed: (dis / (pe.GPSTime - pf.GPSTime)).toFixed(3)
         };
         myUtil.logger(JSON.stringify(__obj));
         let os = __obj.Speed * 3.6;
@@ -241,6 +244,16 @@ let __loop = function () {
     }
 };
 
+let _readLeftList = function (key, cb) {
+    redis.LRANGE(key, 0, 0, function (err, json) {
+        // 从左边读取一条，以判断其时间与当前时间是否相差超过calc_length(两小时)
+        let now = new Date().getTime() / 1000;
+        let obj = JSON.parse(json);
+        console.log(obj);
+    });
+    cb && cb();
+};
+
 /***
  * localmileage demo
  * SerialNumber
@@ -253,23 +266,25 @@ let __loop = function () {
  * @param next
  */
 let doLocationPost = function (req, res, next) {
-    res.statusCode(200).send("1");
-    // let data = req.body;
-    // if (util.isArray(req.body)) {
-    //     let _data;
-    //     let i = 0;
-    //     while (!_data) {
-    //         _data = data[i];
-    //         i++;
-    //     }
-    //     if (!_data) {
-    //         res.send("-4");
-    //         return;
-    //     }
-    //     data = _data;
-    // }
-    // let sn = data.SerialNumber;
-    // res.send(_add_temp(sn));
+    let data = req.body;
+    let arr = [data];
+    let sn = data.SerialNumber;
+    if (util.isArray(data) && data.length > 0) {
+        sn = data[0].SerialNumber;
+        arr = data;
+    }
+    if (!!sn) {
+        let key = redisMileageList.concat(sn);
+        for (let i = 0; i < arr.length; i++) {
+            // 右进
+            redis.RPUSH(key, JSON.stringify(arr[i]));
+        }
+        // 左出
+        _readLeftList(key, function () {
+
+        });
+    }
+    res.status(200).send("1");
 };
 
 let doSingle = function (req, res, next) {
