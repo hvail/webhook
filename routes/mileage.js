@@ -245,6 +245,7 @@ let _readLeftList = function (key, cb) {
         let now = new Date().getTime() / 1000;
         console.log(json);
         let obj = JSON.parse(json), mt = now - obj.GPSTime;
+        console.log(util.isArray(obj));
         if (mt > calc_length) {
             // 开始读取整个区域的里程值，并传送到计算函数中。
             redis.LRANGE(key, 0, -1, function (err, jsonArr) {
@@ -279,7 +280,7 @@ let doLocationPost = function (req, res, next) {
         let key = redisMileageList.concat(sn);
         for (let i = 0; i < arr.length; i++) {
             // 右进
-            redis.RPUSH(key, arr[i]);
+            redis.RPUSH(key, JSON.stringify(arr[i]));
         }
         // 左出
         _readLeftList(key, function () {
