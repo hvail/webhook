@@ -257,7 +257,7 @@ let _readLeftList = function (key, sn, cb) {
                 let obj = JSON.parse(jsons[i]);
                 if (obj.GPSTime > calc_time) {
                     cb && cb();
-                    console.log(`${sn} 没有超过2个点在计算点之前，此次计算放弃`);
+                    // console.log(`${sn} 没有超过2个点在计算点之前，此次计算放弃`);
                     return;
                 }
             }
@@ -272,7 +272,7 @@ let _readLeftList = function (key, sn, cb) {
                         if (_obj.GPSTime < calc_time) arr.push(_obj);
                         else {
                             redis.LTRIM(key, i - 1, -1);
-                            console.log(`${sn} 计算了 ${i} 条数据，从 ${arr[0].GPSTime} 到 ${arr[arr.length - 1].GPSTime}`);
+                            console.log(`${sn} 计算了 ${i} 条数据，从 ${arr[0].GPSTime} 到 ${arr[arr.length - 1].GPSTime} : ${_obj.GPSTime}/${calc_time}`);
                             break;
                         }
                         if (i === jsonArr.length - 1) {
