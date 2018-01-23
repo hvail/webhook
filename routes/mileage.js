@@ -240,7 +240,7 @@ let startCalcMileage = function (sn, lt, cb, __start) {
     });
 };
 
-let _readLeftList = function (key, cb) {
+let _readLeftList = function (key, sn, cb) {
     redis.LRANGE(key, 0, 0, function (err, json) {
         // 从左边读取一条，以判断其时间与当前时间是否相差超过calc_length(两小时)
         let calc_time = _format_gt(Math.round(new Date().getTime() / 1000), calc_length);
@@ -251,12 +251,14 @@ let _readLeftList = function (key, cb) {
                 if (util.isString(obj)) {
                     if (obj[0] !== '{') {
                         redis.DEL(key);
+                        cb && cb(key);
                         return;
                     }
                     obj = JSON.parse(obj);
                 }
             } catch (e) {
                 redis.DEL(key);
+                cb && cb(e);
                 return;
             }
         }
@@ -272,7 +274,7 @@ let _readLeftList = function (key, cb) {
                         if (_obj.GPSTime < calc_time) arr.push(_obj);
                         else {
                             redis.LTRIM(key, i, -1);
-                            console.log(`计算了 ${i} 条数据，从 ${arr[0].GPSTime} 到 ${arr[arr.length - 1].GPSTime}`);
+                            console.log(`${sn} 计算了 ${i} 条数据，从 ${arr[0].GPSTime} 到 ${arr[arr.length - 1].GPSTime}`);
                             break;
                         }
                         if (i === jsonArr.length - 1) {
@@ -282,7 +284,8 @@ let _readLeftList = function (key, cb) {
 
                     // 将针对arr进行数据处理
                     let hash = _calc_pack_mileage(_calcMiddleMileage(arr));
-                    console.log(hash);
+                    _do_save_mileage(hash, sn, calc_mid);
+                    cb && cb(null, '1');
                 } catch (e) {
                     redis.DEL(key);
                     return;
@@ -319,7 +322,7 @@ let doLocationPost = function (req, res, next) {
             redis.RPUSH(key, JSON.stringify(arr[i]));
         }
         // 左出
-        _readLeftList(key, function () {
+        _readLeftList(key, sn, function () {
 
         });
     }
