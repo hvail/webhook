@@ -279,7 +279,7 @@ let doLocationPost = function (req, res, next) {
         let key = redisMileageList.concat(sn);
         for (let i = 0; i < arr.length; i++) {
             // 右进
-            redis.RPUSH(key, JSON.stringify(arr[i]));
+            redis.RPUSH(key, arr[i]);
         }
         // 左出
         _readLeftList(key, function () {
