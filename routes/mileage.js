@@ -244,6 +244,7 @@ let _readLeftList = function (key, cb) {
         // 从左边读取一条，以判断其时间与当前时间是否相差超过calc_length(两小时)
         let now = new Date().getTime() / 1000;
         console.log(json);
+        console.log(util.isObject(json));
         let obj = JSON.parse(json), mt = now - obj.GPSTime;
         console.log(util.isArray(obj));
         if (mt > calc_length) {
