@@ -243,11 +243,10 @@ let _readLeftList = function (key, cb) {
     redis.LRANGE(key, 0, 0, function (err, json) {
         // 从左边读取一条，以判断其时间与当前时间是否相差超过calc_length(两小时)
         let now = new Date().getTime() / 1000;
-        console.log(json);
-        console.log(util.isObject(json));
         let obj = util.isObject(json) ? json : JSON.parse(json);
+        if (util.isArray(obj)) obj = obj[0];
         let mt = now - obj.GPSTime;
-        console.log(util.isArray(obj));
+        console.log(`${key} : ${mt}`);
         if (mt > calc_length) {
             // 开始读取整个区域的里程值，并传送到计算函数中。
             redis.LRANGE(key, 0, -1, function (err, jsonArr) {
