@@ -246,14 +246,20 @@ let _readLeftList = function (key, cb) {
         let obj = util.isObject(json) ? json : JSON.parse(json);
         if (util.isArray(obj)) {
             obj = obj[0];
-            if (util.isString(obj)) obj = JSON.parse(obj);
+            if (util.isString(obj)) {
+                if (obj[0] !== '{') {
+                    redis.LPOP(key);
+                    return;
+                }
+                obj = JSON.parse(obj);
+            }
         }
         let mt = now - obj.GPSTime;
         console.log(`${key} : ${now} - ${obj.GPSTime} - ${mt}`);
         if (mt > calc_length) {
             // 开始读取整个区域的里程值，并传送到计算函数中。
             redis.LRANGE(key, 0, -1, function (err, jsonArr) {
-                console.log(jsonArr);
+                console.log(JSON.parse(jsonArr));
             });
         }
         // console.log(obj);
