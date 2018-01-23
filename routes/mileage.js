@@ -281,7 +281,7 @@ let _readLeftList = function (key, cb) {
                     }
 
                     // 将针对arr进行数据处理
-                    let hash = _calcMiddleMileage(arr);
+                    let hash = _calc_pack_mileage(_calcMiddleMileage(arr));
                     console.log(hash);
                 } catch (e) {
                     redis.DEL(key);
