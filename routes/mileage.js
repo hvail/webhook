@@ -265,8 +265,10 @@ let _readLeftList = function (key, cb) {
             // 开始读取整个区域的里程值，并传送到计算函数中。
             redis.LRANGE(key, 0, 49, function (err, jsonArr) {
                 try {
-                    console.log(jsonArr);
-                    let arr = JSON.parse(jsonArr);
+                    let arr = [];
+                    for (let i = 0; i < jsonArr.length; i++) {
+                        arr.push(JSON.parse(jsonArr[i]));
+                    }
                     console.log(arr);
                 } catch (e) {
                     redis.DEL(key);
