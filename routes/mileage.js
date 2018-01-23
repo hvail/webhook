@@ -245,13 +245,18 @@ let _readLeftList = function (key, cb) {
         let now = Math.round(new Date().getTime() / 1000);
         let obj = util.isObject(json) ? json : JSON.parse(json);
         if (util.isArray(obj)) {
-            obj = obj[0];
-            if (util.isString(obj)) {
-                if (obj[0] !== '{') {
-                    redis.DEL(key);
-                    return;
+            try {
+                obj = obj[0];
+                if (util.isString(obj)) {
+                    if (obj[0] !== '{') {
+                        redis.DEL(key);
+                        return;
+                    }
+                    obj = JSON.parse(obj);
                 }
-                obj = JSON.parse(obj);
+            } catch (e) {
+                redis.DEL(key);
+                return;
             }
         }
         let mt = now - obj.GPSTime;
