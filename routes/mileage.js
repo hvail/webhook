@@ -136,8 +136,8 @@ let _do_save_mileage = function (data, sn, middleTime) {
         obj.TimeString = new Date(k * 1000).FormatDate(4);
         if (obj.Distance > 0) push_obj.push(obj);
     }
-    console.log(JSON.stringify(push_obj));
-    console.log(post_url);
+    // console.log(JSON.stringify(push_obj));
+    // console.log(post_url);
     if (push_obj.length > 0) {
         myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
             if (status !== 1) {
@@ -265,7 +265,7 @@ let _readLeftList = function (key, sn, cb) {
         }
         let mt = calc_time - obj.GPSTime;
         if (calc_time > obj.GPSTime) {
-            console.log(`${key} : ${calc_time} - ${obj.GPSTime} - ${mt}`);
+            // console.log(`${key} : ${calc_time} - ${obj.GPSTime} - ${mt}`);
             // 开始读取整个区域的里程值，并传送到计算函数中。
             redis.LRANGE(key, 0, -1, function (err, jsonArr) {
                 try {
