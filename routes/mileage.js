@@ -245,8 +245,8 @@ let _readLeftList = function (key, cb) {
         let now = new Date().getTime() / 1000;
         let obj = util.isObject(json) ? json : JSON.parse(json);
         if (util.isArray(obj)) {
-            console.log(key + ' : util.isArray true')
             obj = obj[0];
+            console.log(key + ' : util.isArray true : ' + util.isArray(obj));
         }
         let mt = now - obj.GPSTime;
         console.log(`${key} : ${now} - ${obj.GPSTime} - ${mt}`);
