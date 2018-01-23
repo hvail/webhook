@@ -244,7 +244,10 @@ let _readLeftList = function (key, cb) {
         // 从左边读取一条，以判断其时间与当前时间是否相差超过calc_length(两小时)
         let now = new Date().getTime() / 1000;
         let obj = util.isObject(json) ? json : JSON.parse(json);
-        if (util.isArray(obj)) obj = obj[0];
+        if (util.isArray(obj)) {
+            console.log(key + ' : util.isArray true')
+            obj = obj[0];
+        }
         let mt = now - obj.GPSTime;
         console.log(`${key} : ${now} - ${obj.GPSTime} - ${mt}`);
         if (mt > calc_length) {
@@ -253,7 +256,7 @@ let _readLeftList = function (key, cb) {
                 console.log(jsonArr);
             });
         }
-        console.log(obj);
+        // console.log(obj);
     });
     cb && cb();
 };
