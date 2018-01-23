@@ -263,8 +263,14 @@ let _readLeftList = function (key, cb) {
         console.log(`${key} : ${now} - ${obj.GPSTime} - ${mt}`);
         if (mt > calc_length) {
             // 开始读取整个区域的里程值，并传送到计算函数中。
-            redis.LRANGE(key, 0, -1, function (err, jsonArr) {
-                console.log(JSON.parse(jsonArr));
+            redis.LRANGE(key, 0, 49, function (err, jsonArr) {
+                try {
+                    let arr = JSON.parse(jsonArr);
+                    console.log(arr);
+                } catch (e) {
+                    redis.DEL(key);
+                    return;
+                }
             });
         }
         // console.log(obj);
