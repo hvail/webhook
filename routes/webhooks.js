@@ -168,7 +168,7 @@ let _event = function (req, res, next) {
 };
 
 let _network = function (req, res, next) {
-    console.log(req.body);
+    // console.log(req.body);
     res.status(200).send('1');
 };
 
