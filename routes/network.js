@@ -55,11 +55,15 @@ let _doMatchDevice = function (data) {
                 console.log(`${data.SerialNumber} 变更了链接开`);
             } else
                 console.log(`${data.SerialNumber} 开启了链接`);
-            console.log(`SN: ${data.SerialNumber}  :  CONN: ${result.ConnectionId}`);
-            redis.HSET(DeviceHashTableName, data.SerialNumber, result.ConnectionId);
+            console.log(`SN: ${data.SerialNumber}  :  CONN: ${data.ConnectionId}`);
+            redis.HSET(DeviceHashTableName, data.SerialNumber, data.ConnectionId, function (err) {
+                err && console.log(err);
+            });
         });
         console.log(`JSON: ${JSON.stringify(result)} : KEY: ${result.ConnectionId}`);
-        redis.HSET(NetworkHashTableName, result.ConnectionId, JSON.stringify(result));
+        redis.HSET(NetworkHashTableName, result.ConnectionId, JSON.stringify(result), function (err) {
+            err && console.log(err);
+        });
     });
 };
 
