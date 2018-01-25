@@ -36,11 +36,11 @@ let _doCloseNet = function (data) {
             if (connId !== id) {
                 // console.log(`${sn} 变更了链接关 -1`);
                 pushObj.Status = -1;
-                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), pushObj);
+                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, pushObj, sn);
             } else {
                 // console.log(`${sn} 关闭了链接 0`);
                 pushObj.Status = 0;
-                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), pushObj);
+                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, pushObj, sn);
                 redis.HDEL(DeviceHashTableName, sn);
             }
         });
@@ -69,12 +69,12 @@ let _doMatchDevice = function (data) {
                 // 新建链接
                 // console.log(`${sn} 新建了链接 1`);
                 pushObj.Status = 1;
-                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), pushObj);
+                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, pushObj, sn);
             } else {
                 // 更换链接开
                 // console.log(`${sn} 变更了链接开 2`);
                 pushObj.Status = 2;
-                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), pushObj);
+                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, pushObj, sn);
             }
             redis.HSET(DeviceHashTableName, sn, id);
         });
