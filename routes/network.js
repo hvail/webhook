@@ -49,7 +49,7 @@ let _doMatchDevice = function (data) {
                 console.log(`${data.SerialNumber} 变更了链接开`)
             } else
                 console.log(`${data.SerialNumber} 开启了链接`);
-            redis.HSET(DeviceHashTableName, data.SerialNumber, data.ConnectionId);
+            redis.HSET(DeviceHashTableName, data.SerialNumber, result.ConnectionId);
         });
         redis.HSET(NetworkHashTableName, result.ConnectionId, JSON.stringify(result));
     });
