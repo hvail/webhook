@@ -49,22 +49,17 @@ let _doMatchDevice = function (data) {
 
         // 查询设备链接表中是否存在有关此设备的记录
         redis.HGET(DeviceHashTableName, data.SerialNumber, function (err, deviceLink) {
-            console.log("deviceLink");
-            console.log(deviceLink);
             if (deviceLink) {
                 if (deviceLink === result.ConnectionId) return;
                 console.log(`${data.SerialNumber} 变更了链接开`);
-            } else
+            } else {
                 console.log(`${data.SerialNumber} 开启了链接`);
+            }
             console.log(`SN: ${data.SerialNumber}  :  CONN: ${data.ConnectionId}`);
-            redis.HSET(DeviceHashTableName, data.SerialNumber, data.ConnectionId, function (err) {
-                err && console.log(err);
-            });
+            redis.HSET(DeviceHashTableName, data.SerialNumber, data.ConnectionId);
         });
         console.log(`JSON: ${JSON.stringify(result)} : KEY: ${data.ConnectionId}`);
-        redis.HSET(NetworkHashTableName, data.ConnectionId, JSON.stringify(result), function (err) {
-            err && console.log(err);
-        });
+        redis.HSET(NetworkHashTableName, data.ConnectionId, JSON.stringify(result));
     });
 };
 
