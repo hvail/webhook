@@ -4,9 +4,31 @@
  */
 const express = require('express');
 const router = express.Router();
+const redis = require('./../my_modules/redishelp');
+
+const NetworkHashTableName = "HASH-spark-net-work";
+
+let _doOpenNet = function (data) {
+    redis.HSET(NetworkHashTableName, data.ConnectionId, JSON.stringify(data));
+};
+
+let _doCloseNet = function (data) {
+    redis.HDEL(NetworkHashTableName, data.ConnectionId);
+};
+
+let _doMatchDevice = function (data) {
+
+};
 
 let _doPost = function (req, res, next) {
-    console.log(req.body);
+    let {body} = req;
+    if (body.Status === 1) {
+        _doOpenNet(body);
+    } else if (body.Status === 0) {
+        _doCloseNet(body);
+    } else if (body.Status === 2) {
+        _doMatchDevice(body);
+    }
     res.status(200).send('1');
 };
 
