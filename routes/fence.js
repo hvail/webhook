@@ -37,7 +37,7 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     // 利用MQ进行消息中转
     console.log(JSON.stringify(be));
     myUtil.SendMqObject(ExchangeName, [be], sn);
-}
+};
 
 let toCoordPoi = function (fence, p) {
     if (!fence.Coord || fence.Coord === "WGS84") {
