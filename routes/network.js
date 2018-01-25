@@ -35,8 +35,8 @@ let _doMatchDevice = function (data) {
     redis.HSET(DeviceHashTableName, data.SerialNumber, `${data.ConnectionId}`);
     redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, result) {
         result.SerialNumber = data.SerialNumber;
-        redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, result) {
-            redis.HSET(NetworkHashTableName, data.ConnectionId, JSON.stringify(data));
+        redis.HGET(NetworkHashTableName, data.SerialNumber, function (err, result) {
+            redis.HSET(NetworkHashTableName, data.SerialNumber, JSON.stringify(data));
             console.log(`${data.SerialNumber} 开启了链接 `);
         });
     });
