@@ -57,6 +57,7 @@ let trigger = function (ps, fence) {
     let poi = toCoordPoi(fence, fp);
     let _io_f = _fenceCalc(fence.Points, poi.Lat, poi.Lng);
     for (let i = 1; i < ps.length; i++) {
+        if (ps[i].UpMode > 1) continue;
         poi = toCoordPoi(fence, ps[i]);
         let _tio = _fenceCalc(fence.Points, poi.Lat, poi.Lng);
         if (_tio !== _io_f) {
