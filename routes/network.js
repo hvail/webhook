@@ -14,6 +14,7 @@ let _doOpenNet = function (data) {
 };
 
 let _doCloseNet = function (data) {
+    console.log(data);
     redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, result) {
         redis.HDEL(NetworkHashTableName, data.ConnectionId);
         // 如果这个连接没有机身号，则放弃此链接即可
