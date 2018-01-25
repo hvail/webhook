@@ -36,30 +36,23 @@ let _doCloseNet = function (data) {
 };
 
 let _doMatchDevice = function (data) {
-    console.log("data");
-    console.log(data);
     redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, _result) {
         // 如果链接不存在，则放弃所有操作
         let result = _result;
-        if (!result) return;
-        result.SerialNumber = data.SerialNumber;
+        if (!result || result.SerialNumber === data.SerialNumber) return;
 
-        console.log("result");
-        console.log(result);
+        let sn = data.SerialNumber;
+        let id = data.ConnectionId;
+        result.SerialNumber = sn;
 
         // 查询设备链接表中是否存在有关此设备的记录
-        redis.HGET(DeviceHashTableName, data.SerialNumber, function (err, deviceLink) {
-            if (deviceLink) {
-                if (deviceLink === result.ConnectionId) return;
-                console.log(`${data.SerialNumber} 变更了链接开`);
-            } else {
-                console.log(`${data.SerialNumber} 开启了链接`);
-            }
-            console.log(`SN: ${data.SerialNumber}  :  CONN: ${data.ConnectionId}`);
-            redis.HSET(DeviceHashTableName, data.SerialNumber, data.ConnectionId);
+        redis.HGET(DeviceHashTableName, sn, function (err, deviceLink) {
+            if (deviceLink === id) return;
+            console.log(`SN: ${sn}  :  CONN: ${id}`);
+            redis.HSET(DeviceHashTableName, sn, id);
         });
         console.log(`JSON: ${JSON.stringify(result)} : KEY: ${data.ConnectionId}`);
-        redis.HSET(NetworkHashTableName, data.ConnectionId, JSON.stringify(result));
+        redis.HSET(NetworkHashTableName, id, JSON.stringify(result));
     });
 };
 
