@@ -37,7 +37,8 @@ let _doCloseNet = function (data) {
 let _doMatchDevice = function (data) {
     redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, _result) {
         // 如果链接不存在，则放弃所有操作
-        let result = _result;
+        if (!_result) return;
+        let result = JSON.parse(_result);
         if (!result || result.SerialNumber === data.SerialNumber) return;
 
         let sn = data.SerialNumber;
