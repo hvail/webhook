@@ -6,7 +6,8 @@ const express = require('express');
 const router = express.Router();
 const redis = require('./../my_modules/redishelp');
 
-const NetworkHashTableName = "HASH-spark-net-work";
+const NetworkHashTableName = "HASH-spark-net-work-conn";
+const DeviceHashTableName = "HASH-spark-net-work-device";
 
 let _doOpenNet = function (data) {
     redis.HSET(NetworkHashTableName, data.ConnectionId, JSON.stringify(data));
@@ -17,7 +18,10 @@ let _doCloseNet = function (data) {
 };
 
 let _doMatchDevice = function (data) {
-
+    redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, result) {
+        console.log(data);
+        console.log(result);
+    });
 };
 
 let _doPost = function (req, res, next) {
