@@ -167,101 +167,80 @@ let _event = function (req, res, next) {
     });
 };
 
+let _network = function (req, res, next) {
+    res.status(200).send('1')
+};
+
 let _addListen = function (data, cb) {
     let key = data.TargetDevice;
     let lis = data.Listener;
     getWebHooks(key, lis, function (err, result) {
-        if (err) {
-            cb && cb(err);
-            return;
+        if (!err) {
+            if (!result || result.indexOf(data.TargetUrl) < 0) {
+                redis.HSET(HashWebHooks + lis, key, data.TargetUrl);
+            } else console.log("重复不添加");
         }
-        console.log(data.TargetUrl);
-        if (!result || result.indexOf(data.TargetUrl) < 0) {
-            redis.HSET(HashWebHooks + lis, key, data.TargetUrl);
-        } else console.log("重复不添加");
-        cb && cb(null, "ok");
+        cb && cb(err, "ok");
     });
 };
 
-let _doPost = function (req, res, next) {
-    let sn = req.params.sn, url = req.query.url;
-    let data = _util.ClassClone(__Demo_Class, req.body, res);
-    if (data === null) next();
+let __doPostSave = function (url, obj, res) {
     if (url) {
         _addListen(data, function (err, msg) {
-            if (err) {
-                res.send(505, err.Message);
-            } else {
-                res.send(msg);
-            }
-        })
-    } else {
-        res.send('NO');
-    }
+            err ? res.send(505, err.Message) : res.send(msg);
+        });
+    } else res.send('NO-URL');
+};
+
+let _doPost = function (req, res, next) {
+    let data = _util.ClassClone(__Demo_Class, req.body, res);
+    if (data === null) next();
+    __doPostSave(url, data, res);
 };
 
 let _doPositionPost = function (req, res, next) {
-    let sn = req.params.sn, url = req.query.url;
-    let data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPosition"};
-    if (url) {
-        _addListen(data, function (err, msg) {
-            if (err) {
-                res.send(505, err.Message);
-            } else {
-                res.send(msg);
-            }
-        });
-    } else {
-        res.send('NO');
-    }
+    let sn = req.params.sn, url = req.query.url || req.body.url;
+    __doPostSave(url, {TargetDevice: sn, TargetUrl: url, Listener: "GPSPosition"}, res);
 };
 
 let _doEventPost = function (req, res, next) {
-    let {sn, url} = req.params;
-    let data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSEvent"};
-    if (url) {
-        _addListen(data, function (err, msg) {
-            if (err) {
-                res.send(505, err.Message);
-            } else {
-                res.send(msg);
-            }
-        });
-    } else {
-        res.send('NO');
-    }
+    let sn = req.params.sn, url = req.query.url || req.body.url;
+    __doPostSave(url, {TargetDevice: sn, TargetUrl: url, Listener: "GPSEvent"}, res);
 };
 
 let _doPowerPost = function (req, res, next) {
-    let {sn, url} = req.params;
-    if (url) {
-        let data = {TargetDevice: sn, TargetUrl: url, Listener: "GPSPower"};
-        _addListen(data, function (err, msg) {
-            if (err) {
-                res.send(505, err.Message);
-            } else {
-                res.send(msg);
-            }
-        });
-    } else {
-        res.send('no');
-    }
+    let sn = req.params.sn, url = req.query.url || req.body.url;
+    __doPostSave(url, {TargetDevice: sn, TargetUrl: url, Listener: "GPSPower"}, res);
+};
+
+let _doNetWorkPost = function (req, res, next) {
+    let sn = req.params.sn, url = req.query.url || req.body.url;
+    __doPostSave(url, {TargetDevice: sn, TargetUrl: url, Listener: "GPSNetWork"}, res);
 };
 
 /* GET users listing. */
 router.get('/', _default);
 router.get('/lis/:lis/:sn', _getByListenerSn);
 router.get('/all/:lis', _getAllListener);
-router.get('/push/position/:sn', _doPositionPost);
-router.get('/push/event/:sn', _doEventPost);
-router.get('/push/power/:sn', _doPowerPost);
 
 router.post('/', _doPost);
+// 轨迹推送收集
+router.get('/push/position/:sn', _doPositionPost);
 router.post('/push/position/:sn', _doPositionPost);
+// 事件推送收集
+router.get('/push/event/:sn', _doEventPost);
 router.post('/push/event/:sn', _doEventPost);
+// 电量推送收集
+router.get('/push/power/:sn', _doPowerPost);
 router.post('/push/power/:sn', _doPowerPost);
+// 网络推送收集
+router.get('/push/network/:sn', _doNetWorkPost);
+router.post('/push/power/:sn', _doNetWorkPost);
+
+// 发送各类型推送
 router.post('/location', _location);
 router.post('/power', _power);
 router.post('/event', _event);
+router.post('/network', _network);
 
 module.exports = router;

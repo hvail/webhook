@@ -5,30 +5,47 @@
 const express = require('express');
 const router = express.Router();
 const redis = require('./../my_modules/redishelp');
+const myUtil = require('./../my_modules/utils');
 
 const NetworkHashTableName = "HASH-spark-net-work-conn";
 const DeviceHashTableName = "HASH-spark-net-work-device";
+
+const CONNECTION_PUSH_EXCHANGE = "hyz.runtime.connection";
+
+// const DeviceNetWorkPostUrl = `http://v3.res.server.${process.env.DATAAREA}.sky1088.com/network`;
 
 let _doOpenNet = function (data) {
     redis.HSET(NetworkHashTableName, data.ConnectionId, JSON.stringify(data));
 };
 
 let _doCloseNet = function (data) {
-    redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, _result) {
-        redis.HDEL(NetworkHashTableName, data.ConnectionId);
+    let id = data.ConnectionId;
+    redis.HGET(NetworkHashTableName, id, function (err, _result) {
+        redis.HDEL(NetworkHashTableName, id);
         // 如果这个连接没有机身号，则放弃此链接即可
         let result = JSON.parse(_result);
-        if (!result || !result.SerialNumber) {
-            // console.log(`${data.ConnectionId} 关闭了链接`);
-            return;
-        }
+        if (!result || !result.SerialNumber) return;
         let sn = result.SerialNumber;
 
-        redis.HGET(DeviceHashTableName, sn, function (err, obj) {
-            if (obj !== result.ConnectionId) {
-                console.log(`${sn} 变更了链接关`);
+        redis.HGET(DeviceHashTableName, sn, function (err, connId) {
+            if (connId !== id) {
+                console.log(`${sn} 变更了链接关 -1`);
+                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), {
+                    SerialNumber: sn,
+                    ConnectionStart: result.Time,
+                    ConnectionEnd: data.Time,
+                    HashId: id,
+                    Status: -1
+                });
             } else {
-                console.log(`${sn} 关闭了链接`);
+                console.log(`${sn} 关闭了链接 0`);
+                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), {
+                    SerialNumber: sn,
+                    ConnectionStart: result.Time,
+                    ConnectionEnd: data.Time,
+                    HashId: id,
+                    Status: 0
+                });
                 redis.HDEL(DeviceHashTableName, sn);
             }
         });
@@ -50,10 +67,22 @@ let _doMatchDevice = function (data) {
             if (deviceLink === id) return;
             if (!deviceLink) {
                 // 新建链接
-                console.log(`${sn} 新建了链接`);
+                console.log(`${sn} 新建了链接 1`);
+                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), {
+                    SerialNumber: sn,
+                    ConnectionStart: result.Time,
+                    HashId: id,
+                    Status: 1
+                });
             } else {
                 // 更换链接开
-                console.log(`${sn} 变更了链接开`);
+                console.log(`${sn} 变更了链接开 2`);
+                myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), {
+                    SerialNumber: sn,
+                    ConnectionStart: result.Time,
+                    HashId: id,
+                    Status: 2
+                });
             }
             redis.HSET(DeviceHashTableName, sn, id);
         });
