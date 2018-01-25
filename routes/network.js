@@ -38,8 +38,9 @@ let _doCloseNet = function (data) {
 let _doMatchDevice = function (data) {
     console.log("data");
     console.log(data);
-    redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, result) {
+    redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, _result) {
         // 如果链接不存在，则放弃所有操作
+        let result = _result;
         if (!result) return;
         result.SerialNumber = data.SerialNumber;
 
@@ -60,8 +61,8 @@ let _doMatchDevice = function (data) {
                 err && console.log(err);
             });
         });
-        console.log(`JSON: ${JSON.stringify(result)} : KEY: ${result.ConnectionId}`);
-        redis.HSET(NetworkHashTableName, result.ConnectionId, JSON.stringify(result), function (err) {
+        console.log(`JSON: ${JSON.stringify(result)} : KEY: ${data.ConnectionId}`);
+        redis.HSET(NetworkHashTableName, data.ConnectionId, JSON.stringify(result), function (err) {
             err && console.log(err);
         });
     });
