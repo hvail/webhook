@@ -14,13 +14,29 @@ let _doOpenNet = function (data) {
 };
 
 let _doCloseNet = function (data) {
-    redis.HDEL(NetworkHashTableName, data.ConnectionId);
+    redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, result) {
+        redis.HDEL(NetworkHashTableName, data.ConnectionId);
+        let sn = result.SerialNumber;
+        // 如果这个连接没有机身号，则放弃此链接即可
+        if (!sn) return;
+
+        redis.HGET(DeviceHashTableName, sn, function (err, obj) {
+            if (obj !== result.ConnectionId) {
+                console.log(`${sn} 变更了链接`);
+            } else {
+                console.log(`${sn} 关闭了链接`);
+                redis.HDEL(DeviceHashTableName, sn);
+            }
+        });
+    });
 };
 
 let _doMatchDevice = function (data) {
+    redis.HSET(DeviceHashTableName, data.SerialNumber, `${data.ConnectionId}`);
     redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, result) {
-        console.log(data);
-        console.log(result);
+        result.SerialNumber = data.SerialNumber;
+        redis.HSET(NetworkHashTableName, data.ConnectionId, JSON.stringify(data));
+        console.log(`${data.SerialNumber} 开启了链接 `);
     });
 };
 
