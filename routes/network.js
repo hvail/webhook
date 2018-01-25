@@ -14,9 +14,10 @@ let _doOpenNet = function (data) {
 };
 
 let _doCloseNet = function (data) {
-    redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, result) {
+    redis.HGET(NetworkHashTableName, data.ConnectionId, function (err, _result) {
         redis.HDEL(NetworkHashTableName, data.ConnectionId);
         // 如果这个连接没有机身号，则放弃此链接即可
+        let result = JSON.parse(_result);
         if (!result || !result.SerialNumber) {
             console.log(`${data.ConnectionId} 关闭了链接`);
             return;
@@ -47,12 +48,11 @@ let _doMatchDevice = function (data) {
         // 查询设备链接表中是否存在有关此设备的记录
         redis.HGET(DeviceHashTableName, sn, function (err, deviceLink) {
             if (deviceLink === id) return;
-            console.log(`SN: ${sn}  :  CONN: ${id}`);
             redis.HSET(DeviceHashTableName, sn, id);
         });
 
         result.SerialNumber = data.SerialNumber;
-        console.log(`JSON: ${JSON.stringify(result)} : KEY: ${data.ConnectionId}`);
+        console.log(`JSON: ${JSON.stringify(result)} : KEY: ${id}`);
         redis.HSET(NetworkHashTableName, id, JSON.stringify(result));
     });
 };
