@@ -12,7 +12,7 @@ let _doPost = function (req, res, next) {
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-    res.send('respond with a resource');
+    res.send('respond with a resource by network');
 });
 
 router.post('/', _doPost);

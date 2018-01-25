@@ -13,6 +13,7 @@ const power = require('./routes/power');
 const mileage = require('./routes/mileage');
 const alarm_push_phone = require('./routes/push-alarm-phone');
 const webhooks = require('./routes/webhooks');
+const network = require('./routes/network');
 
 let app = express();
 
@@ -47,6 +48,7 @@ app.use('/push-alarm-phone', alarm_push_phone);
 app.use('/webhook', webhooks);
 app.use('/webhooks', webhooks);
 app.use('/mileage', mileage);
+app.use('/network', network);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
