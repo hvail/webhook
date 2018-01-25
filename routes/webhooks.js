@@ -168,7 +168,8 @@ let _event = function (req, res, next) {
 };
 
 let _network = function (req, res, next) {
-    res.status(200).send('1')
+    console.log(req.body);
+    res.status(200).send('1');
 };
 
 let _addListen = function (data, cb) {
