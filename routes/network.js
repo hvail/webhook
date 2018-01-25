@@ -19,7 +19,7 @@ let _doCloseNet = function (data) {
         // 如果这个连接没有机身号，则放弃此链接即可
         let result = JSON.parse(_result);
         if (!result || !result.SerialNumber) {
-            console.log(`${data.ConnectionId} 关闭了链接`);
+            // console.log(`${data.ConnectionId} 关闭了链接`);
             return;
         }
         let sn = result.SerialNumber;
@@ -48,11 +48,16 @@ let _doMatchDevice = function (data) {
         // 查询设备链接表中是否存在有关此设备的记录
         redis.HGET(DeviceHashTableName, sn, function (err, deviceLink) {
             if (deviceLink === id) return;
+            if (!deviceLink) {
+                // 新建链接
+                console.log(`${sn} 新建了链接`);
+            } else {
+                // 更换链接开
+                console.log(`${sn} 变更了链接开`);
+            }
             redis.HSET(DeviceHashTableName, sn, id);
         });
-
         result.SerialNumber = data.SerialNumber;
-        console.log(`JSON: ${JSON.stringify(result)} : KEY: ${id}`);
         redis.HSET(NetworkHashTableName, id, JSON.stringify(result));
     });
 };
