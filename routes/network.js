@@ -22,7 +22,7 @@ let _doCloseNet = function (data) {
 
         redis.HGET(DeviceHashTableName, sn, function (err, obj) {
             if (obj !== result.ConnectionId) {
-                console.log(`${sn} 变更了链接`);
+                console.log(`${sn} 变更了链接关`);
             } else {
                 console.log(`${sn} 关闭了链接`);
                 redis.HDEL(DeviceHashTableName, sn);
@@ -41,7 +41,7 @@ let _doMatchDevice = function (data) {
         redis.HGET(DeviceHashTableName, data.SerialNumber, function (err, deviceLink) {
             if (deviceLink) {
                 if (deviceLink === data.ConnectionId) return;
-                console.log(`${data.SerialNumber} 变更了链接`)
+                console.log(`${data.SerialNumber} 变更了链接开`)
             } else
                 console.log(`${data.SerialNumber} 开启了链接`);
             redis.HSET(DeviceHashTableName, data.SerialNumber, data.ConnectionId);
