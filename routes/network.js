@@ -49,8 +49,8 @@ let _doMatchDevice = function (data) {
             console.log(`SN: ${sn}  :  CONN: ${id}`);
             redis.HSET(DeviceHashTableName, sn, id);
         });
-        
-        result.SerialNumber = sn;
+
+        result.SerialNumber = data.SerialNumber;
         console.log(`JSON: ${JSON.stringify(result)} : KEY: ${data.ConnectionId}`);
         redis.HSET(NetworkHashTableName, id, JSON.stringify(result));
     });
