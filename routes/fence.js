@@ -62,7 +62,6 @@ let trigger = function (ps, fence) {
         let _tio = _fenceCalc(fence.Points, poi.Lat, poi.Lng);
         if (_tio !== _io_f) {
             // 触发围栏报警
-            console.log(ps[i]);
             TriggerFenceAlarm(fp.SerialNumber, fence, _tio);
         }
         _io_f = _tio;
