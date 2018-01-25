@@ -159,7 +159,7 @@ let _readLeftList = function (key, sn, cb) {
                         if (_obj.GPSTime <= calc_time) arr.push(_obj);
                         else {
                             redis.LTRIM(key, i - 1, -1);
-                            console.log(`${sn} 计算了 ${i} 条数据，从 ${arr[0].GPSTime} 到 ${arr[arr.length - 1].GPSTime} : ${_obj.GPSTime}/${calc_time}`);
+                            // console.log(`${sn} 计算了 ${i} 条数据，从 ${arr[0].GPSTime} 到 ${arr[arr.length - 1].GPSTime} : ${_obj.GPSTime}/${calc_time}`);
                             break;
                         }
                         if (i === jsonArr.length - 1) redis.LTRIM(key, i - 1, -1);
