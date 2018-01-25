@@ -29,7 +29,7 @@ let _doCloseNet = function (data) {
 
         redis.HGET(DeviceHashTableName, sn, function (err, connId) {
             if (connId !== id) {
-                console.log(`${sn} 变更了链接关 -1`);
+                // console.log(`${sn} 变更了链接关 -1`);
                 myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), {
                     SerialNumber: sn,
                     ConnectionStart: result.Time,
@@ -38,7 +38,7 @@ let _doCloseNet = function (data) {
                     Status: -1
                 });
             } else {
-                console.log(`${sn} 关闭了链接 0`);
+                // console.log(`${sn} 关闭了链接 0`);
                 myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), {
                     SerialNumber: sn,
                     ConnectionStart: result.Time,
@@ -67,7 +67,7 @@ let _doMatchDevice = function (data) {
             if (deviceLink === id) return;
             if (!deviceLink) {
                 // 新建链接
-                console.log(`${sn} 新建了链接 1`);
+                // console.log(`${sn} 新建了链接 1`);
                 myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), {
                     SerialNumber: sn,
                     ConnectionStart: result.Time,
@@ -76,7 +76,7 @@ let _doMatchDevice = function (data) {
                 });
             } else {
                 // 更换链接开
-                console.log(`${sn} 变更了链接开 2`);
+                // console.log(`${sn} 变更了链接开 2`);
                 myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, CONNECTION_PUSH_EXCHANGE.concat(`.${sn}`), {
                     SerialNumber: sn,
                     ConnectionStart: result.Time,
