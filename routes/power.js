@@ -172,18 +172,24 @@ let formatPower = function (pw) {
         PowerValue: pw[kn],
         PowerTime: pw.PowerTime
     };
-}
+};
 
 let getLastTime = function (req, res, next) {
     let sn = req.params.sn;
     redis.ZSCORE(key_power_calc, body.SerialNumber, function (err, score) {
         res.send(200, score);
     });
-}
+};
 
 let doPostPower = function (req, res, next) {
     let body = req.body;
     let sn = body.SerialNumber;
+
+    if (sn.indexOf("619044") < 0) {
+        res.status(200).send("1");
+        return;
+    }
+
     let end = body.PowerTime;
     redis.ZSCORE(key_power_calc, sn, function (err, score) {
         score = score || first_data;
@@ -198,11 +204,11 @@ let doPostPower = function (req, res, next) {
         });
     });
     res.status(200).send('1');
-}
+};
 
 let getDemo = function (req, res, next) {
     res.send('1.1.0.0 修改电压指示中的负数');
-}
+};
 
 router.post('/', doPostPower);
 router.get('/last/:sn', getLastTime);

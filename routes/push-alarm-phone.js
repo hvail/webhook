@@ -39,18 +39,15 @@ let _doPush = function (phone, eve) {
     myUtil.DoPushPost(url, eve, function (url, data, success, result) {
         console.log(result + "=" + eve.AlarmType + ":" + url);
     });
-    // request.Post(url, eve, function (result) {
-    //     console.log(result + "=" + eve.AlarmType + ":" + url);
-    // });
-}
+};
 
 let getDemo = function (req, res, next) {
     res.send('alarm phone push system 1.0.0.0');
-}
+};
 
 let doPostAlarm = function (req, res, next) {
     let data = req.body;
-}
+};
 
 /* GET users listing. */
 router.get('/', getDemo);

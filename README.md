@@ -4,22 +4,15 @@
 
 ![image](https://img.alicdn.com/imgextra/i4/3083182657/TB2_5v7BbxmpuFjSZJiXXXauVXa_!!3083182657.jpg_430x430q90.jpg)
 
-### v1.0 
+### v1 
+    * 采用静态地址进行数据推送
+### v2 
+    * 采用经销商指定的地址进行数据推送，在经销商添加或移除设备时，自动开始或停止发送，个人账号的注册不影响推送
 
 ***
 
-#### 访问接口
-
-    - post /webhooks (向推送添加一个 router)
-     {
-          "TargetUrl": "http://101.132.32.190:8081/rest/seal/addSealEvent",
-          "TargetDevice": "0000000000000000",
-          "Listener": "GPSEvent"
-     }
-    
-    2 - get /webhooks/lis/{listener}/{targetDevice} (按监听类型和监听目标来查询)
-    
-    
+#### 访问接口(关闭)
+       
     
 ### END
     
