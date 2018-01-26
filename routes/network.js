@@ -34,11 +34,9 @@ let _doCloseNet = function (data) {
         };
         redis.HGET(DeviceHashTableName, sn, function (err, connId) {
             if (connId !== id) {
-                // console.log(`${sn} 变更了链接关 -1`);
                 pushObj.Status = -1;
                 myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, pushObj, sn);
             } else {
-                // console.log(`${sn} 关闭了链接 0`);
                 pushObj.Status = 0;
                 myUtil.SendMqObject(CONNECTION_PUSH_EXCHANGE, pushObj, sn);
                 redis.HDEL(DeviceHashTableName, sn);
