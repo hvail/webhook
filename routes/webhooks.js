@@ -12,7 +12,6 @@ const HashWebHooks = "web-hook-listener-hash-";
 const SetSendStatusTotalKey = "web-hook-send-total-";
 const SetSendStatusSuccessKey = "web-hook-send-success-";
 const SetSendStatusFailureKey = "web-hook-send-failure-";
-
 const GetLastPositionUrl = "http://v3.res.server." + area + ".sky1088.com/track/single/";
 
 let __Demo_Class = {

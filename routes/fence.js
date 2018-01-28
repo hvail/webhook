@@ -96,10 +96,15 @@ let _location = function (req, res, next) {
             let fences = JSON.parse(result);
             if (fences.length < 1 || pos.length < 1) return;
             // 这里读取最后一次记录的轨迹点
-            _readLastAndSet(sn, pos[pos.length - 1], function (poi) {
-                if (poi !== null) pos = poi.concat(pos);
+            let ps = [];
+            for (let m = 0; m < pos.length; m++) {
+                if (pos[i].UpMode < 2) ps.push(pos[i]);
+            }
+            pos = null;
+            _readLastAndSet(sn, ps[ps.length - 1], function (poi) {
+                if (poi !== null) ps = poi.concat(ps);
                 for (let i = 0; i < fences.length; i++) {
-                    trigger(pos, fences[i]);
+                    trigger(ps, fences[i]);
                 }
             });
         } catch (e) {
