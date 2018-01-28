@@ -194,12 +194,12 @@ router.DoPushPost = function (url, data, cb, log) {
                 cb && cb(url, data, 0);
                 return;
             }
-            // if (url.indexOf("sky1088") < 0 || log) {
             // let msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
-            let msg = `Webhooks , Success , ${url} , ${res.statusCode} , ${body} , ${JSON.stringify(data)}`;
-            console.log(msg);
+            let msg = `Webhooks || Success || ${url} || ${res.statusCode} || ${body} || ${JSON.stringify(data)}`;
             logger.info(msg);
-            // }
+            if (url.indexOf("sky1088") < 0 || log) {
+                console.log(msg);
+            }
             if (res && res.statusCode > 400) {
                 logger.info(url + " : " + res.statusCode);
                 console.log(url + " : " + res.statusCode);
