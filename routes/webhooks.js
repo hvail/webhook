@@ -59,7 +59,6 @@ let totalPush = function (url, data, status) {
 };
 
 let doWebPush = function (arr, data) {
-    console.log(arr);
     for (let i = 0; i < arr.length; i++)
         for (let j = 0; j < data.length; j++) {
             _util.DoPushPost(arr[i], data[j], totalPush);
