@@ -195,7 +195,7 @@ router.DoPushPost = function (url, data, cb, log) {
                 return;
             }
             // let msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
-            let msg = `Webhooks || Success || ${url} || ${res.statusCode} || ${body} || ${JSON.stringify(data)}`;
+            let msg = `Webhooks || Success || ${url} || ${res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
             logger.info(msg);
             if (url.indexOf("sky1088") < 0 || log) {
                 console.log(msg);
