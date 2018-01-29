@@ -102,8 +102,12 @@ let _location = function (req, res, next) {
     }
     pos = _pos;
     let sn = pos[0].SerialNumber;
-    request(GetPushUrlByType + `Position/${sn}`, function (err, response, resultUrl) {
+    request(`${GetPushUrlByType}/Position/${sn}`, function (err, response, resultUrl) {
         if (!resultUrl || err) return;
+        if (response.statusCode !== 200) {
+            console.log(`${GetPushUrlByType}/Position/${sn} : ${response.statusCode}`);
+            return;
+        }
         resultUrl = resultUrl.split(',');
         doWebPush(resultUrl, pos);
     });
@@ -126,8 +130,12 @@ let _power = function (req, res, next) {
         pow = _pow;
     }
     let sn = pow[0].SerialNumber;
-    request(GetPushUrlByType + `Power/${sn}`, function (err, response, resultUrl) {
+    request(`${GetPushUrlByType}/Power/${sn}`, function (err, response, resultUrl) {
         if (!resultUrl || err) return;
+        if (response.statusCode !== 200) {
+            console.log(`${GetPushUrlByType}/Event/${sn} : ${response.statusCode}`);
+            return;
+        }
         resultUrl = resultUrl.split(',');
         doWebPush(resultUrl, pow);
     });
@@ -146,8 +154,12 @@ let _event = function (req, res, next) {
         return;
     }
     let sn = eve[0].SerialNumber;
-    request(GetPushUrlByType + `Event/${sn}`, function (err, response, resultUrl) {
+    request(`${GetPushUrlByType}/Event/${sn}`, function (err, response, resultUrl) {
         if (!resultUrl || err) return;
+        if (response.statusCode !== 200) {
+            console.log(`${GetPushUrlByType}/Event/${sn} : ${response.statusCode}`);
+            return;
+        }
         resultUrl = resultUrl.split(',');
         request(GetLastPositionUrl + sn, function (err, response, position) {
             try {
@@ -213,7 +225,7 @@ let _event = function (req, res, next) {
 };
 
 let _network = function (req, res, next) {
-    // console.log(req.body);
+    console.log(req.body);
     res.status(200).send('1');
 };
 
