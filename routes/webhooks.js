@@ -112,10 +112,6 @@ let _location = function (req, res, next) {
         doWebPush(resultUrl, pos);
     });
     res.send("1");
-    // getWebHooks(sn, "GPSPosition", function (err, data) {
-    //     doWebPush(data, pos);
-    // });
-    // res.send("1");
 };
 
 let _power = function (req, res, next) {
@@ -140,11 +136,6 @@ let _power = function (req, res, next) {
         doWebPush(resultUrl, pow);
     });
     res.send("1");
-
-    // getWebHooks(sn, "GPSPower", function (err, data) {
-    //     doWebPush(data, pow);
-    //     res.send("1");
-    // });
 };
 
 let _event = function (req, res, next) {
@@ -189,39 +180,6 @@ let _event = function (req, res, next) {
         });
     });
     res.send("1");
-
-    // let url = GetLastPositionUrl + sn;
-    // request(url, function (err, response, body) {
-    //     try {
-    //         body = JSON.parse(body);
-    //     } catch (e) {
-    //         body = {};
-    //     }
-    //     getWebHooks(sn, "GPSEvent", function (err, data) {
-    //         if (data.length > 0) {
-    //             for (let i = 0; i < eve.length; i++) {
-    //                 if (!eve[i].AlarmType && eve[i].EventType) {
-    //                     eve[i].AlarmType = eve[i].EventType;
-    //                     eve[i].EventTime = eve[i].UpTime;
-    //                 }
-    //                 if (body.GPSTime && Math.abs(body.GPSTime - eve[i].UpTime) < 60) {
-    //                     eve[i].Lat = body.Lat;
-    //                     eve[i].Lng = body.Lng;
-    //                     eve[i].EventTime = eve[i].UpTime;
-    //                     eve[i].Lat_Gg = body.Lat_Gg;
-    //                     eve[i].Lat_Bd = body.Lat_Bd;
-    //                     eve[i].Lng_Gg = body.Lng_Gg;
-    //                     eve[i].Lng_Bd = body.Lng_Bd;
-    //                 }
-    //                 if (eve[i].AlarmType === 51) {
-    //                     eve[i].Message = "指纹录入成功";
-    //                 }
-    //             }
-    //             doWebPush(data, eve);
-    //         }
-    //         res.send("1");
-    //     });
-    // });
 };
 
 let _network = function (req, res, next) {
