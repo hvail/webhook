@@ -163,7 +163,7 @@ let _event = function (req, res, next) {
                     eve[i].AlarmType = eve[i].EventType;
                     eve[i].EventTime = eve[i].UpTime;
                 }
-                if (body.GPSTime && Math.abs(body.GPSTime - eve[i].UpTime) < 60) {
+                if (position.GPSTime && Math.abs(position.GPSTime - eve[i].UpTime) < 60) {
                     eve[i].Lat = position.Lat;
                     eve[i].Lng = position.Lng;
                     eve[i].EventTime = eve[i].UpTime;
