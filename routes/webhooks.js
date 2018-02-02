@@ -183,7 +183,26 @@ let _event = function (req, res, next) {
 };
 
 let _network = function (req, res, next) {
-    // console.log(req.body);
+    let pow = req.body;
+    if (!pow) {
+        res.send('0');
+        return;
+    }
+    if (!util.isArray(pow)) {
+        let _pow = [];
+        _pow.push(pow);
+        pow = _pow;
+    }
+    let sn = pow[0].SerialNumber;
+    request(`${GetPushUrlByType}Network/${sn}`, function (err, response, resultUrl) {
+        if (!resultUrl || err) return;
+        if (response.statusCode !== 200) {
+            console.log(`${GetPushUrlByType}Network/${sn} : ${response.statusCode}`);
+            return;
+        }
+        resultUrl = resultUrl.split(',');
+        doWebPush(resultUrl, pow);
+    });
     res.status(200).send('1');
 };
 
