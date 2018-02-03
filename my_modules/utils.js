@@ -202,8 +202,8 @@ router.DoPushPost = function (url, data, cb, log) {
             }
             if (res && res.statusCode > 400) {
                 logger.info(url + " : " + res.statusCode);
-                console.log(url + " : " + res.statusCode);
-                console.log(body);
+                // console.log(url + " : " + res.statusCode);
+                // console.log(body);
             }
         } catch (e) {
             console.log(e);
@@ -214,7 +214,6 @@ router.DoPushPost = function (url, data, cb, log) {
 
 router.logger = function (log) {
     logger.info(log);
-    // console.log(log);
 };
 
 router.SendMqObject = function (exchage, obj, target) {

@@ -9,9 +9,9 @@ let area = process.env.DATAAREA || "zh-cn";
 let router = express.Router();
 
 let Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/phone/";
-let DeviceAttr = util.format("http://v3.local-manager-mongo.%s.sky1088.com/custom/device-attr/single/", area);
-let GetPhoneNumber = util.format("http://v3.local-manager-redis.%s.sky1088.com/custom/account/single/", area);
-let GetPhoneAlarmUrl = util.format("http://v3.local-manager-mongo.%s.sky1088.com/custom/push-phone/bind/", area);
+let DeviceAttr = util.format("http://v3.manager-mongo.server.%s.sky1088.com/custom/device-attr/single/", area);
+let GetPhoneNumber = util.format("http://v3.manager-redis.server.%s.sky1088.com/custom/account/single/", area);
+let GetPhoneAlarmUrl = util.format("http://v3.manager-mongo.server.%s.sky1088.com/custom/push-phone/bind/", area);
 
 // 接收到报警，开始推送判断
 let _beginPush = function (bind, eve, display) {
@@ -31,7 +31,7 @@ let _beginPush = function (bind, eve, display) {
         // 判断成功，向语音报警系统发送报警请求
         _doPush(data.AlarmTarget, _eve);
     });
-}
+};
 
 // 向后台发送语音报警请求
 let _doPush = function (phone, eve) {
@@ -46,7 +46,27 @@ let getDemo = function (req, res, next) {
 };
 
 let doPostAlarm = function (req, res, next) {
-    let data = req.body;
+    let eve = req.body;
+    console.log(eve);
+    res.status(200).send("1");
+};
+
+let doEvent = function (eve) {
+    if (!eve.SerialNumber) return;
+    let DeviceAttrUrl = DeviceAttr + eve.SerialNumber;
+    // 查询此设备所对应的所有绑定信息
+    request.Get(DeviceAttrUrl, function (dat) {
+        try {
+            let data = JSON.parse(dat);
+            let dn = data.DisplayName || data.SerialNumber;
+            if (!data.Binds) return;
+            for (let i = 0; i < data.Binds.length; i++) {
+                beginPush(data.Binds[i], eve, dn);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    });
 };
 
 /* GET users listing. */
