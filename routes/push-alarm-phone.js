@@ -52,7 +52,9 @@ let doPostAlarm = function (req, res, next) {
         for (let i = 0; i < eve.length; i++) {
             doEvent(eve[i]);
         }
-
+    else {
+        console.log(eve);
+    }
     res.status(200).send("1");
 };
 
@@ -63,12 +65,13 @@ let doEvent = function (eve) {
     // console.log(DeviceAttrUrl);
     request(DeviceAttrUrl, function (data) {
         if (data !== null) {
-            let _eve = {};
-            _eve.DisplayName = display;
-            _eve.AlarmType = eve.EventType;
-            _eve.EventTime = eve.UpTime;
-            _eve.CallPhone = data.Phone;
-            console.log(_eve);
+            console.log(data);
+            // let _eve = {};
+            // _eve.DisplayName = display;
+            // _eve.AlarmType = eve.EventType;
+            // _eve.EventTime = eve.UpTime;
+            // _eve.CallPhone = data.Phone;
+            // console.log(_eve);
             // if (date > data.ExpireTime) return;
             // 判断成功，向语音报警系统发送报警请求
             // _doPush(data.AlarmTarget, _eve);
