@@ -48,7 +48,10 @@ let getDemo = function (req, res, next) {
 
 let doPostAlarm = function (req, res, next) {
     let eve = req.body;
-    if (eve.length) doEvent(eve[0]);
+    if (eve.length)
+        for (let i = 0; i < eve.length; i++)
+            doEvent(eve[i]);
+
     res.status(200).send("1");
 };
 
@@ -56,9 +59,9 @@ let doEvent = function (eve) {
     if (!eve.SerialNumber) return;
     let DeviceAttrUrl = GetDeviceAlarmUrl + eve.SerialNumber;
     // 查询此设备所对应的所有绑定信息
+    console.log(DeviceAttrUrl);
     request(DeviceAttrUrl, function (data) {
         if (data !== null) {
-            console.log(data);
             let _eve = {};
             _eve.DisplayName = display;
             _eve.AlarmType = eve.EventType;
