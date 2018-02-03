@@ -51,7 +51,6 @@ let doPostAlarm = function (req, res, next) {
     if (eve.length)
         for (let i = 0; i < eve.length; i++) {
             doEvent(eve[i]);
-            console.log(eve[i]);
         }
 
     res.status(200).send("1");
