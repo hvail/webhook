@@ -57,7 +57,7 @@ let doEvent = function (eve) {
     if (!eve.SerialNumber) return;
     let DeviceAttrUrl = GetDeviceAlarmUrl + eve.SerialNumber;
     // 查询此设备所对应的所有绑定信息
-    request.Get(DeviceAttrUrl, function (data) {
+    request(DeviceAttrUrl, function (data) {
         console.log(data);
         // try {
         //     let data = JSON.parse(dat);
