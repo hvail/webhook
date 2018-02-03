@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/push-alarm-phone.js" afterPath="$PROJECT_DIR$/routes/push-alarm-phone.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -72,8 +71,8 @@
       <file leaf-file-name="push-alarm-phone.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/push-alarm-phone.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="424">
-              <caret line="71" column="2" lean-forward="true" selection-start-line="71" selection-start-column="2" selection-end-line="71" selection-end-column="2" />
+            <state relative-caret-position="124">
+              <caret line="51" column="24" lean-forward="false" selection-start-line="51" selection-start-column="24" selection-end-line="51" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -669,7 +668,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17932000" />
+    <option name="totallyTimeSpent" value="18066000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -1018,10 +1017,10 @@
         <state relative-caret-position="8820">
           <caret line="588" column="24" lean-forward="false" selection-start-line="588" selection-start-column="24" selection-end-line="588" selection-end-column="24" />
           <folding>
-            <marker date="1517659258846" expanded="true" signature="64572:64589" ph="..." />
-            <marker date="1517659258846" expanded="true" signature="64572:64607" ph="..." />
-            <marker date="1517659258846" expanded="true" signature="64572:64620" ph="..." />
-            <marker date="1517659258846" expanded="true" signature="64572:64635" ph="..." />
+            <marker date="1517659393748" expanded="true" signature="64442:64459" ph="..." />
+            <marker date="1517659393748" expanded="true" signature="64442:64477" ph="..." />
+            <marker date="1517659393748" expanded="true" signature="64442:64490" ph="..." />
+            <marker date="1517659393748" expanded="true" signature="64442:64505" ph="..." />
           </folding>
         </state>
       </provider>
@@ -1131,8 +1130,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/push-alarm-phone.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="424">
-          <caret line="71" column="2" lean-forward="true" selection-start-line="71" selection-start-column="2" selection-end-line="71" selection-end-column="2" />
+        <state relative-caret-position="124">
+          <caret line="51" column="24" lean-forward="false" selection-start-line="51" selection-start-column="24" selection-end-line="51" selection-end-column="24" />
           <folding />
         </state>
       </provider>

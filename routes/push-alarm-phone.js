@@ -49,6 +49,7 @@ let getDemo = function (req, res, next) {
 let doPostAlarm = function (req, res, next) {
     let eve = req.body;
     if (eve.length) doEvent(eve[0]);
+    console.log(eve[0]);
     res.status(200).send("1");
 };
 
