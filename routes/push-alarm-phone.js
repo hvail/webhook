@@ -22,7 +22,7 @@ let _doPush = function (phoneBind, eve) {
         CallPhone: phoneBind.AlarmTarget
     };
     let url = Trigger + phoneBind.AlarmTarget;
-    myUtil.PostUrl(url, _eve, "PushEventAlarmPhone");
+    myUtil.PostUrl(url, _eve, null, "PushEventAlarmPhone");
 };
 
 let getDemo = function (req, res, next) {
