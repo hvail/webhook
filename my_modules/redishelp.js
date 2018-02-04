@@ -1,5 +1,7 @@
-const redis_host = process.env.REDIS_HOST || "112.74.57.39";
-const redis_pwd = process.env.REDIS_PASSWORD || "892df215f8684736:HvailCom2015";
+const redis_host = "119.23.27.9";
+// const redis_host = process.env.REDIS_HOST || "119.23.27.9";
+const redis_pwd = "892df215f8684736:HvailCom2015";
+// const redis_pwd = process.env.REDIS_PASSWORD || "892df215f8684736:HvailCom2015";
 const redis_port = process.env.REDIS_PORT || 6379;
 // const redis_port = 6380;
 const redis = require('redis');

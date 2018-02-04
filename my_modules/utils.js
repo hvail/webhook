@@ -14,12 +14,14 @@ let logger = log4js.getLogger();
 logger.level = 'info';
 
 let getHttpOptions = function (url, data) {
+    console.log(data);
     return {
         url: url,
         method: "POST",
         json: true,
         headers: {
-            'User-Agent': 'Data-Push HYZ hjjhvail@gmail.com'
+            'User-Agent': 'Data-Push HYZ hjjhvail@gmail.com',
+            "Content-Type": "application/json"
         },
         body: data
     };
@@ -231,6 +233,17 @@ router.SendMqObject = function (exchage, obj, target) {
  */
 router.GetSecond = function () {
     return Math.round(new Date().getTime() / 1000);
+};
+
+router.PostUrl = function (url, data, cb) {
+    console.log(data);
+    request({url: url, method: "POST", json: data}, cb);
+    // request.post({url: url, form: 'json', body: JSON.stringify(data)}, function (err, res, body) {
+    //     cb && cb(err, res, body);
+    // });
+    // request(getHttpOptions(url, data), function (err, res, body) {
+    //     cb && cb(err, res, body);
+    // });
 };
 
 router.REQUIRED = REQUIRED;

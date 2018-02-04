@@ -35,10 +35,22 @@ let _beginPush = function (bind, eve, display) {
 };
 
 // 向后台发送语音报警请求
-let _doPush = function (phone, eve) {
+let _doPush = function (phoneBind, eve) {
+    let phone = phoneBind.AlarmTarget;
+    let _eve = {};
+    _eve.DisplayName = phoneBind.BindTarget;
+    _eve.AlarmType = eve.EventType;
+    _eve.EventTime = eve.UpTime;
+    _eve.CallPhone = phone;
+    _eve.DataArea = "zh-cn";
+
     let url = Trigger + phone;
-    myUtil.DoPushPost(url, eve, function (url, data, success, result) {
-        console.log(result + "=" + eve.AlarmType + ":" + url);
+    console.log(url);
+    console.log(_eve);
+    myUtil.PostUrl(url, _eve, function (err, res, body) {
+        console.log(body);
+        console.log(res.statusCode);
+        // console.log(res + "=" + eve.AlarmType + ":" + url);
     });
 };
 
@@ -63,9 +75,12 @@ let doEvent = function (eve) {
     let DeviceAttrUrl = GetDeviceAlarmUrl + eve.SerialNumber;
     // 查询此设备所对应的所有绑定信息
     // console.log(DeviceAttrUrl);
-    request(DeviceAttrUrl, function (data) {
-        if (data !== null) {
-            console.log(data);
+    request(DeviceAttrUrl, function (err, response, data) {
+        if (data !== null && data !== "[]") {
+            let ds = JSON.parse(data);
+            for (let i = 0; i < ds.length; i++) {
+                _doPush(ds[i], eve);
+            }
             // let _eve = {};
             // _eve.DisplayName = display;
             // _eve.AlarmType = eve.EventType;
