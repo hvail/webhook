@@ -9,11 +9,17 @@ let myUtil = require('./../my_modules/utils');
 let area = process.env.DATAAREA || "zh-cn";
 let router = express.Router();
 
-let Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/sms/";
-let DeviceAttr = `http://v3.manager-mongo.server.${area}.sky1088.com/custom/device-attr/single/`;
-let GetPhoneNumber = `http://v3.manager-redis.server.${area}.sky1088.com/custom/account/single/`;
-let GetPhoneAlarmUrl = `http://v3.manager-mongo.server.${area}.sky1088.com/custom/push-phone/bind/`;
+let getDemo = function (req, res, next) {
+    res.send('alarm sms push system 1.1.0.0');
+};
 
+let Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/phone/";
+let GetDeviceAlarmUrl = `http://v3.manager-mongo.server.${area}.sky1088.com/custom/push-sms/field/BindTarget/`;
+
+let doPostAlarm = function (req, res, next) {
+    let eve = req.body;
+    res.status(200).send("1");
+};
 
 /* GET users listing. */
 router.get('/', getDemo);

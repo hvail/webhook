@@ -2,18 +2,18 @@
  * 里程的计算
  * Created by hvail on 2017/10/27.
  */
-let myUtil = require('./../my_modules/utils');
-let gpsUtil = require('./../my_modules/gpsutils');
-let redis = require('./../my_modules/redishelp');
-let request = require('request');
-let express = require('express');
-let util = require('util');
-let router = express.Router();
-let area = process.env.DATAAREA || "zh-cn";
+const myUtil = require('./../my_modules/utils');
+const gpsUtil = require('./../my_modules/gpsutils');
+const redis = require('./../my_modules/redishelp');
+const request = require('request');
+const express = require('express');
+const util = require('util');
+const router = express.Router();
+const area = process.env.DATAAREA || "zh-cn";
 
-let calc_mid = 5 * 60;              // 计算间隔5分钟
-let calc_length = 3 * calc_mid;    // 单次读取长度,3个计算周期 15分钟计算一次以减少系统压力和提高响应速度
-let post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
+const calc_mid = 5 * 60;              // 计算间隔5分钟
+const calc_length = 3 * calc_mid;    // 单次读取长度,3个计算周期 15分钟计算一次以减少系统压力和提高响应速度
+const post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
 // 存储规则为右进左出
 // RPUSH & LRANGE
 let redisMileageList = "list-run-mileage-";
@@ -159,7 +159,6 @@ let _readLeftList = function (key, sn, cb) {
                         if (_obj.GPSTime <= calc_time) arr.push(_obj);
                         else {
                             redis.LTRIM(key, i - 1, -1);
-                            // console.log(`${sn} 计算了 ${i} 条数据，从 ${arr[0].GPSTime} 到 ${arr[arr.length - 1].GPSTime} : ${_obj.GPSTime}/${calc_time}`);
                             break;
                         }
                         if (i === jsonArr.length - 1) redis.LTRIM(key, i - 1, -1);

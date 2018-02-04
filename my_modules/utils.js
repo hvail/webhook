@@ -14,7 +14,6 @@ let logger = log4js.getLogger();
 logger.level = 'info';
 
 let getHttpOptions = function (url, data) {
-    // console.log(data);
     return {
         url: url,
         method: "POST",
@@ -235,15 +234,11 @@ router.GetSecond = function () {
     return Math.round(new Date().getTime() / 1000);
 };
 
-router.PostUrl = function (url, data, cb) {
-    // console.log(data);
-    request({url: url, method: "POST", json: data}, cb);
-    // request.post({url: url, form: 'json', body: JSON.stringify(data)}, function (err, res, body) {
-    //     cb && cb(err, res, body);
-    // });
-    // request(getHttpOptions(url, data), function (err, res, body) {
-    //     cb && cb(err, res, body);
-    // });
+router.PostUrl = function (url, data, cb, type) {
+    request({url: url, method: "POST", json: data}, function (err, res, body) {
+        let msg = `${type} || Success || ${url} || ${res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
+        cb && cb(err, res, body)
+    });
 };
 
 router.REQUIRED = REQUIRED;
