@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/my_modules/redishelp.js" afterPath="$PROJECT_DIR$/my_modules/redishelp.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/my_modules/utils.js" afterPath="$PROJECT_DIR$/my_modules/utils.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/mileage.js" afterPath="$PROJECT_DIR$/routes/mileage.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/push-alarm-phone.js" afterPath="$PROJECT_DIR$/routes/push-alarm-phone.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/push-alarm-sms.js" afterPath="$PROJECT_DIR$/routes/push-alarm-sms.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -76,8 +72,8 @@
       <file leaf-file-name="push-alarm-phone.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/push-alarm-phone.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="39" column="34" lean-forward="true" selection-start-line="39" selection-start-column="34" selection-end-line="39" selection-end-column="34" />
+            <state relative-caret-position="540">
+              <caret line="42" column="15" lean-forward="false" selection-start-line="42" selection-start-column="15" selection-end-line="42" selection-end-column="15" />
               <folding />
             </state>
           </provider>
@@ -142,12 +138,12 @@
       <find>var</find>
       <find>post</find>
       <find>application/json</find>
-      <find>let</find>
       <find>console</find>
+      <find>let</find>
     </findStrings>
     <replaceStrings>
-      <replace>const</replace>
       <replace>let</replace>
+      <replace>const</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -654,7 +650,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24975000" />
+    <option name="totallyTimeSpent" value="25107000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1358" y="-8" width="1936" height="1056" extended-state="6" />
@@ -957,10 +953,10 @@
         <state relative-caret-position="8820">
           <caret line="588" column="24" lean-forward="false" selection-start-line="588" selection-start-column="24" selection-end-line="588" selection-end-column="24" />
           <folding>
-            <marker date="1517707492679" expanded="true" signature="70282:70299" ph="..." />
-            <marker date="1517707492679" expanded="true" signature="70282:70317" ph="..." />
-            <marker date="1517707492679" expanded="true" signature="70282:70330" ph="..." />
-            <marker date="1517707492679" expanded="true" signature="70282:70345" ph="..." />
+            <marker date="1517707591345" expanded="true" signature="69748:69765" ph="..." />
+            <marker date="1517707591345" expanded="true" signature="69748:69783" ph="..." />
+            <marker date="1517707591345" expanded="true" signature="69748:69796" ph="..." />
+            <marker date="1517707591345" expanded="true" signature="69748:69811" ph="..." />
           </folding>
         </state>
       </provider>
@@ -1187,8 +1183,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/push-alarm-phone.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="39" column="34" lean-forward="true" selection-start-line="39" selection-start-column="34" selection-end-line="39" selection-end-column="34" />
+        <state relative-caret-position="540">
+          <caret line="42" column="15" lean-forward="false" selection-start-line="42" selection-start-column="15" selection-end-line="42" selection-end-column="15" />
           <folding />
         </state>
       </provider>

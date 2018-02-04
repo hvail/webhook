@@ -39,7 +39,7 @@ let doPostAlarm = function (req, res, next) {
 let doEvent = function (eve) {
     if (!eve.SerialNumber) return;
     if (AlarmType.indexOf(eve.EventType) < 0) {
-        console.log(eve.EventType + " : 此类型暂时不支持触发报警");
+        // console.log(eve.EventType + " : 此类型暂时不支持触发报警");
         return;
     }
     let DeviceAttrUrl = GetDeviceAlarmUrl + eve.SerialNumber;
