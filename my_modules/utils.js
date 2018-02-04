@@ -14,7 +14,7 @@ let logger = log4js.getLogger();
 logger.level = 'info';
 
 let getHttpOptions = function (url, data) {
-    console.log(data);
+    // console.log(data);
     return {
         url: url,
         method: "POST",
@@ -236,7 +236,7 @@ router.GetSecond = function () {
 };
 
 router.PostUrl = function (url, data, cb) {
-    console.log(data);
+    // console.log(data);
     request({url: url, method: "POST", json: data}, cb);
     // request.post({url: url, form: 'json', body: JSON.stringify(data)}, function (err, res, body) {
     //     cb && cb(err, res, body);
