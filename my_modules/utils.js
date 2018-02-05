@@ -225,7 +225,8 @@ router.SendMqObject = function (exchage, obj, target) {
         MsgTag: tag,
         Context: JSON.stringify(obj)
     };
-    request(getHttpOptions(MqSendUrl, push));
+    request({url: MqSendUrl, method: "POST", json: push});
+    // request(getHttpOptions(MqSendUrl, push));
 };
 
 /**

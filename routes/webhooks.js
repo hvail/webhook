@@ -50,7 +50,7 @@ let _requestPush = function (sn, type, cb) {
         let push = JSON.parse(result);
         cb && cb(push);
     });
-}
+};
 
 let _location = function (req, res, next) {
     let pos = req.body;
