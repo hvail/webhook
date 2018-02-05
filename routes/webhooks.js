@@ -104,6 +104,12 @@ let _event = function (req, res, next) {
     }
     let sn = eve[0].SerialNumber;
     _requestPush(sn, "Event", function (push) {
+        for (let i = 0; i < eve.length; i++) {
+            if (!eve[i].AlarmType && eve[i].EventType) {
+                eve[i].AlarmType = eve[i].EventType;
+                eve[i].EventTime = eve[i].UpTime;
+            }
+        }
         doWebPush(push, eve);
     });
     // request(`${GetPushUrlByType}Event/${sn}`, function (err, response, resultUrl) {
