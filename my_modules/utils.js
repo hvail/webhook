@@ -19,16 +19,15 @@ let getHttpOptions = function (url, data) {
         url: url.Url,
         method: "POST",
         json: true,
-        headers: {
-            "User-Agent": "Data-Push HYZ hjjhvail@gmail.com",
-            "Content-Type": "application/json"
-        },
+        headers: [{
+            name: "User-Agent", value: "Data-Push HYZ hjjhvail@gmail.com",
+        }],
         body: data
     };
     if (url.Headers) {
         for (let i = 0; i < url.Headers.length; i++) {
             let header = url.Headers[i].split('=');
-            result.headers[header[0]] = header[1];
+            result.headers.add({name: header[0], value: header[1]});
         }
     }
     return result;
@@ -203,11 +202,11 @@ router.DoPushPost = function (url, data, cb, log) {
                 cb && cb(url, data, 0);
                 return;
             }
+            if (url.Headers)
+                console.log(res.request.headers);
             // let msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
             let msg = `Webhooks || Success || ${JSON.stringify(url)} || ${res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
             logger.info(msg);
-            if (url.Headers)
-                console.log(res.request.headers);
             if (res && res.statusCode > 400) {
                 logger.info(url.Url + " : " + res.statusCode);
                 // console.log(url + " : " + res.statusCode);
