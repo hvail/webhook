@@ -21,11 +21,11 @@ let __Demo_Class = {
 };
 
 let totalPush = function (url, data, status) {
-    let ds = new Date().toISOString().split("T")[0];
-    let totalKey = SetSendStatusTotalKey + ds;
-    let statusKey = (status > 0 ? SetSendStatusSuccessKey : SetSendStatusFailureKey) + ds;
-    redis.ZINCRBY(totalKey, 1, url);
-    redis.ZINCRBY(statusKey, 1, url);
+    // let ds = new Date().toISOString().split("T")[0];
+    // let totalKey = SetSendStatusTotalKey + ds;
+    // let statusKey = (status > 0 ? SetSendStatusSuccessKey : SetSendStatusFailureKey) + ds;
+    // redis.ZINCRBY(totalKey, 1, url);
+    // redis.ZINCRBY(statusKey, 1, url);
 };
 
 let doWebPush = function (arr, data) {
