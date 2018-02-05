@@ -85,11 +85,10 @@ let poolPost = function (subs, cb, i) {
         cb && cb();
         return;
     }
-    myUtil.DoPushPost(batch_host, subs[_i], function (url, data, status, body) {
-        // console.log("POST : " + batch_host + " Length : " + body);
+    myUtil.PostUrl(batch_host, subs[_i], function (url, data, status, body) {
         _i++;
         poolPost(subs, cb, _i);
-    });
+    }, "PowerSave");
 };
 
 // 具体算法

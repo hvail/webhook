@@ -90,11 +90,11 @@ let _do_save_mileage = function (data, sn, middleTime) {
         if (obj.Distance > 0) push_obj.push(obj);
     }
     if (push_obj.length > 0) {
-        myUtil.DoPushPost(post_url, push_obj, function (url, data, status) {
+        myUtil.PostUrl(post_url, push_obj, function (url, data, status) {
             if (status !== 1) {
                 myUtil.logger(`${post_url}, ${sn}, ${push_obj.length}, ${status} `)
             }
-        });
+        }, "MileageSave");
     }
 };
 
@@ -132,6 +132,8 @@ let _calcMiddleMileage = function (data) {
 
 let _readLeftList = function (key, sn, cb) {
     redis.LRANGE(key, 0, 1, function (err, jsons) {
+        // 默认计时两倍 calc_length 时长，这样可以保证不会有太多的积累数据
+        // redis.EXPIRE(key, calc_length * 2);
         // 只有两条以上符合要求才开始计算里程
         try {
             if (jsons.length < 2) {
@@ -161,7 +163,9 @@ let _readLeftList = function (key, sn, cb) {
                             redis.LTRIM(key, i - 1, -1);
                             break;
                         }
-                        if (i === jsonArr.length - 1) redis.LTRIM(key, i - 1, -1);
+                        if (i === jsonArr.length - 1) {
+                            redis.LTRIM(key, i - 1, -1);
+                        }
                     }
 
                     // 将针对arr进行数据处理
@@ -220,6 +224,7 @@ let doSingle = function (req, res, next) {
 /* GET users listing. */
 router.get('/', demo);
 router.post('/', doLocationPost);
+router.get('/single/:sn', doSingle);
 router.post('/single/:sn', doSingle);
 
 module.exports = router;
