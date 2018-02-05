@@ -60,7 +60,7 @@ let _location = function (req, res, next) {
     let sn = pos[0].SerialNumber;
     request(`${GetPushUrlByType}Position/${sn}`, function (err, response, result) {
         console.log(util.isArray(result));
-        if (!result || err) return;
+        if (!result || result === "[]" || err) return;
         if (response.statusCode !== 200) {
             console.log(`${GetPushUrlByType}Position/${sn} : ${response.statusCode}`);
             return;
