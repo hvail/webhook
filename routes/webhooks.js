@@ -8,9 +8,9 @@ let _util = require('./../my_modules/utils');
 let util = require('util');
 let area = process.env.DATAAREA || "zh-cn";
 let redis = require('./../my_modules/redishelp');
-const SetSendStatusTotalKey = "web-hook-send-total-";
-const SetSendStatusSuccessKey = "web-hook-send-success-";
-const SetSendStatusFailureKey = "web-hook-send-failure-";
+// const SetSendStatusTotalKey = "web-hook-send-total-";
+// const SetSendStatusSuccessKey = "web-hook-send-success-";
+// const SetSendStatusFailureKey = "web-hook-send-failure-";
 const GetLastPositionUrl = "http://v3.res.server." + area + ".sky1088.com/track/single/";
 const GetPushUrlByType = `http://v3.manager-redis.server.${area}.sky1088.com/sales/unit-group-hooks/field/`;
 
