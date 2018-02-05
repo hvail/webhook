@@ -41,7 +41,7 @@ let _default = function (req, res, next) {
 };
 
 let _requestPush = function (sn, type, cb) {
-    request(`${GetPushUrlByType}Position/${sn}`, function (err, response, result) {
+    request(`${GetPushUrlByType}${type}/${sn}`, function (err, response, result) {
         if (!result || result === "[]" || err) return;
         if (response.statusCode !== 200) {
             console.log(`${GetPushUrlByType}${type}/${sn} : ${response.statusCode}`);
