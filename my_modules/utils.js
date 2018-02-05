@@ -14,8 +14,9 @@ let logger = log4js.getLogger();
 logger.level = 'info';
 
 let getHttpOptions = function (url, data) {
+    console.log(url);
     return {
-        url: url,
+        url: url.Url,
         method: "POST",
         json: true,
         headers: {
