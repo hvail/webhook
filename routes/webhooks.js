@@ -40,6 +40,19 @@ let _default = function (req, res, next) {
     res.send('v1.3.0.0');
 };
 
+let _requestPush = function (sn, type, cb) {
+    request(`${GetPushUrlByType}Position/${sn}`, function (err, response, result) {
+        if (!result || result === "[]" || err) return;
+        if (response.statusCode !== 200) {
+            console.log(`${GetPushUrlByType}${type}/${sn} : ${response.statusCode}`);
+            return;
+        }
+        let push = JSON.parse(result);
+        console.log(push);
+        cb && cb(push);
+    });
+}
+
 let _location = function (req, res, next) {
     let pos = req.body;
     if (!pos) {
@@ -58,15 +71,7 @@ let _location = function (req, res, next) {
     }
     pos = _pos;
     let sn = pos[0].SerialNumber;
-    request(`${GetPushUrlByType}Position/${sn}`, function (err, response, result) {
-        console.log(util.isArray(result));
-        if (!result || result === "[]" || err) return;
-        if (response.statusCode !== 200) {
-            console.log(`${GetPushUrlByType}Position/${sn} : ${response.statusCode}`);
-            return;
-        }
-        let push = JSON.parse(result);
-        console.log(push);
+    _requestPush(sn, "Position", function (push) {
         doWebPush(push, pos);
     });
     res.send("1");
@@ -84,14 +89,8 @@ let _power = function (req, res, next) {
         pow = _pow;
     }
     let sn = pow[0].SerialNumber;
-    request(`${GetPushUrlByType}Power/${sn}`, function (err, response, resultUrl) {
-        if (!resultUrl || err) return;
-        if (response.statusCode !== 200) {
-            console.log(`${GetPushUrlByType}Event/${sn} : ${response.statusCode}`);
-            return;
-        }
-        resultUrl = resultUrl.split(',');
-        doWebPush(resultUrl, pow);
+    _requestPush(sn, "Power", function (push) {
+        doWebPush(push, pow);
     });
     res.send("1");
 };
@@ -103,40 +102,43 @@ let _event = function (req, res, next) {
         return;
     }
     let sn = eve[0].SerialNumber;
-    request(`${GetPushUrlByType}Event/${sn}`, function (err, response, resultUrl) {
-        if (!resultUrl || err) return;
-        if (response.statusCode !== 200) {
-            console.log(`${GetPushUrlByType}Event/${sn} : ${response.statusCode}`);
-            return;
-        }
-        resultUrl = resultUrl.split(',');
-        request(GetLastPositionUrl + sn, function (err, response, position) {
-            try {
-                position = JSON.parse(position);
-            } catch (e) {
-                position = {};
-            }
-            for (let i = 0; i < eve.length; i++) {
-                if (!eve[i].AlarmType && eve[i].EventType) {
-                    eve[i].AlarmType = eve[i].EventType;
-                    eve[i].EventTime = eve[i].UpTime;
-                }
-                if (position.GPSTime && Math.abs(position.GPSTime - eve[i].UpTime) < 60) {
-                    eve[i].Lat = position.Lat;
-                    eve[i].Lng = position.Lng;
-                    eve[i].EventTime = eve[i].UpTime;
-                    eve[i].Lat_Gg = position.Lat_Gg;
-                    eve[i].Lat_Bd = position.Lat_Bd;
-                    eve[i].Lng_Gg = position.Lng_Gg;
-                    eve[i].Lng_Bd = position.Lng_Bd;
-                }
-                if (eve[i].AlarmType === 51) {
-                    eve[i].Message = "指纹录入成功";
-                }
-            }
-            doWebPush(resultUrl, eve);
-        });
+    _requestPush(sn, "Event", function (push) {
+        doWebPush(push, eve);
     });
+    // request(`${GetPushUrlByType}Event/${sn}`, function (err, response, resultUrl) {
+    //     if (!resultUrl || err) return;
+    //     if (response.statusCode !== 200) {
+    //         console.log(`${GetPushUrlByType}Event/${sn} : ${response.statusCode}`);
+    //         return;
+    //     }
+    //     resultUrl = resultUrl.split(',');
+    //     request(GetLastPositionUrl + sn, function (err, response, position) {
+    //         try {
+    //             position = JSON.parse(position);
+    //         } catch (e) {
+    //             position = {};
+    //         }
+    //         for (let i = 0; i < eve.length; i++) {
+    //             if (!eve[i].AlarmType && eve[i].EventType) {
+    //                 eve[i].AlarmType = eve[i].EventType;
+    //                 eve[i].EventTime = eve[i].UpTime;
+    //             }
+    //             if (position.GPSTime && Math.abs(position.GPSTime - eve[i].UpTime) < 60) {
+    //                 eve[i].Lat = position.Lat;
+    //                 eve[i].Lng = position.Lng;
+    //                 eve[i].EventTime = eve[i].UpTime;
+    //                 eve[i].Lat_Gg = position.Lat_Gg;
+    //                 eve[i].Lat_Bd = position.Lat_Bd;
+    //                 eve[i].Lng_Gg = position.Lng_Gg;
+    //                 eve[i].Lng_Bd = position.Lng_Bd;
+    //             }
+    //             if (eve[i].AlarmType === 51) {
+    //                 eve[i].Message = "指纹录入成功";
+    //             }
+    //         }
+    //         doWebPush(resultUrl, eve);
+    //     });
+    // });
     res.send("1");
 };
 
