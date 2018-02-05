@@ -154,15 +154,18 @@ let _network = function (req, res, next) {
         pow = _pow;
     }
     let sn = pow[0].SerialNumber;
-    request(`${GetPushUrlByType}Network/${sn}`, function (err, response, resultUrl) {
-        if (!resultUrl || err) return;
-        if (response.statusCode !== 200) {
-            console.log(`${GetPushUrlByType}Network/${sn} : ${response.statusCode}`);
-            return;
-        }
-        resultUrl = resultUrl.split(',');
-        doWebPush(resultUrl, pow);
+    _requestPush(sn, "Network", function (push) {
+        doWebPush(push, pow);
     });
+    // request(`${GetPushUrlByType}Network/${sn}`, function (err, response, resultUrl) {
+    //     if (!resultUrl || err) return;
+    //     if (response.statusCode !== 200) {
+    //         console.log(`${GetPushUrlByType}Network/${sn} : ${response.statusCode}`);
+    //         return;
+    //     }
+    //     resultUrl = resultUrl.split(',');
+    //     doWebPush(resultUrl, pow);
+    // });
     res.status(200).send('1');
 };
 
