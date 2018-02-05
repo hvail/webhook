@@ -15,7 +15,7 @@ logger.level = 'info';
 
 let getHttpOptions = function (url, data) {
     console.log(url);
-    return {
+    let result = {
         url: url.Url,
         method: "POST",
         json: true,
@@ -25,6 +25,14 @@ let getHttpOptions = function (url, data) {
         },
         body: data
     };
+    if (url.Headers) {
+        for (let i = 0; i < url.Headers.length; i++) {
+            let header = url.Headers[i].split('=');
+            result.headers[header[0]] = header[1];
+        }
+        console.log(result);
+    }
+    return result;
 };
 
 Array.prototype.last = function () {
