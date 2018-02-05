@@ -30,7 +30,6 @@ let getHttpOptions = function (url, data) {
             let header = url.Headers[i].split('=');
             result.headers[header[0]] = header[1];
         }
-        console.log(result);
     }
     return result;
 };
@@ -207,7 +206,8 @@ router.DoPushPost = function (url, data, cb, log) {
             // let msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
             let msg = `Webhooks || Success || ${JSON.stringify(url)} || ${res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
             logger.info(msg);
-            console.log(res.request.headers);
+            if (url.Headers)
+                console.log(res.request.headers);
             if (res && res.statusCode > 400) {
                 logger.info(url.Url + " : " + res.statusCode);
                 // console.log(url + " : " + res.statusCode);
