@@ -14,7 +14,7 @@ let logger = log4js.getLogger();
 logger.level = 'info';
 
 let getHttpOptions = function (url, data) {
-    console.log(url);
+    // console.log(url);
     let result = {
         url: url.Url,
         method: "POST",
@@ -27,7 +27,6 @@ let getHttpOptions = function (url, data) {
     if (url.Headers) {
         for (let i = 0; i < url.Headers.length; i++) {
             let header = url.Headers[i].split('=');
-            // result.headers.push({name: header[0], value: header[1]});
             result.headers[header[0]] = header[1];
         }
     }
@@ -210,8 +209,6 @@ router.DoPushPost = function (url, data, cb, log) {
             logger.info(msg);
             if (res && res.statusCode > 400) {
                 logger.info(url.Url + " : " + res.statusCode);
-                // console.log(url + " : " + res.statusCode);
-                // console.log(body);
             }
         } catch (e) {
             console.log(e);
@@ -234,7 +231,6 @@ router.SendMqObject = function (exchage, obj, target) {
     request({url: MqSendUrl, method: "POST", json: push}, function (err, res, body) {
         err && console.log(err);
     });
-    // request(getHttpOptions(MqSendUrl, push));
 };
 
 /**
