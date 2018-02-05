@@ -27,7 +27,7 @@ let getHttpOptions = function (url, data) {
     if (url.Headers) {
         for (let i = 0; i < url.Headers.length; i++) {
             let header = url.Headers[i].split('=');
-            result.headers.add({name: header[0], value: header[1]});
+            result.headers.push({name: header[0], value: header[1]});
         }
     }
     return result;
