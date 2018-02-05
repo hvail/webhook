@@ -20,7 +20,7 @@ let getHttpOptions = function (url, data) {
         method: "POST",
         json: true,
         headers: {
-            'User-Agent': 'Data-Push HYZ hjjhvail@gmail.com',
+            "User-Agent": "Data-Push HYZ hjjhvail@gmail.com",
             "Content-Type": "application/json"
         },
         body: data
@@ -205,11 +205,9 @@ router.DoPushPost = function (url, data, cb, log) {
                 return;
             }
             // let msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
-            let msg = `Webhooks || Success || ${url} || ${res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
+            let msg = `Webhooks || Success || ${JSON.stringify(url)} || ${res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
             logger.info(msg);
-            // if (url.indexOf("sky1088") < 0 || log) {
-            // console.log(msg);
-            // }
+            console.log(res.request.headers);
             if (res && res.statusCode > 400) {
                 logger.info(url.Url + " : " + res.statusCode);
                 // console.log(url + " : " + res.statusCode);
