@@ -250,5 +250,14 @@ router.PostUrl = function (url, data, cb, type) {
     });
 };
 
+Number.prototype.toPadLeft = function (size, chat) {
+    if (arguments.length === 1) chat = '0';
+    let me = this.toString();
+    while (me.length < size) {
+        me = chat + me;
+    }
+    return me;
+};
+
 router.REQUIRED = REQUIRED;
 module.exports = router;

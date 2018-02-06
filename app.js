@@ -11,9 +11,10 @@ const users = require('./routes/users');
 const fence = require('./routes/fence');
 const power = require('./routes/power');
 const mileage = require('./routes/mileage');
+const network = require('./routes/network');
 const alarm_push_phone = require('./routes/push-alarm-phone');
 const webhooks = require('./routes/webhooks');
-const network = require('./routes/network');
+const webtimer = require('./routes/webtimers');
 
 let app = express();
 
@@ -46,6 +47,7 @@ app.use('/fence', fence);
 app.use('/power', power);
 app.use('/push-alarm-phone', alarm_push_phone);
 app.use('/webhook', webhooks);
+app.use('/webtimer', webtimer);
 app.use('/webhooks', webhooks);
 app.use('/mileage', mileage);
 app.use('/network', network);
