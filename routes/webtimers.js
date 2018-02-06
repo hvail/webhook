@@ -16,6 +16,8 @@ const key_sSet_end = "SSET-spark-do-timer-end";
 // 记录操作任务的Hash
 const key_Hash_job = "Hash-spark-do-timer-job";
 
+let edTime = new Date('3000-01-01T00:00:00Z').getTime() / 1000;
+
 let demo = {
     // 任务名(req,only)
     Name: "TimerDemo",
@@ -66,7 +68,7 @@ let _execSpecRunTime = function (Spec) {
     return {Start: sd.getTime() / 1000, End: ed.getTime() / 1000};
 };
 
-console.log(_execSpecRunTime("2018-02-.*T.*:00:00Z"));
+// console.log(_execSpecRunTime("2018-02-.*T.*:00:00Z"));
 
 let _execSpecCount = function (Spec) {
     let patten = endTimePatten.test(Spec);
@@ -89,9 +91,50 @@ let _execSpecCount = function (Spec) {
     return cc;
 };
 
+let _doJobEnd = function () {
+    // 这里是删除过期的任务，并将其记录到数据库中。
+    console.log("_doJobEnd");
+    if (arguments.length === 1) {
+        console.log(arguments[0]);
+    }
+};
+
+let _doJobBegin = function (objs, DateString, i) {
+    let ii = i || 0;
+    if (ii === objs.length) {
+        _doJobEnd();
+        return;
+    }
+    let obj = JSON.parse(objs[ii]);
+    if (eval("/" + obj.Spec + "/").test(DateString)) {
+        // 如果符合条件就向其发送数据
+        myUtil.DoPushPost(obj.Hooks, obj.Hooks.Data);
+    } else {
+        if (ii++ === objs.length - 1) {
+            _doJobEnd();
+        } else {
+            _doJobBegin(objs, DateString, ii);
+        }
+    }
+};
+
 let _doRunCommand = function (req, res, next) {
-    console.log('YES I DO ' + (new Date().toISOString()));
-    res.send('YES I DO ' + (new Date().toISOString()));
+    let DateTime = new Date();
+    let DateString = DateTime.toISOString();
+    let runtime = DateTime.getTime() / 1000;
+    // 查找在此之前开始的所有key，和在此之后才结束的所有key
+    redis.ZRANGEBYSCORE(key_sSet_start, 0, runtime, function (err, _start) {
+        err && _doJobEnd(err);
+        redis.ZRANGEBYSCORE(key_sSet_end, runtime, edTime, function (err, _end) {
+            err && _doJobEnd(err);
+            let arr = _start.intersection(_end);
+            redis.HMGET(key_Hash_job, arr, function (err, _result) {
+                err && _doJobEnd(err);
+                _doJobBegin(_result, DateString);
+            });
+        });
+    });
+    res.status(200).send("YES I DO COMMANDER " + DateString);
 };
 
 let _getDefault = function (req, res, next) {
@@ -118,15 +161,18 @@ let _doJobPost = function (req, res, next) {
     });
 };
 
+let _doJobCancel = function (req, res, next) {
+    res.status(200).send("YOU JOB BE CANCEL");
+};
+
 /* GET users listing. */
 router.get('/', _getDefault);
 // 开始行动的指令，来源是定时器发出的
 router.get('/run', _doRunCommand);
 
+// 添加任务
 router.post('/', _doJobPost);
-
-// schedule.scheduleJob('*/2 * * * * *', function () {
-//     console.log('The answer to life, the universe, and everything!');
-// });
+// 取消任务
+router.delete('/{name}', _doJobCancel);
 
 module.exports = router;

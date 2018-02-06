@@ -14,7 +14,6 @@ let logger = log4js.getLogger();
 logger.level = 'info';
 
 let getHttpOptions = function (url, data) {
-    // console.log(url);
     let result = {
         url: url.Url,
         method: "POST",
@@ -30,6 +29,10 @@ let getHttpOptions = function (url, data) {
             result.headers[header[0]] = header[1];
         }
     }
+    // if (url.Data && typeof(url.Data) === 'object') {
+    //     let obj = url.Data;
+    //     Clone(url.Data, result.body);
+    // }
     return result;
 };
 
@@ -41,6 +44,15 @@ Array.prototype.last = function () {
 Array.prototype.first = function () {
     let me = this;
     return me[0];
+};
+
+Array.prototype.intersection = function (target) {
+    let arr = [], me = this;
+    for (let i = 0; i < me.length; i++) {
+        if (target.indexOf(me[i]) > -1)
+            arr.push(me[i]);
+    }
+    return arr;
 };
 
 // 跟据字段值查询数组
@@ -131,7 +143,7 @@ Date.prototype.FormatDate = function (format) {
  * @param tar
  * @constructor
  */
-router.Clone = function (src, tar) {
+router.Clone = Clone = function (src, tar) {
     let clone = {};
     if (!tar) return null;
     for (let k in src) {
