@@ -7,7 +7,7 @@ const redis = require('./../my_modules/redishelp');
 const myUtil = require('./../my_modules/utils');
 const router = express.Router();
 const endTimePatten = /^(.*)-(.*)-(.*)T(.*):(.*):.*$/;
-const monthDay = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const monthDay = [31, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 // 记录开始时间的sortedSet
 const key_sSet_start = "SSET-spark-do-timer-start";
@@ -51,22 +51,22 @@ let _execSpecRunTime = function (Spec) {
         let month = ($2 * 1 || 1).toPadLeft(2), day = ($3 * 1 || 1).toPadLeft(2),
             hours = ($4 * 1 || 0).toPadLeft(2), min = ($5 * 1 || 0).toPadLeft(2);
         sd = new Date(`${$1}-${month}-${day}T${hours}:${min}:00Z`);
+        // 直接相等会直接复制内存堆，这样两个值怎么修改都一样。
+        ed = new Date(sd.toISOString());
         if ($2 === ".*") {
             ed.setYear(sd.getFullYear() + 1);
-            ed = new Date(`${ed.getFullYear()}-01-01T00:00:00Z`);
         } else if ($3 === ".*") {
             ed.setMonth(sd.getMonth() + 1);
-            ed = new Date(`${ed.getYear()}-${ed.getMonth()}-01T00:00:00Z`);
         } else if ($4 === ".*") {
             ed.setDate(sd.getDate() + 1);
-            ed = new Date(`${ed.getYear()}-${ed.getMonth()}-${ed.getDate()}T00:00:00Z`);
         } else if ($5 === ".*") {
             ed.setHours(sd.getHours() + 1);
-            ed = new Date(`${ed.getYear()}-${ed.getMonth()}-${ed.getDate()}T${ed.getHours()}:00:00Z`);
         }
     }
     return {Start: sd.getTime() / 1000, End: ed.getTime() / 1000};
 };
+
+console.log(_execSpecRunTime("2018-02-.*T.*:00:00Z"));
 
 let _execSpecCount = function (Spec) {
     let patten = endTimePatten.test(Spec);
