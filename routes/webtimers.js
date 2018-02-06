@@ -3,24 +3,35 @@
  */
 const schedule = require("node-schedule");
 const express = require('express');
+const redis = require('./../my_modules/redishelp');
 const myUtil = require('./../my_modules/utils');
 const router = express.Router();
-//language=JSRegexp
 const endTimePatten = /^(.*)-(.*)-(.*)T(.*):(.*):.*$/;
 const monthDay = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
+// 记录开始时间的sortedSet
+const key_sSet_start = "SSET-spark-do-timer-start";
+// 记录结束时间的sortedSet
+const key_sSet_end = "SSET-spark-do-timer-end";
+// 记录操作任务的Hash
+const key_Hash_job = "Hash-spark-do-timer-job";
+
 let demo = {
+    // 任务名(req,only)
     Name: "TimerDemo",
     // 开始时间
     Start: 0,
     // 结束时间
     End: 0,
-    // 时区
+    // 时区(req)
     TimeZone: 8,
-    // 执行时段
+    // 执行时段(req)
     Spec: "2018-02-06T04:.*:00Z",
     // 共执行次数
     Count: 0,
+    // 最近执行的时间，以此来判断是否会有重复执行
+    DoTime: 0,
+    // 网络请求详细(req)
     Hooks: {
         Url: "www.sky1088.com",
         Data: "{a=1,b=2,c=3}",
@@ -78,14 +89,6 @@ let _execSpecCount = function (Spec) {
     return cc;
 };
 
-// console.log(_execSpecRunTime(demo.Spec));
-// console.log(_execSpecCount(demo.Spec));
-// console.log(endTimePatten.test(demo.Spec));
-
-// let json = JSON.stringify(demo);
-// console.log(json);
-// console.log(eval(JSON.parse(json).Spec).test(new Date().toISOString()));
-
 let _doRunCommand = function (req, res, next) {
     console.log('YES I DO ' + (new Date().toISOString()));
     res.send('YES I DO ' + (new Date().toISOString()));
@@ -95,10 +98,32 @@ let _getDefault = function (req, res, next) {
     res.send('respond with a time request');
 };
 
+// 添加一个定时任务
+let _doJobPost = function (req, res, next) {
+    let {Name, Spec, TimeZone, Hooks} = req.body;
+    let data = req.body;
+    // 首先查看名称是否被注册了
+    redis.HEXISTS(key_Hash_job, Name, function (err, exists) {
+        res.status(200).send(exists ? "Error : 任务名已经被注册了" : "YES");
+        if (exists) return;
+        let count = _execSpecCount(Spec);
+        if (count === -1) return;
+        let run = _execSpecRunTime(Spec);
+        data.Start = run.Start;
+        data.End = run.End;
+        data.Count = count;
+        redis.ZADD(key_sSet_start, run.Start, Name);
+        redis.ZADD(key_sSet_end, run.End, Name);
+        redis.HSET(key_Hash_job, Name, JSON.stringify(data));
+    });
+};
+
 /* GET users listing. */
 router.get('/', _getDefault);
 // 开始行动的指令，来源是定时器发出的
 router.get('/run', _doRunCommand);
+
+router.post('/', _doJobPost);
 
 // schedule.scheduleJob('*/2 * * * * *', function () {
 //     console.log('The answer to life, the universe, and everything!');

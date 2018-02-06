@@ -59,7 +59,8 @@ let calcMidPowers = function (sn, start, end, cb) {
                     let ave = powersAverage(ps);
                     result.push({SerialNumber: _pa.SerialNumber, PowerValue: ave, PowerTime: _ptst});
                 }
-                i = 0, limit = 200;
+                i = 0;
+                let limit = 200;
                 let sendCount = 0;
                 let mss = [];
                 while (i < result.length) {
