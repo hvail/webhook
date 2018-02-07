@@ -181,7 +181,7 @@ let _readLeftList = function (key, sn, cb) {
                         // 如果最后一条和现在相近，则不删除，如果较久，则删除
                         let mid = now_time - dataArray.last().GPSTime;
                         if (mid > calc_now_mid_time) {
-                            console.log(`${key} TIME ERROR : 与当前相隔 ${mid} : 最大相隔 ${calc_now_mid_time} : 相差 ${mid - calc_now_mid_time}`);
+                            console.log(`${key} TIME ERROR : 与当前相隔 ${mid.toPadLeft(6)} : 最大相隔 ${calc_now_mid_time.toPadLeft(3)} : 相差 ${mid - calc_now_mid_time}`);
                             // console.log(key + " TIME ERROR :  _obj.GPSTime - mid = " + (dataArray.last().GPSTime - mid));
                         }
                     }
