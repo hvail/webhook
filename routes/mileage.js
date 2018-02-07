@@ -134,6 +134,7 @@ let _readLeftList = function (key, sn, cb) {
     redis.LRANGE(key, 0, 1, function (err, jsons) {
         // 默认计时两倍 calc_length 时长，这样可以保证不会有太多的积累数据
         // redis.EXPIRE(key, calc_length * 2);
+
         // 只有两条以上符合要求才开始计算里程
         try {
             if (jsons.length < 2) {
@@ -164,6 +165,8 @@ let _readLeftList = function (key, sn, cb) {
                             break;
                         }
                         if (i === jsonArr.length - 1) {
+                            // 如果最后一条和现在相近，则不删除，如果较久，则删除
+                            console.log(key + " :  _obj.GPSTime - calc_time = " + (_obj.GPSTime - calc_time));
                             redis.LTRIM(key, i - 1, -1);
                         }
                     }
