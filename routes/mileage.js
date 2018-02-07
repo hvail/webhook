@@ -172,7 +172,7 @@ let _readLeftList = function (key, sn, cb) {
                 }
 
                 if (arr.length > 1) {
-                    console.log(`${key} 移除了 ${arr.length} 条数据，总长度: ${len} 还有 ${len - arr.length + 1}`);
+                    // console.log(`${key} 移除了 ${arr.length} 条数据，总长度: ${len} 还有 ${len - arr.length + 1}`);
                     redis.LTRIM(key, arr.length - 1, -1);
 
                     if (dataArray.length === arr.length) {
