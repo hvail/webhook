@@ -157,12 +157,13 @@ let _readLeftList = function (key, sn, cb) {
             redis.LRANGE(key, 0, -1, function (err, jsonArr) {
                 try {
                     /**以下为测试内容**/
-                    let test = [];
-                    for (let i = 0; i < jsonArr.length; i++) {
-                        let _obj = JSON.parse(jsonArr[i]);
-                        test.push(_obj.GPSTime);
-                    }
-                    console.log(JSON.stringify(test));
+                    // let test = [];
+                    // for (let i = 0; i < jsonArr.length; i++) {
+                    //     let _obj = JSON.parse(jsonArr[i]);
+                    //     test.push(_obj.GPSTime);
+                    // }
+                    // console.log(JSON.stringify(test));
+                    /**测试结果表示读取是按时间顺序进行读取的**/
                     /**测试内容结束**/
                     let arr = [];
                     for (let i = 0; i < jsonArr.length; i++) {
@@ -215,12 +216,16 @@ let doLocationPost = function (req, res, next) {
     }
     if (!!sn) {
         let key = redisMileageList.concat(sn);
+        // 以下代码中存在一个时间先后的问题
+        let arr = [];
         for (let i = 0; i < arr.length; i++) {
-            // 右进
-            redis.RPUSH(key, JSON.stringify(arr[i]));
+            arr.push(JSON.stringify(arr[i]));
         }
-        // 左出
-        _readLeftList(key, sn);
+        // 右进
+        redis.RPUSH(key, arr, function (err, result) {
+            // 左出
+            _readLeftList(key, sn);
+        });
     }
     res.status(200).send("1");
 };

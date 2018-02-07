@@ -20,5 +20,26 @@ redisClient.on('ready', function (res) {
     });
 });
 
+redisClient.execPromise = function (cmd) {
+    let args = Array.from(arguments).slice(1, arguments.length);
+    let cb = null;
+    if (typeof args[args.length - 1] === 'function') {
+        cb = args[args.length - 1];
+        args = args.slice(0, args.length - 1);
+    }
+    return new Promise(function (resolve, reject) {
+        redisClient[cmd](args, function (err, result) {
+            // 回调函数和Promise可同时使用
+            if (cb) cb(err, result);
+            if (!err) {
+                resolve(result);
+            } else {
+                console.log(err);
+                reject(err);
+            }
+        });
+    });
+};
+
 module.exports = redisClient;
 
