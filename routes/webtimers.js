@@ -93,7 +93,7 @@ let _execSpecCount = function (Spec) {
 
 let _doJobEnd = function () {
     // 这里是删除过期的任务，并将其记录到数据库中。
-    console.log("_doJobEnd");
+    // console.log("_doJobEnd");
     if (arguments.length === 1) {
         console.log(arguments[0]);
     }
