@@ -141,7 +141,9 @@ let _readLeftList = function (key, sn, cb) {
         }
 
         // console.log(`${key} 可计算的长度为 ${len}`);
-        let calc_time = _format_gt(Math.round(new Date().getTime() / 1000), calc_length);
+        let now_time = Math.round(new Date().getTime() / 1000);
+        let calc_time = _format_gt(now_time, calc_length);
+        let calc_now_mid_time = now_time - calc_time;
 
         redis.LRANGE(key, 0, len, function (err, jsonArr) {
             try {
@@ -177,8 +179,11 @@ let _readLeftList = function (key, sn, cb) {
 
                     if (dataArray.length === arr.length) {
                         // 如果最后一条和现在相近，则不删除，如果较久，则删除
-                        let mid = Math.round(new Date().getTime() / 1000);
-                        console.log(key + " :  _obj.GPSTime - mid = " + (dataArray.last().GPSTime - mid));
+                        let mid = now_time - dataArray.last().GPSTime;
+                        if (mid > calc_now_mid_time) {
+                            console.log(`${key} TIME ERROR : 与当前相隔 ${mid} : 最大相隔 ${calc_now_mid_time} : 相差 ${mid - calc_now_mid_time}`);
+                            // console.log(key + " TIME ERROR :  _obj.GPSTime - mid = " + (dataArray.last().GPSTime - mid));
+                        }
                     }
 
                     // 将针对arr进行数据处理
