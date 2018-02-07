@@ -178,6 +178,6 @@ router.get('/run', _doRunCommand);
 // 添加任务
 router.post('/', _doJobPost);
 // 取消任务
-router.del('/{name}', _doJobCancel);
+router.delete('/:name', _doJobCancel);
 
 module.exports = router;
