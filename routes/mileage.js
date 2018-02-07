@@ -175,7 +175,8 @@ let _readLeftList = function (key, sn, cb) {
                         }
                         if (i === jsonArr.length - 1) {
                             // 如果最后一条和现在相近，则不删除，如果较久，则删除
-                            console.log(key + " :  _obj.GPSTime - calc_time = " + (_obj.GPSTime - calc_time));
+                            let mid = Math.round(new Date().getTime() / 1000);
+                            console.log(key + " :  _obj.GPSTime - mid = " + (_obj.GPSTime - mid));
                             redis.LTRIM(key, i - 1, -1);
                         }
                     }
