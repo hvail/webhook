@@ -125,12 +125,12 @@ let _doRunCommand = function (req, res, next) {
     let runtime = DateTime.getTime() / 1000;
     // 查找在此之前开始的所有key，和在此之后才结束的所有key
     redis.ZRANGEBYSCORE(key_sSet_start, 0, runtime, function (err, _start) {
-        err && _doJobEnd(err);
+        (err || !_start || !_start.length) && _doJobEnd(err);
         redis.ZRANGEBYSCORE(key_sSet_end, runtime, edTime, function (err, _end) {
-            err && _doJobEnd(err);
+            (err || !_end || !_end.length) && _doJobEnd(err);
             let arr = _start.intersection(_end);
             redis.HMGET(key_Hash_job, arr, function (err, _result) {
-                err && _doJobEnd(err);
+                (err || !_result || !_result.length) && _doJobEnd(err);
                 _doJobBegin(_result, DateString);
             });
         });
