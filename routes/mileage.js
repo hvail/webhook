@@ -12,7 +12,7 @@ const router = express.Router();
 const area = process.env.DATAAREA || "zh-cn";
 
 const calc_mid = 5 * 60;              // 计算间隔5分钟
-const calc_length = 3 * calc_mid;    // 单次读取长度,3个计算周期 15分钟计算一次以减少系统压力和提高响应速度
+const calc_length = 2 * calc_mid;    // 单次读取长度,2个计算周期 10分钟计算一次以减少系统压力和提高响应速度
 const post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
 // 存储规则为右进左出
 // RPUSH & LRANGE
@@ -279,16 +279,23 @@ let doLocationPost = function (req, res, next) {
     if (!!sn) {
         let key = redisMileageList.concat(sn);
         // 以下代码中存在一个时间先后的问题
-        let _arr = [];
-        for (let i = 0; i < arr.length; i++) {
-            _arr.push(JSON.stringify(arr[i]));
-        }
+        // let _arr = [];
+        // for (let i = 0; i < arr.length; i++) {
+        //     _arr.push(JSON.stringify(arr[i]));
+        // }
 
-        // 右进
-        redis.RPUSH(key, _arr, function (err, result) {
-            // 左出
-            _readLeftList(key, sn);
+        redis.LRANGE(key, 0, -1, function (err, result) {
+            // 对数据进行排序
+            let objs = result.parseJSON();
+            objs = objs.concat(arr).sort((a, b) => a.GPSTime > b.GPSTime ? 1 : -1);
+            redis.del(key);
+            // 右进
+            redis.RPUSH(key, objs.stringifyJSON(), function (err, result) {
+                // 左出
+                _readLeftList(key, sn);
+            });
         });
+
     }
     res.status(200).send("1");
 };

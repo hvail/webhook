@@ -108,6 +108,22 @@ Array.prototype.ave = function (field) {
     return sum / l;
 };
 
+Array.prototype.parseJSON = function () {
+    let arr = this, result = [];
+    for (let i = 0; i < arr.length; i++) {
+        result.push(JSON.parse(arr[i]));
+    }
+    return result;
+};
+
+Array.prototype.stringifyJSON = function () {
+    let arr = this, result = [];
+    for (let i = 0; i < arr.length; i++) {
+        result.push(JSON.stringify(arr[i]));
+    }
+    return result;
+};
+
 /**
  * @return {string}
  */

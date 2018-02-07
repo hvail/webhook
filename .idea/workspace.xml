@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/my_modules/gpsutils.js" afterPath="$PROJECT_DIR$/my_modules/gpsutils.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/my_modules/utils.js" afterPath="$PROJECT_DIR$/my_modules/utils.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/mileage.js" afterPath="$PROJECT_DIR$/routes/mileage.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -18,10 +20,10 @@
       <file leaf-file-name="utils.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/my_modules/utils.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="137" column="2" lean-forward="false" selection-start-line="137" selection-start-column="2" selection-end-line="137" selection-end-column="2" />
+            <state relative-caret-position="525">
+              <caret line="110" column="25" lean-forward="false" selection-start-line="110" selection-start-column="16" selection-end-line="110" selection-end-column="25" />
               <folding>
-                <marker date="1517971782282" expanded="true" signature="6531:6533" ph="{...}" />
+                <marker date="1517995762906" expanded="true" signature="6915:6917" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -42,8 +44,8 @@
       <file leaf-file-name="gpsutils.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/my_modules/gpsutils.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="17" lean-forward="false" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
+            <state relative-caret-position="405">
+              <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -62,8 +64,8 @@
       <file leaf-file-name="mileage.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/mileage.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="168" column="60" lean-forward="false" selection-start-line="168" selection-start-column="60" selection-end-line="168" selection-end-column="60" />
+            <state relative-caret-position="406">
+              <caret line="272" column="21" lean-forward="false" selection-start-line="272" selection-start-column="21" selection-end-line="272" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -154,6 +156,8 @@
       <find>data</find>
       <find>doSingle</find>
       <find>arr</find>
+      <find>Array</find>
+      <find>_arr</find>
     </findStrings>
     <replaceStrings>
       <replace>let</replace>
@@ -181,10 +185,11 @@
         <option value="$PROJECT_DIR$/package-lock.json" />
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/routes/power.js" />
-        <option value="$PROJECT_DIR$/my_modules/utils.js" />
         <option value="$PROJECT_DIR$/my_modules/redishelp.js" />
         <option value="$PROJECT_DIR$/routes/push-alarm-phone.js" />
         <option value="$PROJECT_DIR$/routes/webtimers.js" />
+        <option value="$PROJECT_DIR$/my_modules/gpsutils.js" />
+        <option value="$PROJECT_DIR$/my_modules/utils.js" />
         <option value="$PROJECT_DIR$/routes/mileage.js" />
       </list>
     </option>
@@ -686,12 +691,12 @@
       <workItem from="1517281408418" duration="5000" />
       <workItem from="1517288002401" duration="13000" />
       <workItem from="1517800578938" duration="10458000" />
-      <workItem from="1517908458038" duration="30424000" />
+      <workItem from="1517908458038" duration="31602000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="82056000" />
+    <option name="totallyTimeSpent" value="83234000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1358" y="-8" width="1936" height="1056" extended-state="6" />
@@ -969,16 +974,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/my_modules/utils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="137" column="2" lean-forward="false" selection-start-line="137" selection-start-column="2" selection-end-line="137" selection-end-column="2" />
-          <folding>
-            <marker date="1517971782282" expanded="true" signature="6531:6533" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/redis-commands/commands.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-6120">
@@ -1029,14 +1024,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/my_modules/gpsutils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="17" lean-forward="false" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/my_modules/redishelp.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="31">
@@ -1065,10 +1052,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/my_modules/gpsutils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my_modules/utils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="110" column="25" lean-forward="false" selection-start-line="110" selection-start-column="16" selection-end-line="110" selection-end-column="25" />
+          <folding>
+            <marker date="1517995762906" expanded="true" signature="6915:6917" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/routes/mileage.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="168" column="60" lean-forward="false" selection-start-line="168" selection-start-column="60" selection-end-line="168" selection-end-column="60" />
+        <state relative-caret-position="406">
+          <caret line="272" column="21" lean-forward="false" selection-start-line="272" selection-start-column="21" selection-end-line="272" selection-end-column="21" />
           <folding />
         </state>
       </provider>

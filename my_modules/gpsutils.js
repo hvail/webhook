@@ -254,14 +254,8 @@ GPSUtils.IsPointInPolygon = function (Fps, lat, lng) {
         p1 = p2;//next ray left point
     }
 
-    if (intersectCount % 2 === 0) {
-        //偶数在多边形外
-        return false;
-    } else {
-        //奇数在多边形内
-        return true;
-    }
-}
+    return intersectCount % 2 !== 0;
+};
 
 
 module.exports = GPSUtils;
