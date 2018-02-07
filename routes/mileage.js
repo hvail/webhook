@@ -136,7 +136,7 @@ let _readLeftList = function (key, sn, cb) {
         if (len < 2 || err) {
             cb && cb();
             err && console.log(err);
-            console.log(`${key} 未送到计算条件 第2个数据为空 ${len}`);
+            // console.log(`${key} 未送到计算条件 第2个数据为空 ${len}`);
             return;
         }
 
@@ -168,6 +168,12 @@ let _readLeftList = function (key, sn, cb) {
                 }
 
                 redis.LTRIM(key, arr.length - 1, -1);
+
+                if (dataArray.length === arr.length) {
+                    // 如果最后一条和现在相近，则不删除，如果较久，则删除
+                    let mid = Math.round(new Date().getTime() / 1000);
+                    console.log(key + " :  _obj.GPSTime - mid = " + (dataArray.last().GPSTime - mid));
+                }
                 // else {
                 //         redis.LTRIM(key, i - 1, -1);
                 //         break;
