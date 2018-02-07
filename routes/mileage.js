@@ -167,7 +167,6 @@ let _readLeftList = function (key, sn, data, cb) {
                     }
 
                     redis.LTRIM(key, arr.length - 1, -1);
-
                     // else {
                     //         redis.LTRIM(key, i - 1, -1);
                     //         break;
