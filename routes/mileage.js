@@ -151,14 +151,17 @@ let _readLeftList = function (key, sn, cb) {
                     dataArray.push(_obj);
                 }
                 // if (data) dataArray = dataArray.concat(data);
-                console.log(`${key} 总的长度为 ${dataArray.length}`);
+                // console.log(`${key} 总的长度为 ${dataArray.length}`);
 
                 /**以下为测试内容**/
-                let test = [];
+                    // let test = [];
+                let gn = 0;
                 for (let i = 0; i < dataArray.length; i++) {
-                    test.push(dataArray[i].GPSTime);
+                    // test.push(dataArray[i].GPSTime);
+                    if (gn > dataArray[i].GPSTime) console.log(key + " : 按时间排序出错 i = " + i);
+                    gn = dataArray[i].GPSTime;
                 }
-                console.log(key + " : " + JSON.stringify(test));
+                // console.log(key + " : " + JSON.stringify(test));
                 /**测试结果表示读取是按时间顺序进行读取的**/
                 /**测试内容结束**/
                 let arr = [];
