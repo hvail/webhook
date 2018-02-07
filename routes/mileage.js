@@ -140,7 +140,7 @@ let _readLeftList = function (key, sn, cb) {
             return;
         }
 
-        console.log(`${key} 可计算的长度为 ${len}`);
+        // console.log(`${key} 可计算的长度为 ${len}`);
         let calc_time = _format_gt(Math.round(new Date().getTime() / 1000), calc_length);
 
         redis.LRANGE(key, 0, len, function (err, jsonArr) {
