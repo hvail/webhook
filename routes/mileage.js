@@ -149,7 +149,7 @@ let _readLeftList = function (key, sn, cb) {
                     let _obj = JSON.parse(jsonArr[i]);
                     test.push(_obj);
                 }
-                if (data) dataArray = dataArray.concat(data);
+                // if (data) dataArray = dataArray.concat(data);
                 console.log(`${key} 总的长度为 ${dataArray.length}`);
 
                 /**以下为测试内容**/

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/mileage.js" afterPath="$PROJECT_DIR$/routes/mileage.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -63,8 +62,8 @@
       <file leaf-file-name="mileage.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/mileage.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="451">
-              <caret line="138" column="19" lean-forward="false" selection-start-line="138" selection-start-column="19" selection-end-line="138" selection-end-column="19" />
+            <state relative-caret-position="316">
+              <caret line="148" column="54" lean-forward="false" selection-start-line="148" selection-start-column="54" selection-end-line="148" selection-end-column="54" />
               <folding />
             </state>
           </provider>
@@ -152,6 +151,7 @@
       <find>Pro</find>
       <find>createClient</find>
       <find>arg</find>
+      <find>data</find>
     </findStrings>
     <replaceStrings>
       <replace>let</replace>
@@ -684,12 +684,12 @@
       <workItem from="1517281408418" duration="5000" />
       <workItem from="1517288002401" duration="13000" />
       <workItem from="1517800578938" duration="10458000" />
-      <workItem from="1517908458038" duration="26362000" />
+      <workItem from="1517908458038" duration="26426000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="77994000" />
+    <option name="totallyTimeSpent" value="78058000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1358" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1065,8 +1065,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/mileage.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="451">
-          <caret line="138" column="19" lean-forward="false" selection-start-line="138" selection-start-column="19" selection-end-line="138" selection-end-column="19" />
+        <state relative-caret-position="316">
+          <caret line="148" column="54" lean-forward="false" selection-start-line="148" selection-start-column="54" selection-end-line="148" selection-end-column="54" />
           <folding />
         </state>
       </provider>
