@@ -130,63 +130,63 @@ let _calcMiddleMileage = function (data) {
     return obj;
 };
 
-let _readLeftList = function (key, sn, data, cb) {
+let _readLeftList = function (key, sn, cb) {
     redis.LLEN(key, function (err, len) {
-        data && redis.RPUSH(key, data, function (err, result) {
-            if (len < 2 || err) {
-                cb && cb();
-                console.log(`${key} 未送到计算条件 第2个数据为空`);
-                return;
-            }
+        // data && redis.RPUSH(key, data, function (err, result) {
+        if (len < 2 || err) {
+            cb && cb();
+            console.log(`${key} 未送到计算条件 第2个数据为空`);
+            return;
+        }
 
-            console.log(`${key} 可计算的长度为 ${len}`);
-            let calc_time = _format_gt(Math.round(new Date().getTime() / 1000), calc_length);
+        console.log(`${key} 可计算的长度为 ${len}`);
+        let calc_time = _format_gt(Math.round(new Date().getTime() / 1000), calc_length);
 
-            redis.LRANGE(key, 0, len, function (err, jsonArr) {
-                try {
-                    let dataArray = [];
-                    for (let i = 0; i < jsonArr.length; i++) {
-                        let _obj = JSON.parse(jsonArr[i]);
-                        test.push(_obj);
-                    }
-                    if (data) dataArray = dataArray.concat(data);
-                    console.log(`${key} 总的长度为 ${dataArray.length}`);
-
-                    /**以下为测试内容**/
-                    let test = [];
-                    for (let i = 0; i < dataArray.length; i++) {
-                        test.push(dataArray[i].GPSTime);
-                    }
-                    console.log(key + " : " + JSON.stringify(test));
-                    /**测试结果表示读取是按时间顺序进行读取的**/
-                    /**测试内容结束**/
-                    let arr = [];
-                    for (let i = 0; i < dataArray.length; i++) {
-                        let _obj = dataArray[i];
-                        if (_obj.GPSTime <= calc_time) arr.push(_obj);
-                    }
-
-                    redis.LTRIM(key, arr.length - 1, -1);
-                    // else {
-                    //         redis.LTRIM(key, i - 1, -1);
-                    //         break;
-                    //     }
-                    //     if (i === jsonArr.length - 1) {
-                    //         // 如果最后一条和现在相近，则不删除，如果较久，则删除
-                    //         let mid = Math.round(new Date().getTime() / 1000);
-                    //         console.log(key + " :  _obj.GPSTime - mid = " + (_obj.GPSTime - mid));
-                    //         redis.LTRIM(key, i - 1, -1);
-                    //     }
-
-                    // 将针对arr进行数据处理
-                    let hash = _calc_pack_mileage(_calcMiddleMileage(arr));
-                    _do_save_mileage(hash, sn, calc_mid);
-                    cb && cb(null, '1');
-                } catch (e) {
-                    redis.DEL(key);
+        redis.LRANGE(key, 0, len, function (err, jsonArr) {
+            try {
+                let dataArray = [];
+                for (let i = 0; i < jsonArr.length; i++) {
+                    let _obj = JSON.parse(jsonArr[i]);
+                    test.push(_obj);
                 }
-            });
+                if (data) dataArray = dataArray.concat(data);
+                console.log(`${key} 总的长度为 ${dataArray.length}`);
+
+                /**以下为测试内容**/
+                let test = [];
+                for (let i = 0; i < dataArray.length; i++) {
+                    test.push(dataArray[i].GPSTime);
+                }
+                console.log(key + " : " + JSON.stringify(test));
+                /**测试结果表示读取是按时间顺序进行读取的**/
+                /**测试内容结束**/
+                let arr = [];
+                for (let i = 0; i < dataArray.length; i++) {
+                    let _obj = dataArray[i];
+                    if (_obj.GPSTime <= calc_time) arr.push(_obj);
+                }
+
+                redis.LTRIM(key, arr.length - 1, -1);
+                // else {
+                //         redis.LTRIM(key, i - 1, -1);
+                //         break;
+                //     }
+                //     if (i === jsonArr.length - 1) {
+                //         // 如果最后一条和现在相近，则不删除，如果较久，则删除
+                //         let mid = Math.round(new Date().getTime() / 1000);
+                //         console.log(key + " :  _obj.GPSTime - mid = " + (_obj.GPSTime - mid));
+                //         redis.LTRIM(key, i - 1, -1);
+                //     }
+
+                // 将针对arr进行数据处理
+                let hash = _calc_pack_mileage(_calcMiddleMileage(arr));
+                _do_save_mileage(hash, sn, calc_mid);
+                cb && cb(null, '1');
+            } catch (e) {
+                redis.DEL(key);
+            }
         });
+        // });
     });
     // redis.LRANGE(key, 0, 1, function (err, jsons) {
     //     // 默认计时两倍 calc_length 时长，这样可以保证不会有太多的积累数据
@@ -279,14 +279,12 @@ let doLocationPost = function (req, res, next) {
         for (let i = 0; i < arr.length; i++) {
             arr.push(JSON.stringify(arr[i]));
         }
-        _readLeftList(key, sn, arr, function () {
 
-        });
         // 右进
-        // redis.RPUSH(key, arr, function (err, result) {
-        //     // 左出
-        //     _readLeftList(key, sn);
-        // });
+        redis.RPUSH(key, arr, function (err, result) {
+            // 左出
+            _readLeftList(key, sn);
+        });
     }
     res.status(200).send("1");
 };
