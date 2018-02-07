@@ -162,7 +162,11 @@ let _doJobPost = function (req, res, next) {
 };
 
 let _doJobCancel = function (req, res, next) {
-    res.status(200).send("YOU JOB BE CANCEL");
+    let {name} = req.params;
+    redis.ZREM(key_sSet_start, name);
+    redis.ZREM(key_sSet_end, name);
+    redis.HDEL(key_Hash_job, name);
+    res.status(200).send("YOU JOB WILL CANCEL");
 };
 
 /* GET users listing. */
