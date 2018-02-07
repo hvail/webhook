@@ -158,6 +158,7 @@ let _readLeftList = function (key, sn, cb) {
                 let gn = 0;
                 for (let i = 0; i < dataArray.length; i++) {
                     // test.push(dataArray[i].GPSTime);
+                    // 不能出现 "时间排序出错" 如果出现，则表示有些地方出了问题
                     if (gn > dataArray[i].GPSTime) console.log(key + " : 按时间排序出错 i = " + i + " LEN : " + len);
                     gn = dataArray[i].GPSTime;
                 }
@@ -170,6 +171,7 @@ let _readLeftList = function (key, sn, cb) {
                     if (_obj.GPSTime <= calc_time) arr.push(_obj);
                 }
 
+                console.log(`${key} 移除了 ${arr.length} 条数据，总长度: ${len} 还有 ${len - arr.length + 1}`);
                 redis.LTRIM(key, arr.length - 1, -1);
 
                 if (dataArray.length === arr.length) {
