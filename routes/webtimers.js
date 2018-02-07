@@ -106,6 +106,7 @@ let _doJobBegin = function (objs, DateString, i) {
         return;
     }
     let obj = JSON.parse(objs[ii]);
+    if (obj === null) return;
     if (eval("/" + obj.Spec + "/").test(DateString)) {
         // 如果符合条件就向其发送数据
         myUtil.DoPushPost(obj.Hooks, obj.Hooks.Data);
@@ -177,6 +178,6 @@ router.get('/run', _doRunCommand);
 // 添加任务
 router.post('/', _doJobPost);
 // 取消任务
-router.delete('/{name}', _doJobCancel);
+router.del('/{name}', _doJobCancel);
 
 module.exports = router;
