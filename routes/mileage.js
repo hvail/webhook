@@ -135,7 +135,8 @@ let _readLeftList = function (key, sn, cb) {
         // data && redis.RPUSH(key, data, function (err, result) {
         if (len < 2 || err) {
             cb && cb();
-            console.log(`${key} 未送到计算条件 第2个数据为空`);
+            err && console.log(err);
+            console.log(`${key} 未送到计算条件 第2个数据为空 ${len}`);
             return;
         }
 
