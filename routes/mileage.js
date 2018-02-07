@@ -156,6 +156,14 @@ let _readLeftList = function (key, sn, cb) {
             // 开始读取整个区域的里程值，并传送到计算函数中。
             redis.LRANGE(key, 0, -1, function (err, jsonArr) {
                 try {
+                    /**以下为测试内容**/
+                    let test = [];
+                    for (let i = 0; i < jsonArr.length; i++) {
+                        let _obj = JSON.parse(jsonArr[i]);
+                        test.push(_obj.GPSTime);
+                    }
+                    console.log(JSON.stringify(test));
+                    /**测试内容结束**/
                     let arr = [];
                     for (let i = 0; i < jsonArr.length; i++) {
                         let _obj = JSON.parse(jsonArr[i]);
