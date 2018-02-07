@@ -171,28 +171,20 @@ let _readLeftList = function (key, sn, cb) {
                     if (_obj.GPSTime <= calc_time) arr.push(_obj);
                 }
 
-                console.log(`${key} 移除了 ${arr.length} 条数据，总长度: ${len} 还有 ${len - arr.length + 1}`);
-                redis.LTRIM(key, arr.length - 1, -1);
+                if (arr.length > 1) {
+                    console.log(`${key} 移除了 ${arr.length} 条数据，总长度: ${len} 还有 ${len - arr.length + 1}`);
+                    redis.LTRIM(key, arr.length - 1, -1);
 
-                if (dataArray.length === arr.length) {
-                    // 如果最后一条和现在相近，则不删除，如果较久，则删除
-                    let mid = Math.round(new Date().getTime() / 1000);
-                    console.log(key + " :  _obj.GPSTime - mid = " + (dataArray.last().GPSTime - mid));
+                    if (dataArray.length === arr.length) {
+                        // 如果最后一条和现在相近，则不删除，如果较久，则删除
+                        let mid = Math.round(new Date().getTime() / 1000);
+                        console.log(key + " :  _obj.GPSTime - mid = " + (dataArray.last().GPSTime - mid));
+                    }
+
+                    // 将针对arr进行数据处理
+                    let hash = _calc_pack_mileage(_calcMiddleMileage(arr));
+                    _do_save_mileage(hash, sn, calc_mid);
                 }
-                // else {
-                //         redis.LTRIM(key, i - 1, -1);
-                //         break;
-                //     }
-                //     if (i === jsonArr.length - 1) {
-                //         // 如果最后一条和现在相近，则不删除，如果较久，则删除
-                //         let mid = Math.round(new Date().getTime() / 1000);
-                //         console.log(key + " :  _obj.GPSTime - mid = " + (_obj.GPSTime - mid));
-                //         redis.LTRIM(key, i - 1, -1);
-                //     }
-
-                // 将针对arr进行数据处理
-                let hash = _calc_pack_mileage(_calcMiddleMileage(arr));
-                _do_save_mileage(hash, sn, calc_mid);
                 cb && cb(null, '1');
             } catch (e) {
                 redis.DEL(key);
