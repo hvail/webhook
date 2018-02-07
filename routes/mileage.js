@@ -131,7 +131,7 @@ let _calcMiddleMileage = function (data) {
 };
 
 let _readLeftList = function (key, sn, cb) {
-    redis.LRANGE(key, 0, 1, function (err, jsons) {
+    redis.LRANGE(key, 0, -1, function (err, jsons) {
         // 默认计时两倍 calc_length 时长，这样可以保证不会有太多的积累数据
         // redis.EXPIRE(key, calc_length * 2);
 
