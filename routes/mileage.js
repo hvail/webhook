@@ -276,13 +276,13 @@ let doLocationPost = function (req, res, next) {
     if (!!sn) {
         let key = redisMileageList.concat(sn);
         // 以下代码中存在一个时间先后的问题
-        let arr = [];
+        let _arr = [];
         for (let i = 0; i < arr.length; i++) {
-            arr.push(JSON.stringify(arr[i]));
+            _arr.push(JSON.stringify(arr[i]));
         }
 
         // 右进
-        redis.RPUSH(key, arr, function (err, result) {
+        redis.RPUSH(key, _arr, function (err, result) {
             // 左出
             _readLeftList(key, sn);
         });
