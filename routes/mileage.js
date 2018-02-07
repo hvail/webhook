@@ -158,7 +158,7 @@ let _readLeftList = function (key, sn, cb) {
                 let gn = 0;
                 for (let i = 0; i < dataArray.length; i++) {
                     // test.push(dataArray[i].GPSTime);
-                    if (gn > dataArray[i].GPSTime) console.log(key + " : 按时间排序出错 i = " + i);
+                    if (gn > dataArray[i].GPSTime) console.log(key + " : 按时间排序出错 i = " + i + " LEN : " + len);
                     gn = dataArray[i].GPSTime;
                 }
                 // console.log(key + " : " + JSON.stringify(test));
