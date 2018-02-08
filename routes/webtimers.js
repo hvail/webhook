@@ -63,6 +63,8 @@ let _execSpecRunTime = function (Spec) {
             ed.setDate(sd.getDate() + 1);
         } else if ($5 === ".*") {
             ed.setHours(sd.getHours() + 1);
+        } else {
+            ed.setMinutes(sd.getMinutes() + 1);
         }
     }
     return {Start: sd.getTime() / 1000, End: ed.getTime() / 1000};
@@ -106,9 +108,7 @@ let _doJobBegin = function (objs, DateString, i) {
         return;
     }
     try {
-        if (typeof objs === 'string') {
-            objs = [objs];
-        }
+        if (typeof objs === 'string') objs = [objs];
         let obj = JSON.parse(objs[ii]);
         if (obj === null) return;
         if (eval("/" + obj.Spec + "/").test(DateString)) {
