@@ -353,6 +353,7 @@ let doClear = function (req, res, next) {
 router.get('/', demo);
 router.post('/', doLocationPost);
 router.get('/clear', doClear);
+router.post('/clear', doClear);
 router.get('/single/:sn', doSingle);
 router.post('/single/:sn', doSingle);
 
