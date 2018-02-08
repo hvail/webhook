@@ -140,15 +140,15 @@ let _readLeftList = function (key, sn, cb) {
         let len = lenArr.length;
         // data && redis.RPUSH(key, data, function (err, result) {
         if (len < 2 || err) {
-            cb && cb();
             err && console.log(err);
-            console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${(now_time - obj.GPSTime - calc_now_mid_time)}，则删除之`);
             if (len === 1) {
                 let obj = JSON.parse(lenArr[0]);
                 if ((now_time - obj.GPSTime - calc_now_mid_time) > calc_time) {
+                    console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${(now_time - obj.GPSTime - calc_now_mid_time)}，则删除之`);
                     redis.DEL(key);
                 }
             }
+            cb && cb();
             return;
         }
 
