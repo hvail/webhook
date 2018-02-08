@@ -17,6 +17,7 @@ const post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
 // 存储规则为右进左出
 // RPUSH & LRANGE
 let redisMileageList = "list-run-mileage-";
+let redisMileageSortedSet = "SSET-speak-mileage-last";
 
 let demo = function (req, res, next) {
     res.send('mileage v2.0.0');
@@ -195,7 +196,6 @@ let _readLeftList = function (key, sn, cb) {
                 redis.DEL(key);
             }
         });
-        // });
     });
     // redis.LRANGE(key, 0, 1, function (err, jsons) {
     //     // 默认计时两倍 calc_length 时长，这样可以保证不会有太多的积累数据
@@ -293,6 +293,7 @@ let doLocationPost = function (req, res, next) {
             // 对数据进行排序
             let objs = result.parseJSON();
             objs = objs.concat(arr).sort((a, b) => a.GPSTime > b.GPSTime ? 1 : -1);
+            redis.ZADD(redisMileageSortedSet, sn, new Date().getTime());
             redis.del(key);
             // 右进
             redis.RPUSH(key, objs.stringifyJSON(), function (err, result) {
