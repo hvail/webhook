@@ -311,7 +311,7 @@ let doSingle = function (req, res, next) {
     let sn = req.params.sn;
     let key = redisMileageList.concat(sn);
     _readLeftList(key, sn);
-    res.statusCode(200).send("1");
+    res.status(200).send("1");
 };
 
 /* GET users listing. */
