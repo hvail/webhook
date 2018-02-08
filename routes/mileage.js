@@ -138,7 +138,7 @@ let _readLeftList = function (key, sn, cb) {
         if (len < 2 || err) {
             cb && cb();
             err && console.log(err);
-            // console.log(`${key} 未送到计算条件 第2个数据为空 ${len}`);
+            console.log(`${key} 未送到计算条件 第2个数据为空 ${len}`);
             return;
         }
 
@@ -176,7 +176,7 @@ let _readLeftList = function (key, sn, cb) {
                 }
 
                 if (arr.length > 1) {
-                    console.log(`${key} 移除了 ${arr.length} 条数据，总长度: ${len} 还有 ${len - arr.length + 1}`);
+                    // console.log(`${key} 移除了 ${arr.length} 条数据，总长度: ${len} 还有 ${len - arr.length + 1}`);
                     redis.LTRIM(key, arr.length - 1, -1);
 
                     if (dataArray.length === arr.length) {
@@ -188,10 +188,10 @@ let _readLeftList = function (key, sn, cb) {
                         // console.log(key + " TIME ERROR :  _obj.GPSTime - mid = " + (dataArray.last().GPSTime - mid));
                         // }
                         // 如果这个相隔两个计算周期，则此键可以删除
-                        // if (calc_mid > calc_time) {
-                        console.log(`${key} TIME ERROR : 与当前相隔 ${mid.toPadLeft(6)} : 最大相隔 ${calc_now_mid_time} : 相差 ${calc_mid} 删除之`)
-                        // redis.DEL(key);
-                        // }
+                        if (calc_mid > calc_time) {
+                            console.log(`${key} TIME ERROR : 与当前相隔 ${mid.toPadLeft(6)} : 最大相隔 ${calc_now_mid_time} : 相差 ${calc_mid} 删除之`)
+                            redis.DEL(key);
+                        }
                     }
 
                     // 将针对arr进行数据处理
