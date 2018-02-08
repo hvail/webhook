@@ -293,7 +293,7 @@ let doLocationPost = function (req, res, next) {
             // 对数据进行排序
             let objs = result.parseJSON();
             objs = objs.concat(arr).sort((a, b) => a.GPSTime > b.GPSTime ? 1 : -1);
-            redis.ZADD(redisMileageSortedSet, sn, new Date().getTime());
+            redis.ZADD(redisMileageSortedSet, new Date().getTime(), sn);
             redis.del(key);
             // 右进
             redis.RPUSH(key, objs.stringifyJSON(), function (err, result) {
