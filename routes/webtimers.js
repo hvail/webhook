@@ -144,8 +144,7 @@ let _doRunCommand = function (req, res, next) {
     //         });
     //     }
     // });
-
-    // ************************* 这里使用Promise 写法进行
+    // ************************* 这里使用Promise 写法进行 ***************************///
     let _start = redis.execPromise("ZRANGEBYSCORE", key_sSet_start, 0, runtime);
     let _end = redis.execPromise("ZRANGEBYSCORE", key_sSet_end, runtime, edTime);
 
@@ -154,8 +153,10 @@ let _doRunCommand = function (req, res, next) {
         if (!arr || arr.length === 0) {
             _doJobEnd();
         } else {
-            redis.execPromise("HMGET", key_Hash_job, arr)
-                .then(_resultData => _doJobBegin(_resultData, DateString))
+            console.log(arr);
+            let _doJobs = (arr.length === 1) ?
+                redis.execPromise("HGET", key_Hash_job, arr[0]) : redis.execPromise("HMGET", key_Hash_job, arr);
+            _doJobs.then(_resultData => _doJobBegin(_resultData, DateString))
                 .catch(_doJobEnd);
         }
     }));
