@@ -105,17 +105,23 @@ let _doJobBegin = function (objs, DateString, i) {
         _doJobEnd();
         return;
     }
-    let obj = JSON.parse(objs[ii]);
-    if (obj === null) return;
-    if (eval("/" + obj.Spec + "/").test(DateString)) {
-        // 如果符合条件就向其发送数据
-        myUtil.DoPushPost(obj.Hooks, obj.Hooks.Data);
-    } else {
-        if (ii++ === objs.length - 1) {
-            _doJobEnd();
+    try {
+        let obj = JSON.parse(objs[ii]);
+        if (obj === null) return;
+        if (eval("/" + obj.Spec + "/").test(DateString)) {
+            // 如果符合条件就向其发送数据
+            myUtil.DoPushPost(obj.Hooks, obj.Hooks.Data);
         } else {
-            _doJobBegin(objs, DateString, ii);
+            if (ii++ === objs.length - 1) {
+                _doJobEnd();
+            } else {
+                _doJobBegin(objs, DateString, ii);
+            }
         }
+    } catch (e) {
+        console.log(e);
+        console.log(ii);
+        console.log(objs[ii]);
     }
 };
 
