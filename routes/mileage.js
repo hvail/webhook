@@ -142,10 +142,10 @@ let _readLeftList = function (key, sn, cb) {
         if (len < 2 || err) {
             cb && cb();
             err && console.log(err);
+            console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${(now_time - obj.GPSTime - calc_now_mid_time)}，则删除之`);
             if (len === 1) {
                 let obj = JSON.parse(lenArr[0]);
                 if ((now_time - obj.GPSTime - calc_now_mid_time) > calc_time) {
-                    console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${(now_time - obj.GPSTime - calc_now_mid_time)}，则删除之`);
                     redis.DEL(key);
                 }
             }
@@ -326,6 +326,7 @@ let doLocationPost = function (req, res, next) {
 let doSingle = function (req, res, next) {
     let sn = req.params.sn;
     let key = redisMileageList.concat(sn);
+    console.log(`读取 ${key} 的相关里程信息 并进行计算`);
     _readLeftList(key, sn);
     res.status(200).send("1");
 };
