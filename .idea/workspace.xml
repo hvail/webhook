@@ -62,8 +62,8 @@
       <file leaf-file-name="mileage.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/mileage.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="139" column="32" lean-forward="true" selection-start-line="139" selection-start-column="32" selection-end-line="139" selection-end-column="32" />
+            <state relative-caret-position="110">
+              <caret line="135" column="59" lean-forward="false" selection-start-line="135" selection-start-column="59" selection-end-line="135" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -156,6 +156,7 @@
       <find>arr</find>
       <find>Array</find>
       <find>_arr</find>
+      <find>sn</find>
     </findStrings>
     <replaceStrings>
       <replace>let</replace>
@@ -309,7 +310,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Node.js.webtimers.js">
+  <component name="RunManager" selected="Node.js.bin\www">
     <configuration default="false" name="webtimers.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="project" path-to-js-file="webtimers.js" working-dir="$PROJECT_DIR$/routes">
       <method />
     </configuration>
@@ -689,12 +690,12 @@
       <workItem from="1517281408418" duration="5000" />
       <workItem from="1517288002401" duration="13000" />
       <workItem from="1517800578938" duration="10458000" />
-      <workItem from="1517908458038" duration="42467000" />
+      <workItem from="1517908458038" duration="43840000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="94099000" />
+    <option name="totallyTimeSpent" value="95472000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -747,7 +748,7 @@
           <option name="timeStamp" value="110" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="115" />
+      <option name="time" value="121" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1071,8 +1072,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/mileage.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="139" column="32" lean-forward="true" selection-start-line="139" selection-start-column="32" selection-end-line="139" selection-end-column="32" />
+        <state relative-caret-position="110">
+          <caret line="135" column="59" lean-forward="false" selection-start-line="135" selection-start-column="59" selection-end-line="135" selection-end-column="59" />
           <folding />
         </state>
       </provider>

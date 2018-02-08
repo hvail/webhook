@@ -17,6 +17,7 @@ const post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
 // 存储规则为右进左出
 // RPUSH & LRANGE
 let redisMileageList = "list-run-mileage-";
+let redisMileageListPatten = /list-run-mileage-(.*)/;
 let redisMileageSortedSet = "SSET-speak-mileage-last";
 
 let demo = function (req, res, next) {
@@ -147,7 +148,7 @@ let _readLeftList = function (key, sn, cb) {
                 let __mid = now_time - obj.GPSTime - calc_now_mid_time;
                 // console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${__mid}，则删除之: ${(__mid > calc_time)})`);
                 if (__mid > calc_length) {
-                    console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${__mid}，则删除之`);
+                    // console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${__mid}，则删除之`);
                     redis.DEL(key);
                 }
             }
@@ -195,11 +196,7 @@ let _readLeftList = function (key, sn, cb) {
                     if (dataArray.length === arr.length) {
                         // 如果最后一条和现在相近，则不删除，如果较久，则删除
                         let mid = now_time - dataArray.last().GPSTime;
-                        // if (mid > (calc_now_mid_time + calc_time)) {
                         let calc_mid = mid - calc_now_mid_time;
-                        // console.log(`${key} TIME ERROR : 与当前相隔 ${mid.toPadLeft(6)} : 最大相隔 ${calc_now_mid_time.toPadLeft(3)} : 相差 ${calc_mid}`);
-                        // console.log(key + " TIME ERROR :  _obj.GPSTime - mid = " + (dataArray.last().GPSTime - mid));
-                        // }
                         // 如果这个相隔两个计算周期，则此键可以删除
                         if (calc_mid > calc_length) {
                             console.log(`${key} TIME ERROR : 与当前相隔 ${mid.toPadLeft(6)} : 最大相隔 ${calc_now_mid_time} : 相差 ${calc_mid} 删除之`)
@@ -329,14 +326,33 @@ let doLocationPost = function (req, res, next) {
 let doSingle = function (req, res, next) {
     let sn = req.params.sn;
     let key = redisMileageList.concat(sn);
-    console.log(`读取 ${key} 的相关里程信息 并进行计算`);
+    // console.log(`读取 ${key} 的相关里程信息 并进行计算`);
     _readLeftList(key, sn);
     res.status(200).send("1");
+};
+
+let _doKeep = function (keys, i, max) {
+    let index = i++;
+    max = max || keys.length;
+    if (index === keys.length || index >= max)return;
+    let key = keys[index];
+    redisMileageListPatten.test(key);
+    let sn = RegExp.$1;
+    _readLeftList(key, sn, function (err, end) {
+        _doKeep(keys, i, max);
+    });
+};
+
+let doClear = function (req, res, next) {
+    redis.KEYS("list-run-mileage-*", function (err, keys) {
+        _doKeep(keys, 0);
+    });
 };
 
 /* GET users listing. */
 router.get('/', demo);
 router.post('/', doLocationPost);
+router.get('/clear', doClear);
 router.get('/single/:sn', doSingle);
 router.post('/single/:sn', doSingle);
 
