@@ -106,6 +106,9 @@ let _doJobBegin = function (objs, DateString, i) {
         return;
     }
     try {
+        if (typeof objs === 'string') {
+            objs = [objs];
+        }
         let obj = JSON.parse(objs[ii]);
         if (obj === null) return;
         if (eval("/" + obj.Spec + "/").test(DateString)) {
