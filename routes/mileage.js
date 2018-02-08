@@ -347,6 +347,7 @@ let doClear = function (req, res, next) {
     redis.KEYS("list-run-mileage-*", function (err, keys) {
         _doKeep(keys, 0);
     });
+    res.status(200).send("1")
 };
 
 /* GET users listing. */
