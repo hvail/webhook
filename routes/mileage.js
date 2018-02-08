@@ -146,7 +146,7 @@ let _readLeftList = function (key, sn, cb) {
                 let obj = JSON.parse(lenArr[0]);
                 let __mid = now_time - obj.GPSTime - calc_now_mid_time;
                 console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${__mid}，则删除之: ${(__mid > calc_time)})`);
-                if (__mid > calc_time) {
+                if (__mid > calc_length) {
                     console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${__mid}，则删除之`);
                     redis.DEL(key);
                 }
@@ -201,7 +201,7 @@ let _readLeftList = function (key, sn, cb) {
                         // console.log(key + " TIME ERROR :  _obj.GPSTime - mid = " + (dataArray.last().GPSTime - mid));
                         // }
                         // 如果这个相隔两个计算周期，则此键可以删除
-                        if (calc_mid > calc_time) {
+                        if (calc_mid > calc_length) {
                             console.log(`${key} TIME ERROR : 与当前相隔 ${mid.toPadLeft(6)} : 最大相隔 ${calc_now_mid_time} : 相差 ${calc_mid} 删除之`)
                             redis.DEL(key);
                         }
