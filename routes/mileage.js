@@ -144,6 +144,7 @@ let _readLeftList = function (key, sn, cb) {
             console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期`);
             if ((len * 1) === 1) {
                 let obj = JSON.parse(lenArr[0]);
+                console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${(now_time - obj.GPSTime - calc_now_mid_time)}，则删除之`);
                 if ((now_time - obj.GPSTime - calc_now_mid_time) > calc_time) {
                     console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${(now_time - obj.GPSTime - calc_now_mid_time)}，则删除之`);
                     redis.DEL(key);
