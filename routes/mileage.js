@@ -132,20 +132,30 @@ let _calcMiddleMileage = function (data) {
 };
 
 let _readLeftList = function (key, sn, cb) {
+    let now_time = Math.round(new Date().getTime() / 1000);
+    let calc_time = _format_gt(now_time, calc_length);
+    let calc_now_mid_time = now_time - calc_time;
+
     redis.LRANGE(key, 0, 1, function (err, lenArr) {
         let len = lenArr.length;
         // data && redis.RPUSH(key, data, function (err, result) {
         if (len < 2 || err) {
             cb && cb();
             err && console.log(err);
-            console.log(`${key} 未送到计算条件 第2个数据为空 ${len}`);
+            if (len === 1) {
+                let obj = JSON.parse(lenArr[0]);
+                if ((now_time - obj.GPSTime - calc_now_mid_time) > calc_time) {
+                    console.log(`${key} 未送到计算条件 第2个数据为空 ${len} 且数据已经过期 ${(now_time - obj.GPSTime - calc_now_mid_time)}，则删除之`);
+                    redis.DEL(key);
+                }
+            }
             return;
         }
 
         // console.log(`${key} 可计算的长度为 ${len}`);
-        let now_time = Math.round(new Date().getTime() / 1000);
-        let calc_time = _format_gt(now_time, calc_length);
-        let calc_now_mid_time = now_time - calc_time;
+        // let now_time = Math.round(new Date().getTime() / 1000);
+        // let calc_time = _format_gt(now_time, calc_length);
+        // let calc_now_mid_time = now_time - calc_time;
 
         redis.LRANGE(key, 0, len, function (err, jsonArr) {
             try {
