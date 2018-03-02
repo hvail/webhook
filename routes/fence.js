@@ -91,7 +91,10 @@ let _location = function (req, res, next) {
     let sn = pos[0].SerialNumber;
     let getFenceUrl = fenceUrl + sn;
     request(getFenceUrl, function (err, response, result) {
-        if (response.statusCode !== 200 && result === "[]") return;
+        if (response.statusCode !== 200 && result === "[]") {
+            if (response.statusCode !== 200) console.log(result);
+            return;
+        }
         try {
             let fences = JSON.parse(result);
             if (fences.length < 1 || pos.length < 1) return;
@@ -109,7 +112,7 @@ let _location = function (req, res, next) {
             });
         } catch (e) {
             // console.log(e);
-            // console.log("GET " + getFenceUrl + " : " + response.statusCode);
+            console.log("GET " + getFenceUrl + " : " + response.statusCode + " ; " + result);
         }
     });
     res.send("1");
