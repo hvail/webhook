@@ -111,7 +111,7 @@ let _location = function (req, res, next) {
                 }
             });
         } catch (e) {
-            // console.log(e);
+            console.log(e);
             console.log("GET " + getFenceUrl + " : " + response.statusCode + " ; " + result);
         }
     });
