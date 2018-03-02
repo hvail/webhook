@@ -68,13 +68,10 @@ function _getLoop(v, a, b) {
  */
 GPSUtils.degreeToRad = function (degree) {
     return Math.PI * degree / 180;
-}
+};
 
 GPSUtils.equalPoint = function (p1, p2) {
-    if ((p1.Lat * 100000 - p2.Lat * 100000) < 1 && (p1.Lng * 100000 - p2.Lng * 100000) < 1) {
-        return true;
-    }
-    return false;
+    return (p1.Lat * 100000 - p2.Lat * 100000) < 1 && (p1.Lng * 100000 - p2.Lng * 100000) < 1;
 }
 
 /***

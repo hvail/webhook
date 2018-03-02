@@ -230,8 +230,8 @@ router.DoPushPost = function (url, data, cb, log) {
                 cb && cb(url, data, 0);
                 return;
             }
-            if (url.Headers)
-                console.log(res.request.headers);
+            // if (url.Headers)
+            //     console.log(res.request.headers);
             // let msg = url + " , " + res.statusCode + " (" + JSON.stringify(body) + ") INFO : " + JSON.stringify(data);
             let msg = `Webhooks || Success || ${JSON.stringify(url)} || ${res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
             logger.info(msg);
