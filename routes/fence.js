@@ -101,7 +101,7 @@ let _location = function (req, res, next) {
             // 这里读取最后一次记录的轨迹点
             let ps = [];
             for (let m = 0; m < pos.length; m++) {
-                if (pos[i].UpMode < 2) ps.push(pos[i]);
+                if (pos[m].UpMode < 2) ps.push(pos[m]);
             }
             pos = null;
             _readLastAndSet(sn, ps[ps.length - 1], function (poi) {
