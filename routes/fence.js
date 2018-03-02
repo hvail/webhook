@@ -103,13 +103,15 @@ let _location = function (req, res, next) {
             for (let m = 0; m < pos.length; m++) {
                 if (pos[m].UpMode < 2) ps.push(pos[m]);
             }
-            pos = null;
-            _readLastAndSet(sn, ps[ps.length - 1], function (poi) {
-                if (poi !== null) ps = poi.concat(ps);
-                for (let i = 0; i < fences.length; i++) {
-                    trigger(ps, fences[i]);
-                }
-            });
+            if (ps.length > 0) {
+                pos = null;
+                _readLastAndSet(sn, ps[ps.length - 1], function (poi) {
+                    if (poi !== null) ps = poi.concat(ps);
+                    for (let i = 0; i < fences.length; i++) {
+                        trigger(ps, fences[i]);
+                    }
+                });
+            }
         } catch (e) {
             console.log(e);
             console.log("GET " + getFenceUrl + " : " + response.statusCode + " ; " + result);
