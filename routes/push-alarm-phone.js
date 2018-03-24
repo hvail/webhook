@@ -19,7 +19,8 @@ let _doPush = function (phoneBind, eve) {
         DisplayName: phoneBind.BindTarget,
         AlarmType: eve.EventType,
         EventTime: eve.UpTime,
-        CallPhone: phoneBind.Phone
+        CallPhone: phoneBind.Phone,
+        SerialNumber: eve.SerialNumber
     };
     let url = Trigger + phoneBind.AlarmTarget;
     myUtil.PostUrl(url, _eve, null, "PushEventAlarmPhone");
