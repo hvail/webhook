@@ -225,8 +225,8 @@ router.DoPushPost = function (url, data, cb, log) {
     request(getHttpOptions(url, data), function (err, res, body) {
         try {
             if (err) {
-                console.log(url);
-                console.log(err);
+                // console.log(url);
+                // console.log(err);
                 cb && cb(url, data, 0);
                 return;
             }

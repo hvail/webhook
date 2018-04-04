@@ -98,7 +98,7 @@ GPSUtils.getPolygonBound = function (pPolygon) {
     }
 
     return [{Lng: west, Lat: south}, {Lng: east, Lat: north}];
-}
+};
 
 /**
  * 计算两点之间的距离,两点坐标必须为经纬度
@@ -122,7 +122,7 @@ GPSUtils.GetDistance = function (Lat1, Lng1, Lat2, Lng2) {
     y2 = GPSUtils.degreeToRad(Lat2);
 
     return Math.round(EARTHRADIUS * Math.acos((Math.sin(y1) * Math.sin(y2) + Math.cos(y1) * Math.cos(y2) * Math.cos(x2 - x1))));
-}
+};
 
 /**
  * 计算折线或者点数组的长度

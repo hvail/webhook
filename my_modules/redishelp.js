@@ -8,17 +8,9 @@ const redis = require('redis');
 let redisClient;
 let isConnection = false;
 
-// console.log(redis_host);
-// console.log(redis_pwd);
-// console.log(redis_port);
-
 redisClient = redis.createClient(redis_port, redis_host, {});
 redisClient.auth(redis_pwd);
-redisClient.on('ready', function (res) {
-    redisClient.on('connect', function () {
-        isConnection = true;
-    });
-});
+redisClient.on('ready', () => redisClient.on('connect', () => isConnection = true));
 
 redisClient.execPromise = function (cmd) {
     let args = Array.from(arguments).slice(1, arguments.length);
