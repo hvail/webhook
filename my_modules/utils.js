@@ -273,10 +273,10 @@ router.PostUrl = function (url, data, cb, type) {
         if (err) {
             console.log(url);
             console.log(err);
-        } else {
-            let msg = `${type} || Success || ${url} || ${res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
+            let msg = `${type} || Success || ${url} || ${res && res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
             logger.info(msg);
             console.log(msg);
+        } else {
             cb && cb(err, res, body);
         }
     });

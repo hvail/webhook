@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/my_modules/utils.js" afterPath="$PROJECT_DIR$/my_modules/utils.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/fence.js" afterPath="$PROJECT_DIR$/routes/fence.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -94,10 +92,10 @@
       <file leaf-file-name="utils.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/my_modules/utils.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="601">
-              <caret line="274" column="29" lean-forward="true" selection-start-line="274" selection-start-column="29" selection-end-line="274" selection-end-column="29" />
+            <state relative-caret-position="511">
+              <caret line="268" column="2" lean-forward="true" selection-start-line="268" selection-start-column="2" selection-end-line="268" selection-end-column="2" />
               <folding>
-                <marker date="1523687077932" expanded="true" signature="6927:6929" ph="{...}" />
+                <marker date="1523687742516" expanded="true" signature="6927:6929" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -700,12 +698,12 @@
       <workItem from="1521855262830" duration="1608000" />
       <workItem from="1522139392756" duration="1755000" />
       <workItem from="1522728707829" duration="8260000" />
-      <workItem from="1523515398799" duration="1672000" />
+      <workItem from="1523515398799" duration="2325000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="135240000" />
+    <option name="totallyTimeSpent" value="135893000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1358" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1065,10 +1063,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/my_modules/utils.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="601">
-          <caret line="274" column="29" lean-forward="true" selection-start-line="274" selection-start-column="29" selection-end-line="274" selection-end-column="29" />
+        <state relative-caret-position="511">
+          <caret line="268" column="2" lean-forward="true" selection-start-line="268" selection-start-column="2" selection-end-line="268" selection-end-column="2" />
           <folding>
-            <marker date="1523687077932" expanded="true" signature="6927:6929" ph="{...}" />
+            <marker date="1523687742516" expanded="true" signature="6927:6929" ph="{...}" />
           </folding>
         </state>
       </provider>
