@@ -270,11 +270,15 @@ router.GetSecond = function () {
 
 router.PostUrl = function (url, data, cb, type) {
     request({url: url, method: "POST", json: data}, function (err, res, body) {
-        let msg = `${type} || Success || ${url} || ${res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
-        logger.info(msg);
-        // console.log(msg);
-        err && console.log(err);
-        cb && cb(err, res, body)
+        if (err) {
+            console.log(url);
+            console.log(err);
+        } else {
+            let msg = `${type} || Success || ${url} || ${res.statusCode} || ${JSON.stringify(body)} || ${JSON.stringify(data)}`;
+            logger.info(msg);
+            console.log(msg);
+            cb && cb(err, res, body);
+        }
     });
 };
 

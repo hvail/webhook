@@ -35,7 +35,7 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     be.SerialNumber = sn;
     be.Description = "By Web Hooks";
     // 利用MQ进行消息中转
-    console.log(JSON.stringify(be));
+    // console.log(JSON.stringify(be));
     myUtil.SendMqObject(ExchangeName, [be], sn);
 };
 
