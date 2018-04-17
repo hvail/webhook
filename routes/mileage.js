@@ -130,13 +130,31 @@ let _calcMiddleMileage = function (data) {
     return obj;
 };
 
+let _checkLastValid = (key, len, cb) => {
+    if (len < 1) {
+        redis.DEL(key);
+        cb && cb();
+    }
+    redis.LINDEX(key, 0, (err, json) => {
+        console.log(json);
+        cb && cb();
+    });
+};
+
 let _readLeftList = function (key, sn, cb) {
     redis.LLEN(key, function (err, len) {
-        // data && redis.RPUSH(key, data, function (err, result) {
-        if (len < 2 || err) {
+        if (err) {
+            console.log(err);
             cb && cb();
-            err && console.log(err);
+            return;
+        }
+
+        // data && redis.RPUSH(key, data, function (err, result) {
+        if (len < 2) {
             // console.log(`${key} 未送到计算条件 第2个数据为空 ${len}`);
+            // cb && cb();
+            // 检查最后一个是否有效
+            _checkLastValid(key, len, cb);
             return;
         }
 
