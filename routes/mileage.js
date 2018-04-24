@@ -158,7 +158,6 @@ let _readLeftList = function (key, sn, cb) {
             return;
         }
 
-        // console.log(`${key} 可计算的长度为 ${len}`);
         let now_time = Math.round(new Date().getTime() / 1000);
         let calc_time = _format_gt(now_time, calc_length);
         let calc_now_mid_time = now_time - calc_time;
@@ -170,14 +169,10 @@ let _readLeftList = function (key, sn, cb) {
                     let _obj = JSON.parse(jsonArr[i]);
                     dataArray.push(_obj);
                 }
-                // if (data) dataArray = dataArray.concat(data);
-                // console.log(`${key} 总的长度为 ${dataArray.length}`);
 
                 /**以下为测试内容**/
-                    // let test = [];
                 let gn = 0;
                 for (let i = 0; i < dataArray.length; i++) {
-                    // test.push(dataArray[i].GPSTime);
                     // 不能出现 "时间排序出错" 如果出现，则表示有些地方出了问题
                     if (gn > dataArray[i].GPSTime) console.log(key + " : 按时间排序出错 i = " + i + " LEN : " + len);
                     gn = dataArray[i].GPSTime;
@@ -200,7 +195,6 @@ let _readLeftList = function (key, sn, cb) {
                         let mid = now_time - dataArray.last().GPSTime;
                         if (mid > calc_now_mid_time + calc_time) {
                             console.log(`${key} TIME ERROR : 与当前相隔 ${mid.toPadLeft(6)} : 最大相隔 ${calc_now_mid_time.toPadLeft(3)} : 相差 ${mid - calc_now_mid_time}`);
-                            // console.log(key + " TIME ERROR :  _obj.GPSTime - mid = " + (dataArray.last().GPSTime - mid));
                         }
                     }
 
@@ -213,71 +207,7 @@ let _readLeftList = function (key, sn, cb) {
                 redis.DEL(key);
             }
         });
-        // });
     });
-    // redis.LRANGE(key, 0, 1, function (err, jsons) {
-    //     // 默认计时两倍 calc_length 时长，这样可以保证不会有太多的积累数据
-    //     // redis.EXPIRE(key, calc_length * 2);
-    //
-    //     // 只有两条以上符合要求才开始计算里程
-    //     try {
-    //         if (jsons.length < 2) {
-    //             cb && cb();
-    //             return;
-    //         }
-    //
-    //         // 从左边读取一条，以判断其时间与当前时间是否相差超过calc_length(两小时)
-    //         let calc_time = _format_gt(Math.round(new Date().getTime() / 1000), calc_length);
-    //
-    //         for (let i = 0; i < 2; i++) {
-    //             let obj = JSON.parse(jsons[i]);
-    //             if (obj.GPSTime > calc_time) {
-    //                 cb && cb();
-    //                 return;
-    //             }
-    //         }
-    //
-    //         // 开始读取整个区域的里程值，并传送到计算函数中。
-    //         redis.LRANGE(key, 0, -1, function (err, jsonArr) {
-    //             try {
-    //                 /**以下为测试内容**/
-    //                 let test = [];
-    //                 for (let i = 0; i < jsonArr.length; i++) {
-    //                     let _obj = JSON.parse(jsonArr[i]);
-    //                     test.push(_obj.GPSTime);
-    //                 }
-    //                 console.log(JSON.stringify(test));
-    //                 /**测试结果表示读取是按时间顺序进行读取的**/
-    //                 /**测试内容结束**/
-    //                 let arr = [];
-    //                 for (let i = 0; i < jsonArr.length; i++) {
-    //                     let _obj = JSON.parse(jsonArr[i]);
-    //                     if (_obj.GPSTime <= calc_time) arr.push(_obj);
-    //                     else {
-    //                         redis.LTRIM(key, i - 1, -1);
-    //                         break;
-    //                     }
-    //                     if (i === jsonArr.length - 1) {
-    //                         // 如果最后一条和现在相近，则不删除，如果较久，则删除
-    //                         let mid = Math.round(new Date().getTime() / 1000);
-    //                         console.log(key + " :  _obj.GPSTime - mid = " + (_obj.GPSTime - mid));
-    //                         redis.LTRIM(key, i - 1, -1);
-    //                     }
-    //                 }
-    //
-    //                 // 将针对arr进行数据处理
-    //                 let hash = _calc_pack_mileage(_calcMiddleMileage(arr));
-    //                 _do_save_mileage(hash, sn, calc_mid);
-    //                 cb && cb(null, '1');
-    //             } catch (e) {
-    //                 redis.DEL(key);
-    //             }
-    //         });
-    //     } catch (e) {
-    //         redis.DEL(key);
-    //     }
-    //     cb && cb();
-    // });
 };
 
 /***
@@ -302,11 +232,6 @@ let doLocationPost = function (req, res, next) {
     if (!!sn) {
         let key = redisMileageList.concat(sn);
         // 以下代码中存在一个时间先后的问题
-        // let _arr = [];
-        // for (let i = 0; i < arr.length; i++) {
-        //     _arr.push(JSON.stringify(arr[i]));
-        // }
-
         redis.LRANGE(key, 0, -1, function (err, result) {
             // 对数据进行排序
             let objs = result.parseJSON();
@@ -318,7 +243,6 @@ let doLocationPost = function (req, res, next) {
                 _readLeftList(key, sn);
             });
         });
-
     }
     res.status(200).send("1");
 };
