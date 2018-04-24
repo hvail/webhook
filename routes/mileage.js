@@ -136,7 +136,10 @@ let _checkLastValid = (key, len, cb) => {
         cb && cb();
     }
     redis.LINDEX(key, 0, (err, json) => {
-        console.log(json);
+        let poi = JSON.parse(json);
+        console.log(poi);
+        if ((new Date().getTime() / 1000 - poi.GPSTime) > 900)
+            redis.DEL(key);
         cb && cb();
     });
 };
