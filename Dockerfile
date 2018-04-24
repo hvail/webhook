@@ -10,6 +10,4 @@ ADD public                      /usr/local/web/public
 ADD routes                      /usr/local/web/routes
 ADD views                       /usr/local/web/views
 
-EXPOSE 8080
-
 CMD ["npm", "start"]
