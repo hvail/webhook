@@ -134,16 +134,16 @@ let _checkLastValid = (key, len, cb) => {
     if (len < 1) {
         redis.DEL(key);
         cb && cb();
+    } else {
+        redis.LINDEX(key, 0, (err, json) => {
+            let poi = JSON.parse(json);
+            if (!!poi) {
+                if ((new Date().getTime() / 1000 - poi.GPSTime) > 900)
+                    redis.DEL(key);
+            }
+            cb && cb();
+        });
     }
-    redis.LINDEX(key, 0, (err, json) => {
-        let poi = JSON.parse(json);
-        console.log(poi);
-        if (!!poi) {
-            if ((new Date().getTime() / 1000 - poi.GPSTime) > 900)
-                redis.DEL(key);
-        }
-        cb && cb();
-    });
 };
 
 let _readLeftList = function (key, sn, cb) {
