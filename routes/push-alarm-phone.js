@@ -22,6 +22,10 @@ let _doPush = function (phoneBind, eve) {
     } else if ((phoneBind.ExpireTime - 7 * 86400) < curr) {
         console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警还有7天过期 最后时间 ${new Date(phoneBind.ExpireTime * 1000)}`);
     }
+    if (phoneBind.status && phoneBind.status * 1 === 0) {
+        console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警被主动暂停`);
+        return;
+    }
     let _eve = {
         DisplayName: phoneBind.BindTarget,
         AlarmType: eve.EventType,
