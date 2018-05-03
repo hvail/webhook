@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/push-alarm-phone.js" afterPath="$PROJECT_DIR$/routes/push-alarm-phone.js" />
-    </list>
+    <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -848,12 +846,12 @@
       <workItem from="1522728707829" duration="8260000" />
       <workItem from="1523515398799" duration="15336000" />
       <workItem from="1524538106258" duration="1134000" />
-      <workItem from="1525228342207" duration="8471000" />
+      <workItem from="1525228342207" duration="9062000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="168622000" />
+    <option name="totallyTimeSpent" value="169213000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
