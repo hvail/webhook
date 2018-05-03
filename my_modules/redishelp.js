@@ -12,6 +12,13 @@ redisClient = redis.createClient(redis_port, redis_host, {});
 redisClient.auth(redis_pwd);
 redisClient.on('ready', () => redisClient.on('connect', () => isConnection = true));
 
+const build = (host, port, auth) => {
+    redisClient = redis.createClient(host, port, {});
+    redisClient.auth(auth);
+    redisClient.on('ready', () => redisClient.on('connect', () => isConnection = true));
+    return redisClient;
+};
+
 redisClient.execPromise = function (cmd) {
     let args = Array.from(arguments).slice(1, arguments.length);
     let cb = null;
@@ -33,5 +40,6 @@ redisClient.execPromise = function (cmd) {
     });
 };
 
+redisClient.build = build;
 module.exports = redisClient;
 

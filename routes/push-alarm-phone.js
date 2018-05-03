@@ -8,7 +8,6 @@ const util = require('util');
 const myUtil = require('./../my_modules/utils');
 const area = process.env.DATAAREA || "zh-cn";
 const router = express.Router();
-
 const Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/phone/";
 const GetDeviceAlarmUrl = `http://v3.manager-mongo.server.${area}.sky1088.com/custom/push-phone/field/BindTarget/`;
 const AlarmType = [4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 31, 38, 39, 46];
@@ -31,6 +30,8 @@ let _doPush = function (phoneBind, eve) {
         AlarmType: eve.EventType,
         EventTime: eve.UpTime,
         CallPhone: phoneBind.Phone,
+        UId: phoneBind.UId,
+        Area: area,
         SerialNumber: eve.SerialNumber
     };
     let url = Trigger + phoneBind.AlarmTarget;
@@ -50,10 +51,7 @@ let doPostAlarm = function (req, res, next) {
 
 let doEvent = function (eve) {
     if (!eve.SerialNumber) return;
-    if (AlarmType.indexOf(eve.EventType) < 0) {
-        // console.log(eve.EventType + " : 此类型暂时不支持触发报警");
-        return;
-    }
+    if (AlarmType.indexOf(eve.EventType) < 0)  return;
     let DeviceAttrUrl = GetDeviceAlarmUrl + eve.SerialNumber;
     // 查询此设备所对应的电话报警信息
     request(DeviceAttrUrl, function (err, response, data) {
