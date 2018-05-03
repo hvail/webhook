@@ -7,6 +7,7 @@ const request = require('request');
 const util = require('util');
 const myUtil = require('./../my_modules/utils');
 const area = process.env.DATAAREA || "zh-cn";
+const UIdPIX = area.replace("-", "").toUpperCase() + "_UId_";
 const router = express.Router();
 const Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/phone/";
 const GetDeviceAlarmUrl = `http://v3.manager-mongo.server.${area}.sky1088.com/custom/push-phone/field/BindTarget/`;
@@ -30,8 +31,7 @@ let _doPush = function (phoneBind, eve) {
         AlarmType: eve.EventType,
         EventTime: eve.UpTime,
         CallPhone: phoneBind.Phone,
-        UId: phoneBind.UId,
-        Area: area,
+        CallAccount: UIdPIX + phoneBind.UId,
         SerialNumber: eve.SerialNumber
     };
     let url = Trigger + phoneBind.AlarmTarget;
