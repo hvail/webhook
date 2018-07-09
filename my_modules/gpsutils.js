@@ -1,4 +1,4 @@
-/**
+/***
  * Created by hvail on 2017/9/6.
  */
 let GPSUtils = {};
@@ -10,7 +10,6 @@ let EARTHRADIUS = 6370996.81;
 
 /**
  * 将源对象的所有属性拷贝到目标对象中
- * @name baidu.extend
  * @function
  * @grammar baidu.extend(target, source)
  * @param {Object} target 目标对象
@@ -33,7 +32,7 @@ GPSUtils.ClassCopy = function (mode, target) {
         }
     }
     return target;
-}
+};
 
 /**
  * 将v值限定在a,b之间，纬度使用
@@ -52,12 +51,8 @@ function _getRange(v, a, b) {
  * 将v值限定在a,b之间，经度使用
  */
 function _getLoop(v, a, b) {
-    while (v > b) {
-        v -= b - a
-    }
-    while (v < a) {
-        v += b - a
-    }
+    while (v > b) v -= b - a;
+    while (v < a) v += b - a;
     return v;
 }
 
@@ -72,12 +67,12 @@ GPSUtils.degreeToRad = function (degree) {
 
 GPSUtils.equalPoint = function (p1, p2) {
     return (p1.Lat * 100000 - p2.Lat * 100000) < 1 && (p1.Lng * 100000 - p2.Lng * 100000) < 1;
-}
+};
 
 /***
  * 将多边形或线形计算出最大矩形
  * @param pPolygon
- * @returns {arr} [sw,ne]
+ * @returns  [sw,ne]
  */
 GPSUtils.getPolygonBound = function (pPolygon) {
     let sw, ne;
@@ -114,13 +109,11 @@ GPSUtils.GetDistance = function (Lat1, Lng1, Lat2, Lng2) {
     Lat1 = _getRange(Lat1, -74, 74);
     Lng2 = _getLoop(Lng2, -180, 180);
     Lat2 = _getRange(Lat2, -74, 74);
-
     let x1, x2, y1, y2;
     x1 = GPSUtils.degreeToRad(Lng1);
     y1 = GPSUtils.degreeToRad(Lat1);
     x2 = GPSUtils.degreeToRad(Lng2);
     y2 = GPSUtils.degreeToRad(Lat2);
-
     return Math.round(EARTHRADIUS * Math.acos((Math.sin(y1) * Math.sin(y2) + Math.cos(y1) * Math.cos(y2) * Math.cos(x2 - x1))));
 };
 
@@ -130,8 +123,7 @@ GPSUtils.GetDistance = function (Lat1, Lng1, Lat2, Lng2) {
  * @param points
  */
 GPSUtils.GetLineDistance = function (points) {
-    // console.log(points.length);
-    //检查类型
+    // 检查类型
     if (points instanceof Array) {
         if (points.length < 2) {
             //小于2个点，返回0
@@ -149,7 +141,7 @@ GPSUtils.GetLineDistance = function (points) {
     } else {
         return 0;
     }
-}
+};
 
 /***
  * 判断点是否在圆形内
@@ -159,10 +151,9 @@ GPSUtils.IsPointInCircle = function (Fps, lat, lng) {
     //point与圆心距离小于圆形半径，则点在圆内，否则在圆外
     let pCircle = Fps[0];
     let r = GPSUtils.GetDistance(pCircle.Lat, pCircle.Lng, Fps[1].Lat, Fps[1].Lng);
-
     let dis = GPSUtils.GetDistance(pCircle.Lat, pCircle.Lng, lat, lng);
     return (dis <= r);
-}
+};
 
 /***
  * 判断点是否在矩形内
@@ -172,7 +163,7 @@ GPSUtils.IsPointInRect = function (Fps, lat, lng) {
     let sw = Fps[0];
     let ne = Fps[1];
     return (lng >= sw.Lng && lng <= ne.Lng && lat >= sw.Lat && lat <= ne.Lat);
-}
+};
 
 /***
  * 判断点是否多边形内
@@ -210,7 +201,8 @@ GPSUtils.IsPointInPolygon = function (Fps, lat, lng) {
         p2 = pts[i % N];//right vertex
         if (p.Lat < Math.min(p1.Lat, p2.Lat) || p.Lat > Math.max(p1.Lat, p2.Lat)) {//ray is outside of our interests
             p1 = p2;
-            continue;//next ray left point
+            continue;
+            //next ray left point
         }
 
         if (p.Lat > Math.min(p1.Lat, p2.Lat) && p.Lat < Math.max(p1.Lat, p2.Lat)) {//ray is crossing over by the algorithm (common part of)
@@ -224,21 +216,24 @@ GPSUtils.IsPointInPolygon = function (Fps, lat, lng) {
                     if (p1.Lng === p.Lng) {
                         //overlies on a vertical ray
                         return boundOrVertex;
-                    } else {//before ray
+                    } else {
+                        //before ray
                         ++intersectCount;
                     }
                 } else {//cross point on the left side
                     let xinters = (p.Lat - p1.Lat) * (p2.Lng - p1.Lng) / (p2.Lat - p1.Lat) + p1.Lng;//cross point of Lng
-                    if (Math.abs(p.Lng - xinters) < precision) {//overlies on a ray
+                    if (Math.abs(p.Lng - xinters) < precision) {
+                        //overlies on a ray
                         return boundOrVertex;
                     }
-
-                    if (p.Lng < xinters) {//before ray
+                    if (p.Lng < xinters) {
+                        //before ray
                         ++intersectCount;
                     }
                 }
             }
-        } else {//special case when ray is crossing through the vertex
+        } else {
+            //special case when ray is crossing through the vertex
             if (p.Lat === p2.Lat && p.Lng <= p2.Lng) {//p crossing over p2
                 let p3 = pts[(i + 1) % N]; //next vertex
                 if (p.Lat >= Math.min(p1.Lat, p3.Lat) && p.Lat <= Math.max(p1.Lat, p3.Lat)) {//p.Lat lies between p1.Lat & p3.Lat
@@ -250,7 +245,6 @@ GPSUtils.IsPointInPolygon = function (Fps, lat, lng) {
         }
         p1 = p2;//next ray left point
     }
-
     return intersectCount % 2 !== 0;
 };
 

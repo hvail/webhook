@@ -282,6 +282,19 @@ router.PostUrl = function (url, data, cb, type) {
     });
 };
 
+router.HttpGetPromise = function (url) {
+    console.log("GET : " + url);
+    return new Promise((res, rej) => {
+        request(url, function (err, response, body) {
+            (err || (response && response.statusCode > 400)) ? rej(err) : res(body);
+        });
+    }).then((data) => {
+        if (typeof(data) === 'string' && (data[0] === '{' || data[0] === '['))
+            return JSON.parse(data);
+        return data;
+    })
+};
+
 Number.prototype.toPadLeft = function (size, chat) {
     if (arguments.length === 1) chat = '0';
     let me = this.toString();

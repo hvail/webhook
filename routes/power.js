@@ -28,7 +28,6 @@ let calcMidPowers = function (sn, start, end, cb) {
             let data = JSON.parse(body);
             if (start === first_data && data.length > 0) {
                 start = data[0].PowerTime - data[0].PowerTime % calc_mid;
-                // console.log(sn + " init power timer format start is " + start)
                 calcMidPowers(sn, start, end, cb);
             } else {
                 // let clen = end - start;
@@ -113,11 +112,6 @@ let powersAverage = function (ps) {
 // 找出最高值，最低值，初始值，结束值
 let powerArgSearch = function (ps) {
     if (ps === null || ps.length < 2) return null;
-    // if (ps.length == 1) {
-    //     let p = ps[0];
-    //     return {Max: p.PowerValue, MaxTime: p.PowerTime, Min: p.PowerValue, MinTime: p.PowerTime};
-    // }
-    // let fv = ps[0].PowerValue, ev = ps[ps.length - 1].PowerValue;
     let hv = 0, ht, lv = 99999999999, lt, average;
     let aveSum = 0;
     for (let i = 0; i < ps.length; i++) {
