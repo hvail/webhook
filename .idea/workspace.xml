@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="" />
+    <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/fence.js" afterPath="$PROJECT_DIR$/routes/fence.js" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -66,8 +68,8 @@
       <file leaf-file-name="fence.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/fence.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="99" column="63" lean-forward="true" selection-start-line="99" selection-start-column="63" selection-end-line="99" selection-end-column="63" />
+            <state relative-caret-position="270">
+              <caret line="102" column="50" lean-forward="false" selection-start-line="102" selection-start-column="50" selection-end-line="102" selection-end-column="50" />
               <folding />
             </state>
           </provider>
@@ -916,12 +918,12 @@
       <workItem from="1530432191166" duration="13869000" />
       <workItem from="1530582587525" duration="3795000" />
       <workItem from="1530794817302" duration="1818000" />
-      <workItem from="1531136685599" duration="614000" />
+      <workItem from="1531136685599" duration="1040000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="202197000" />
+    <option name="totallyTimeSpent" value="202623000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="0" />
@@ -1368,8 +1370,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/fence.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="99" column="63" lean-forward="true" selection-start-line="99" selection-start-column="63" selection-end-line="99" selection-end-column="63" />
+        <state relative-caret-position="270">
+          <caret line="102" column="50" lean-forward="false" selection-start-line="102" selection-start-column="50" selection-end-line="102" selection-end-column="50" />
           <folding />
         </state>
       </provider>
