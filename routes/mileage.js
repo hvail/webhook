@@ -244,7 +244,7 @@ let doLocationPost = function (req, res, next) {
             redis.del(key);
             // 右进
             redis.RPUSH(key, objs.stringifyJSON(), function (err, result) {
-                // 左出
+                // 左出36
                 _readLeftList(key, sn);
             });
         });
