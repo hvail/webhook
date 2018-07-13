@@ -265,6 +265,16 @@ let _doLocationPost = function (req, res, next) {
     //     .catch(next);
 };
 
+let _doDayGet = (req, res, next) => {
+    let {sn} = req.params;
+    let day = redisMileageDay.concat(sn);
+    redis.execPromise('lrange', day, 0, -1)
+        .then(msg => {
+            res.status(200).send(msg);
+        })
+        .catch(err => res.status(500).send(err));
+};
+
 let doSingle = function (req, res, next) {
     let sn = req.params.sn;
     let key = redisMileageList.concat(sn);
@@ -276,7 +286,7 @@ let doSingle = function (req, res, next) {
 router.get('/', demo);
 router.post('/', _doPost);
 router.post('/', _doLocationPost);
-router.get('/single/:sn', doSingle);
+router.get('/day/:sn', doSingle);
 router.post('/single/:sn', doSingle);
 
 module.exports = router;
