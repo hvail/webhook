@@ -249,7 +249,7 @@ let _doLocationPost = function (req, res, next) {
         .then((msg) => {
             console.log(msg);
         })
-        .then(() => next('ok'))
+        .then(() => next())
         .catch(next);
 };
 
