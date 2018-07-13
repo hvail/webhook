@@ -270,7 +270,8 @@ let _doDayGet = (req, res, next) => {
     let day = redisMileageDay.concat(sn);
     redis.execPromise('lrange', day, 0, -1)
         .then(msg => {
-            res.status(200).send(msg);
+            let ps = redis.ArrayToObject(msg);
+            res.status(200).send('' + gpsUtil.GetLineDistance(ps));
         })
         .catch(err => res.status(500).send(err));
 };
@@ -286,7 +287,7 @@ let doSingle = function (req, res, next) {
 router.get('/', demo);
 router.post('/', _doPost);
 router.post('/', _doLocationPost);
-router.get('/day/:sn', doSingle);
+router.get('/day/:sn', _doDayGet);
 router.post('/single/:sn', doSingle);
 
 module.exports = router;

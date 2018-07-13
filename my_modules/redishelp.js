@@ -41,6 +41,14 @@ redisClient.execPromise = function (cmd) {
     });
 };
 
+redisClient.ArrayToObject = (arr) => {
+    let result = [];
+    for (let i = 0; i < arr.length; i++) {
+        result.push(JSON.parse(arr[i]));
+    }
+    return result;
+}
+
 redisClient.build = build;
 module.exports = redisClient;
 
