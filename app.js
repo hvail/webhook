@@ -42,6 +42,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('/mileage', mileage);
 
 /****************  轨迹点的处理 ******************/
 app.use('/location', mileage);
@@ -62,7 +63,6 @@ app.use('/location', (err, req, res) => {
 // app.use('/webhook', webhooks);
 // app.use('/webtimer', webtimer);
 // app.use('/webhooks', webhooks);
-// app.use('/mileage', mileage);
 // app.use('/network', network);
 
 // catch 404 and forward to error handler
