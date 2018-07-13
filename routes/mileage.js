@@ -216,6 +216,16 @@ let _readLeftList = function (key, sn, cb) {
     });
 };
 
+const __buildDayList = (m, key, data) => {
+    if (m === 0) {
+        let expire = new Date().getTime() / 1000;
+        expire = expire + (86400 - expire % 86400);
+        return redis.execPromise('rpush', key, data)
+            .then(redis.execPromise('expireat', key, expire))
+    }
+    return 1;
+};
+
 /***
  * 这里只进行数据存储
  * @param req
@@ -234,8 +244,9 @@ let _doPost = function (req, res, next) {
     if (!!sn) {
         let key = redisMileageList.concat(sn);
         let day = redisMileageDay.concat(sn);
-        redis.execPromise('rpush', key, p_data)
-            .then(redis.execPromise('rpush', day, p_data))
+        redis.execPromise('rpushx', day, p_data)
+            .then((e) => __buildDayList(e, day, p_data))
+            .then(redis.execPromise('rpush', key, p_data))
             .then(() => next())
             .catch(next);
     } else next();
@@ -245,12 +256,13 @@ let _doLocationPost = function (req, res, next) {
     let data = req.body;
     let sn = data.SerialNumber;
     let key = redisMileageList.concat(sn);
-    redis.execPromise('lrange', key, 0, -1)
-        .then((msg) => {
-            console.log(msg);
-        })
-        .then(() => next())
-        .catch(next);
+    // 暂时不处理里程
+    next();
+    // redis.execPromise('lrange', key, 0, -1)
+    //     .then((msg) => {
+    //     })
+    //     .then(() => next())
+    //     .catch(next);
 };
 
 let doSingle = function (req, res, next) {
