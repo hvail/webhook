@@ -5,6 +5,7 @@
 const myUtil = require('./../my_modules/utils');
 const gpsUtil = require('./../my_modules/gpsutils');
 const redis = require('./../my_modules/redishelp');
+const mongo = require('./../my_modules/mongo');
 const request = require('request');
 const express = require('express');
 const util = require('util');
@@ -18,6 +19,13 @@ const post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
 // RPUSH & LRANGE
 let redisMileageList = "list-run-mileage-";
 let redisMileageDay = "day-mileage-";
+
+const dbConfig = function (sn) {
+    return {
+        dbName: 'MileageResource',
+        colName: `Mileage-${sn}`
+    };
+};
 
 let demo = function (req, res, next) {
     res.send('mileage v2.0.0');
@@ -256,13 +264,13 @@ let _doLocationPost = function (req, res, next) {
     let data = req.body;
     let sn = data.SerialNumber;
     let key = redisMileageList.concat(sn);
-    // 暂时不处理里程
-    next();
-    // redis.execPromise('lrange', key, 0, -1)
-    //     .then((msg) => {
-    //     })
-    //     .then(() => next())
-    //     .catch(next);
+    redis.execPromise('lrange', key, 0, -1)
+        .then((msg) => {
+            let ps = redis.ArrayToObject(msg);
+
+        })
+        .then(() => next())
+        .catch(next);
 };
 
 let _doDayGet = (req, res, next) => {
@@ -283,11 +291,47 @@ let doSingle = function (req, res, next) {
     res.status(200).send("1");
 };
 
+/***
+ * 获取设备区间的里程
+ * @param req
+ * @param res
+ * @param next
+ */
+let getRangeMileage = function (req, res, next) {
+    let {sn, start, end} = req.params;
+    let filter = {};
+    filter.GPSTime = {"$gt": start * 1, "$lt": end * 1};
+    let obj = dbConfig(sn);
+    obj.sort = {"GPSTime": 1};
+    mongo.find(filter, obj, function (err, data) {
+        if (err || !data || data.length < 1)
+            res.send("[]");
+        else {
+            let result = [];
+            for (let i = 0; i < data.length; i++) {
+                let di = data[i];
+                let ip = 1;
+                for (let j = 0; j < result.length; j++) {
+                    let ri = result[j];
+                    if (ri.GPSTime === di.GPSTime) {
+                        ip = 0;
+                        break;
+                    }
+                }
+                if (ip) result.push(di);
+            }
+            res.send(result);
+        }
+    });
+};
+
 /* GET users listing. */
 router.get('/', demo);
 router.post('/', _doPost);
 router.post('/', _doLocationPost);
 router.get('/day/:sn', _doDayGet);
 router.post('/single/:sn', doSingle);
+// router.get('/last/:sn', getLast);
+router.get('/range/:sn/:start/:end', getRangeMileage);
 
 module.exports = router;
