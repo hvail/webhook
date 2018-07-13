@@ -90,8 +90,6 @@ const partMileageRun = (_ps) => {
     for (let i = 0; i < _ps.length; i++) if (_ps[i].UpMode === 1) ps.push(_ps[i]);
     // let way = _pullTrackPoint(ps);
     let first = ps.first(), end = ps.last();
-    // let wayString = getWayPointsString(way);
-    // console.log(wayString);
     let url = drivingApi(first, end, [], 1);
     return myUtil.HttpGetPromise(url)
         .then((res) => res.result.routes)
