@@ -17,6 +17,7 @@ const post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
 // 存储规则为右进左出
 // RPUSH & LRANGE
 let redisMileageList = "list-run-mileage-";
+let redisMileageDay = "day-mileage-";
 
 let demo = function (req, res, next) {
     res.send('mileage v2.0.0');
@@ -216,17 +217,12 @@ let _readLeftList = function (key, sn, cb) {
 };
 
 /***
- * localmileage demo
- * SerialNumber
- * GPSTime
- * Lat
- * Lng
- * Mileage
+ * 这里只进行数据存储
  * @param req
  * @param res
  * @param next
  */
-let doLocationPost = function (req, res, next) {
+let _doPost = function (req, res, next) {
     let data = req.body;
     let arr = [data];
     let sn = data.SerialNumber;
@@ -234,22 +230,27 @@ let doLocationPost = function (req, res, next) {
         sn = data[0].SerialNumber;
         arr = data;
     }
+    let p_data = arr.stringifyJSON().toString();
     if (!!sn) {
         let key = redisMileageList.concat(sn);
-        // 以下代码中存在一个时间先后的问题
-        redis.LRANGE(key, 0, -1, function (err, result) {
-            // 对数据进行排序
-            let objs = result.parseJSON();
-            objs = objs.concat(arr).sort((a, b) => a.GPSTime > b.GPSTime ? 1 : -1);
-            redis.del(key);
-            // 右进
-            redis.RPUSH(key, objs.stringifyJSON(), function (err, result) {
-                // 左出36
-                _readLeftList(key, sn);
-            });
-        });
-    }
-    res.status(200).send("1");
+        let day = redisMileageDay.concat(sn);
+        redis.execPromise('rpush', key, p_data)
+            .then(redis.execPromise('rpush', day, p_data))
+            .then(() => next())
+            .catch(next);
+    } else next();
+};
+
+let _doLocationPost = function (req, res, next) {
+    let data = req.body;
+    let sn = data.SerialNumber;
+    let key = redisMileageList.concat(sn);
+    redis.execPromise('lrange', key, 0, -1)
+        .then((msg) => {
+            console.log(msg);
+        })
+        .then(() => next('ok'))
+        .catch(next);
 };
 
 let doSingle = function (req, res, next) {
@@ -261,7 +262,8 @@ let doSingle = function (req, res, next) {
 
 /* GET users listing. */
 router.get('/', demo);
-router.post('/', doLocationPost);
+router.post('/', _doPost);
+router.post('/', _doLocationPost);
 router.get('/single/:sn', doSingle);
 router.post('/single/:sn', doSingle);
 

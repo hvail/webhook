@@ -178,7 +178,7 @@ let _doRunCommand = function (req, res, next) {
     // res.status(200).send("YES I DO COMMANDER " + DateString);
 };
 
-_doRunCommand();
+// _doRunCommand();
 
 let _getDefault = function (req, res, next) {
     res.send('respond with a time request');

@@ -106,9 +106,9 @@ const partMileageRun = (_ps) => {
         });
 };
 
-myUtil.HttpGetPromise(`${api}${sn}/${opt.start}/${opt.end}`)
-    .then(partCalc)
-    .then(partMileageMatch)
-    .then(console.log)
-    .catch(console.log);
+// myUtil.HttpGetPromise(`${api}${sn}/${opt.start}/${opt.end}`)
+//     .then(partCalc)
+//     .then(partMileageMatch)
+//     .then(console.log)
+//     .catch(console.log);
 

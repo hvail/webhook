@@ -42,15 +42,28 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
-app.use('/fence', fence);
-app.use('/power', power);
-app.use('/push-alarm-phone', alarm_push_phone);
-app.use('/webhook', webhooks);
-app.use('/webtimer', webtimer);
-app.use('/webhooks', webhooks);
-app.use('/mileage', mileage);
-app.use('/network', network);
+
+/****************  轨迹点的处理 ******************/
+app.use('/location', mileage);
+app.use('/location', fence);
+// 正常处理
+app.use('/location', (req, res) => {
+    res.send('1');
+});
+// 异常处理
+app.use('/location', (err, req, res) => {
+    res.send('-1');
+});
+
+// app.use('/users', users);
+// app.use('/fence', fence);
+// app.use('/power', power);
+// app.use('/push-alarm-phone', alarm_push_phone);
+// app.use('/webhook', webhooks);
+// app.use('/webtimer', webtimer);
+// app.use('/webhooks', webhooks);
+// app.use('/mileage', mileage);
+// app.use('/network', network);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -61,6 +74,7 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
+    console.log('err');
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};

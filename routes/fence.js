@@ -118,9 +118,14 @@ let _location = function (req, res, next) {
         }
     });
     res.send("1");
-}
+};
+
+let _doPost = (req, res, next) => {
+    next();
+};
 
 router.get('/');
+router.post('/', _doPost);
 router.post('/location', _location);
 
 module.exports = router;
