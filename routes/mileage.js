@@ -309,11 +309,12 @@ const __List_Delete = (msg, key) => {
             let pp = ps[i];
             if (pp.GPSTime > curr) break;
         }
-        redis.execPromise('llen', key)
-            .then((l) => {
-                console.log(`total : ${l} ::: redis.execPromise('ltrim', ${key}, ${i}, ${ps.length});`);
-                redis.execPromise('ltrim', key, i, ps.length);
-            });
+        if (i > 0)
+            redis.execPromise('llen', key)
+                .then((l) => {
+                    console.log(`total : ${l} ::: redis.execPromise('ltrim', ${key}, ${i}, ${ps.length});`);
+                    redis.execPromise('ltrim', key, i, ps.length);
+                });
     }
     return msg;
 }
