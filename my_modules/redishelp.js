@@ -41,13 +41,25 @@ redisClient.execPromise = function (cmd) {
     });
 };
 
+const reg = new RegExp('},{', "g");
+
 redisClient.ArrayToObject = (arr) => {
     let result = [];
     for (let i = 0; i < arr.length; i++) {
-        result.push(JSON.parse(arr[i]));
+        try {
+            let jsr = arr[i].replace(reg, "}|-|{");
+            let jss = jsr.split("|-|");
+            for (let j = 0; j < jss.length; j++) {
+                let obj = JSON.parse(jss[j]);
+                result.push(obj);
+            }
+        } catch (e) {
+            console.log(arr[i]);
+            console.log(e);
+        }
     }
     return result;
-}
+};
 
 redisClient.build = build;
 module.exports = redisClient;

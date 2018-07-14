@@ -227,7 +227,8 @@ let _readLeftList = function (key, sn, cb) {
 const __buildDayList = (m, key, data) => {
     if (m === 0) {
         let expire = new Date().getTime() / 1000;
-        expire = expire + (86400 - expire % 86400);
+        // 默认8时区
+        expire = expire + (86400 - expire % 86400) - (8 * 3600);
         return redis.execPromise('rpush', key, data)
             .then(redis.execPromise('expireat', key, expire))
     }
@@ -248,7 +249,10 @@ let _doPost = function (req, res, next) {
         sn = data[0].SerialNumber;
         arr = data;
     }
-    let p_data = arr.stringifyJSON().toString();
+    let p_data = [];
+    for (let m = 0; m < arr.length; m++) {
+        p_data.push(JSON.stringify(arr[i]));
+    }
     if (!!sn) {
         let key = redisMileageList.concat(sn);
         let day = redisMileageDay.concat(sn);
@@ -281,7 +285,10 @@ let _doDayGet = (req, res, next) => {
             let ps = redis.ArrayToObject(msg);
             res.status(200).send('' + gpsUtil.GetLineDistance(ps));
         })
-        .catch(err => res.status(500).send(err));
+        .catch(err => {
+            console.log(err);
+            res.status(500).send(err);
+        });
 };
 
 let doSingle = function (req, res, next) {
