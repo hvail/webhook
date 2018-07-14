@@ -17,8 +17,14 @@ const calc_length = 2 * calc_mid;    // 单次读取长度,2个计算周期 10�
 const post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
 // 存储规则为右进左出
 // RPUSH & LRANGE
-let redisMileageList = "list-run-mileage-";
-let redisMileageDay = "day-mileage-";
+const redisMileageList = "list-run-mileage-";
+const redisMileageDay = "day-mileage-";
+const baiduSk = "inl7EljWEdaPIiDKoTHM3Z7QGMOsGTDT";
+const baiduApiUrl = "http://api.map.baidu.com/direction/v2/driving";
+
+const drivingApi = (origin, dest) => {
+    return `${baiduApiUrl}?origin=${origin.Lat_Bd},${origin.Lng_Bd}&alternatives=1&destination=${dest.Lat_Bd},${dest.Lng_Bd}&ak=${baiduSk}`;
+};
 
 const dbConfig = function (sn) {
     return {
@@ -31,199 +37,6 @@ let demo = function (req, res, next) {
     res.send('mileage v2.0.0');
 };
 
-let _format_gt = function (time, mid) {
-    return time - (time % mid);
-};
-
-let _calc_pack_mileage = function (pack_hash) {
-    let top_end_point = null;
-    let top_key;
-    let sn;
-    let obj = new myUtil.Hash();
-    for (let key in pack_hash._hash) {
-        if (!pack_hash._hash.hasOwnProperty(key)) continue;
-        let ps = pack_hash._hash[key];
-        if (ps.length < 2) continue;
-        let pf = ps.first(), pe = ps.last();
-        let sn = pf.SerialNumber;
-        let _maxSpeed = ps.max('Speed');
-        let _aveMileage = ps.ave('Mileage');
-        if (!top_end_point) top_end_point = pf;
-        let dis = Math.round((pe.Mileage - top_end_point.Mileage) * 1000);
-        if (dis < 0 || dis > 20000 || pe.Mileage < 10 || pe.Mileage % 1 !== 0) {
-            // 如果量程小于0，距离大于20公里，总里程小于10，总里程不是整数，则取全部的距离
-            let middle_time = pf.GPSTime - top_end_point.GPSTime;
-            // 如果有上一个点并且和此次时间相差小于静止间隔，则按比例分配两点间的距离
-            let mid_distance = gpsUtil.GetDistance(top_end_point.Lat, top_end_point.Lng, pf.Lat, pf.Lng) || 0;
-            if (middle_time > 0 && middle_time < calc_mid && mid_distance > 10) {
-                let ut = mid_distance / middle_time;
-                let ft = _format_gt(pf.GPSTime, calc_mid);
-                let left = Math.round((ft - top_end_point.GPSTime) * ut), right = Math.round((pf.GPSTime - ft) * ut);
-                obj._hash[top_key] && (obj._hash[top_key].Distance += left);
-                dis = right;
-            }
-            dis = Math.round(dis + gpsUtil.GetLineDistance(ps));
-        }
-        // 暂时先放弃(设备提供的里程精度太低) 17-11-6
-        // 优先使用设备里程。 17-11-7
-        let __obj = {
-            Distance: dis,
-            PointCount: ps.length,
-            GPSTime: key * 1,
-            MileageBegin: pf.Mileage,
-            MileageEnd: pe.Mileage,
-            MaxSpeed: _maxSpeed.toFixed(3) + " km/h",
-            Speed: (dis / (pe.GPSTime - pf.GPSTime)).toFixed(3)
-        };
-        myUtil.logger(JSON.stringify(__obj));
-        let os = __obj.Speed * 3.6;
-        if ((os < _maxSpeed * 1.5) || (_maxSpeed === 0 && os < 240)) {
-            if (_maxSpeed < os) __obj.MaxSpeed = (os * 1.2).toFixed(3) + " km/h";
-            __obj.Speed = (__obj.Speed * 3.6).toFixed(3) + " km/h";
-            obj.add(key, __obj);
-        }
-        top_key = key;
-        top_end_point = pe;
-    }
-    return obj;
-};
-
-let _do_save_mileage = function (data, sn, middleTime) {
-    let push_obj = [];
-    for (let k in data._hash) {
-        if (!data._hash.hasOwnProperty(k)) continue;
-        let obj = data._hash[k];
-        obj.SerialNumber = sn;
-        obj.MiddleTime = middleTime;
-        obj.TimeString = new Date(k * 1000).FormatDate(4);
-        if (obj.Distance > 0) push_obj.push(obj);
-    }
-    if (push_obj.length > 0) {
-        myUtil.PostUrl(post_url, push_obj, function (url, data, status) {
-            if (status !== 1) {
-                myUtil.logger(`${post_url}, ${sn}, ${push_obj.length}, ${status} `)
-            }
-        }, "MileageSave");
-    }
-};
-
-/***
- * 计算区间里程
- * @param data
- * @returns {*}
- * @private
- */
-let _calcMiddleMileage = function (data) {
-    if (data.length < 1) {
-        return null;
-    }
-    let df = data.first(), de = data.last();
-    let _start = _format_gt(df.GPSTime, calc_mid);
-    let end = _format_gt(de.GPSTime, calc_mid) + calc_mid, i = 0;
-    let obj = new myUtil.Hash();
-    while (_start < end) {
-        let dt = data[i].GPSTime, _m = _start * 1 + calc_mid;
-        let key = _format_gt(dt, calc_mid);
-        let das = [];
-        if (dt < _m) {
-            while (data[i].GPSTime < _m) {
-                das.push(data[i]);
-                i++;
-                if (i === data.length) break;
-            }
-        }
-        _start = _m;
-        obj.add(key, das);
-        if (i === data.length) break;
-    }
-    return obj;
-};
-
-let _checkLastValid = (key, len, cb) => {
-    if (len < 1) {
-        redis.DEL(key);
-        cb && cb();
-    } else {
-        redis.LINDEX(key, 0, (err, json) => {
-            let poi = JSON.parse(json);
-            if (!!poi) {
-                if ((new Date().getTime() / 1000 - poi.GPSTime) > 900)
-                    redis.DEL(key);
-            }
-            cb && cb();
-        });
-    }
-};
-
-let _readLeftList = function (key, sn, cb) {
-    redis.LLEN(key, function (err, len) {
-        if (err) {
-            console.log(err);
-            cb && cb();
-            return;
-        }
-
-        // data && redis.RPUSH(key, data, function (err, result) {
-        if (len < 2) {
-            // console.log(`${key} 未送到计算条件 第2个数据为空 ${len}`);
-            // cb && cb();
-            // 检查最后一个是否有效
-            _checkLastValid(key, len, cb);
-            return;
-        }
-
-        let now_time = Math.round(new Date().getTime() / 1000);
-        let calc_time = _format_gt(now_time, calc_length);
-        let calc_now_mid_time = now_time - calc_time;
-
-        redis.LRANGE(key, 0, len, function (err, jsonArr) {
-            try {
-                let dataArray = [];
-                for (let i = 0; i < jsonArr.length; i++) {
-                    let _obj = JSON.parse(jsonArr[i]);
-                    dataArray.push(_obj);
-                }
-
-                /**以下为测试内容**/
-                let gn = 0;
-                for (let i = 0; i < dataArray.length; i++) {
-                    // 不能出现 "时间排序出错" 如果出现，则表示有些地方出了问题
-                    if (gn > dataArray[i].GPSTime) console.log(key + " : 按时间排序出错 i = " + i + " LEN : " + len);
-                    gn = dataArray[i].GPSTime;
-                }
-                // console.log(key + " : " + JSON.stringify(test));
-                /**测试结果表示读取是按时间顺序进行读取的**/
-                /**测试内容结束**/
-                let arr = [];
-                for (let i = 0; i < dataArray.length; i++) {
-                    let _obj = dataArray[i];
-                    if (_obj.GPSTime <= calc_time) arr.push(_obj);
-                }
-
-                if (arr.length > 1) {
-                    // console.log(`${key} 移除了 ${arr.length} 条数据，总长度: ${len} 还有 ${len - arr.length + 1}`);
-                    redis.LTRIM(key, arr.length - 1, -1);
-
-                    if (dataArray.length === arr.length) {
-                        // 如果最后一条和现在相近，则不删除，如果较久，则删除
-                        let mid = now_time - dataArray.last().GPSTime;
-                        if (mid > calc_now_mid_time + calc_time) {
-                            console.log(`${key} TIME ERROR : 与当前相隔 ${mid.toPadLeft(6)} : 最大相隔 ${calc_now_mid_time.toPadLeft(3)} : 相差 ${mid - calc_now_mid_time}`);
-                        }
-                    }
-
-                    // 将针对arr进行数据处理
-                    let hash = _calc_pack_mileage(_calcMiddleMileage(arr));
-                    _do_save_mileage(hash, sn, calc_mid);
-                }
-                cb && cb(null, '1');
-            } catch (e) {
-                redis.DEL(key);
-            }
-        });
-    });
-};
-
 const __buildDayList = (m, key, data) => {
     if (m === 0) {
         let expire = new Date().getTime() / 1000;
@@ -233,6 +46,222 @@ const __buildDayList = (m, key, data) => {
             .then(redis.execPromise('expireat', key, expire))
     }
     return 1;
+};
+
+/***
+ * 排序并去重
+ * @param ps
+ * @returns {Array}
+ * @private
+ */
+const __doMileage_Sort = (ps) => {
+    let result = [];
+    let _res = ps.sort((a, b) => a.GPSTime > b.GPSTime ? 1 : -1);
+    let _currTime = 0;
+    for (let i = 0; i < _res.length; i++) {
+        let currPoint = _res[i];
+        // if (currPoint.UpMode > 1) continue;
+        if (currPoint.GPSTime > _currTime) {
+            result.push(currPoint);
+            _currTime = currPoint.GPSTime;
+        }
+    }
+    return result;
+};
+
+/***
+ * 里程条件计算
+ * @param ps
+ * @returns {boolean}
+ * @private
+ */
+const __doMileage_IsMileage = (ps) => {
+    let curr = new Date().getTime() / 1000;
+    let fTime = ps.first().GPSTime, eTime = ps.last().GPSTime;
+    if (curr - fTime > 900) return true;
+    // console.log((new Date().getTime() / 1000) - ps.first().GPSTime);
+    // console.log((new Date().getTime() / 1000) - ps.last().GPSTime);
+    // 里程符合条件 （ a: 初始点时间到当前时间大于10分钟）
+    return false;
+};
+
+const __doPathSearch = (start, end, cnDis) => {
+    let url = drivingApi(start, end);
+    return myUtil.HttpGetPromise(url)
+        .then((res) => res.result.routes)
+        .then((routes) => {
+            for (let i = 0; i < routes.length; i++) {
+                let route = routes[i];
+                let Rou_Dis = route.distance;
+                let steps = route.steps;
+                let arr = [];
+                for (let k = 0; k < steps.length; k++) {
+                    let path = steps[k].path;
+                    let stepArr = path.split(';');
+                    for (let j = 0; j < stepArr.length; j++) {
+                        let sArr = stepArr[j].split(',');
+                        let obj = {Lat: sArr[1], Lng: sArr[0]};
+                        arr.push(obj);
+                    }
+                }
+                let currDis = 999;
+                let k = 0;
+                for (; k < arr.length; k++) {
+                    let ak = arr[k];
+                    let dis = gpsUtil.GetDistance(ak.Lat, ak.Lng, end.Lat_Bd, end.Lng_Bd);
+                    if (dis > currDis) break;
+                    currDis = dis;
+                }
+                arr = arr.slice(0, k);
+                arr.push({Lat: end.Lat_Bd, Lng: end.Lng_Bd});
+            }
+        });
+};
+
+const __doMileage_findTimePoint = (start, end) => {
+    let mt = end.GPSTime - start.GPSTime;
+    let dmLat = (end.Lat - start.Lat) / mt, dmLng = (end.Lng - start.Lng) / mt;
+    let ms = end.GPSTime - (end.GPSTime % 300);
+    // mLat mLng 表示的是相差值
+    let mLat = (ms - start.GPSTime) * dmLat, mLng = (end.GPSTime - ms) * dmLng;
+    let result = myUtil.Clone(end, {});
+    result.GPSTime = ms;
+    result.Lat = start.Lat + mLat;
+    result.Lng = start.Lng + mLng;
+    return result;
+};
+
+/***
+ * 按时间进行分割
+ * @param ps
+ * @private
+ */
+const __doMileage_SplitTime = (ps) => {
+    // 5 分钟分割式
+    let _parts = {};
+    let cTime = new Date().getTime() / 1000;
+    let splitTime = 300;
+    for (let i = 0; i < ps.length; i++) {
+        let gt = ps[i].GPSTime;
+        let _st = gt - (gt % splitTime);
+        if (cTime - _st <= splitTime) {
+            console.log('当前正在运行');
+            break;
+        }
+        if (ps[i].UpMode > 1) {
+            // _cells.push(ps[i]);
+            continue;
+        }
+        if (!_parts[_st]) _parts[_st] = [];
+        _parts[_st].push(ps[i]);
+    }
+    let keys = [];
+    for (let k in _parts) {
+        if ((cTime - k * 1) < splitTime) {
+            _parts[k] = null;
+            continue;
+        }
+        let dis = gpsUtil.GetLineDistance(_parts[k]);
+        if (dis > 0) {
+            keys.push(k);
+        }
+    }
+    for (let i = 0; i < keys.length - 1; i++) {
+        let curr = keys[i], next = keys[i + 1];
+        let _last = _parts[curr].last(), _next = _parts[next].first();
+        if (next - curr > 300) {
+            // 如果两段之间时间相差大于5分钟
+            // 计算此段最后点和下段初始点的距离
+            let cnDis = gpsUtil.GetLineDistance([_last, _next]);
+            if (cnDis < 300) {
+                // 如果距离小于300 则直接将此段最后点写入到下段的起始点
+                let nextFirst = myUtil.Clone(_last, {});
+                nextFirst.GPSTime = next;
+                _parts[next].insert(0, nextFirst);
+
+                // } else if (cnDis < 1000) {
+                // 如果距离小于1000 则计算其运行路线(要求异步，难度较高，后定)
+                // __doPathSearch(_last, _next, cnDis);
+
+            }
+            // console.log(new Date(curr * 1000).FormatDate() + "/" + new Date(next * 1000).FormatDate() + " : " + gpsUtil.GetLineDistance([_parts[curr].last(), _parts[next].first()]));
+        } else {
+            // 如果两段之间时间相邻近，找寻中间点
+            let md = __doMileage_findTimePoint(_last, _next);
+            _parts[curr].push(md);
+            _parts[next].insert(0, md);
+        }
+    }
+    return _parts;
+};
+
+const __doMileage_CalcPart = (part) => {
+    let result = [];
+    for (let k in part) {
+        if (part.hasOwnProperty(k)) {
+            let _part = part[k];
+            let sn = _part.first().SerialNumber;
+            let obj = {
+                Distance: gpsUtil.GetLineDistance(_part),
+                PointCount: _part.length - 1,
+                GPSTime: k * 1,
+                SerialNumber: sn,
+                MiddleTime: 300,
+                TimeString: new Date(k * 1000).FormatDate(4),
+                MaxSpeed: _part.max('Speed').toFixed(3) + " km/h"
+            };
+            obj.Speed = (obj.Distance / 300 * 3.6).toFixed(3) + " km/h";
+            result.push(obj);
+        }
+    }
+    return result;
+};
+
+let _addRange = function (dataArray, sn, isLoad) {
+    mongo.add(dataArray, dbConfig(sn), function (err, data) {
+        if (err) {
+            // 如果是批量出错，则删除其出错的那行
+            if (err.code === 11000) {
+                let result = dataArray.length;
+                // console.log(err.message + " -- " + result);
+                for (let i = 0; i < result; i++) {
+                    if (err.message.indexOf(dataArray[i]._id.toString()) > 0) {
+                        mongo.del(mongo.GetByMasterId(dataArray[i]._id), dbConfig(sn));
+                        break;
+                    }
+                }
+                !isLoad && _addRange(dataArray, sn, true);
+            } else {
+                console.log(err.code);
+                console.log(err);
+            }
+        }
+    });
+};
+
+const __doMileage_Save = (dataArray) => {
+    if (!util.isArray(dataArray)) dataArray = [dataArray];
+    let sn = dataArray[0].SerialNumber;
+    let result = dataArray.length;
+    for (let i = 0; i < result; i++) {
+        let {SerialNumber, GPSTime} = dataArray[i];
+        dataArray[i]._id = new mongo.ObjectID(SerialNumber.concat(GPSTime.toString(16)));
+    }
+    _addRange(dataArray, sn);
+};
+
+const __doMileage = (ps) => {
+    // 1 按时间排序并删除重复数据
+    let _ps = __doMileage_Sort(ps);
+    // 2 计算是否符合里程计算要求
+    if (!__doMileage_IsMileage(_ps)) return -1;
+    // 3 数据点按5分钟进行分割
+    let part = __doMileage_SplitTime(_ps);
+    // 4 计算和封装段
+    let cPart = __doMileage_CalcPart(part);
+    // 5 将每一段都写到数据库中
+    __doMileage_Save(cPart);
+    return part;
 };
 
 /***
@@ -251,7 +280,7 @@ let _doPost = function (req, res, next) {
     }
     let p_data = [];
     for (let m = 0; m < arr.length; m++) {
-        p_data.push(JSON.stringify(arr[i]));
+        p_data.push(JSON.stringify(arr[m]).toString());
     }
     if (!!sn) {
         let key = redisMileageList.concat(sn);
@@ -267,11 +296,34 @@ let _doPost = function (req, res, next) {
 let _doLocationPost = function (req, res, next) {
     let data = req.body;
     let sn = data.SerialNumber;
+    if (util.isArray(data) && data.length > 0) sn = data[0].SerialNumber;
     let key = redisMileageList.concat(sn);
     redis.execPromise('lrange', key, 0, -1)
+        .then(msg => {
+            let curr = new Date().getTime() / 1000;
+            curr = curr - (curr % 300) - 300;
+            let ps = redis.ArrayToObject(msg);
+            if (!ps || !ps.length) return null;
+            if (ps.last().GPSTime < curr) {
+                redis.execPromise('del', key);
+                console.log(`redis.execPromise('del', ${key});`);
+            } else {
+                let i = 0;
+                for (; i < ps.length; i++) {
+                    let pp = ps[i];
+                    if (pp.GPSTime > curr) break;
+                }
+                redis.execPromise('llen', key)
+                    .then((l) => {
+                        console.log(`total : ${l} ::: redis.execPromise('ltrim', ${key}, ${i}, ${ps.length});`);
+                        redis.execPromise('ltrim', key, i, ps.length);
+                    });
+            }
+            return msg;
+        })
         .then((msg) => {
             let ps = redis.ArrayToObject(msg);
-
+            return __doMileage(ps);
         })
         .then(() => next())
         .catch(next);
@@ -294,8 +346,45 @@ let _doDayGet = (req, res, next) => {
 let doSingle = function (req, res, next) {
     let sn = req.params.sn;
     let key = redisMileageList.concat(sn);
-    _readLeftList(key, sn);
-    res.status(200).send("1");
+    // let count = 0, lTime = 0;
+    redis.execPromise('lrange', key, 0, -1)
+        .then(msg => {
+            let curr = new Date().getTime() / 1000;
+            curr = curr - (curr % 300);
+            let ps = redis.ArrayToObject(msg);
+            if (!ps || !ps.length) return null;
+            if (ps.last().GPSTime < curr) {
+                redis.execPromise('del', key);
+                console.log("redis.execPromise('del', key);");
+                console.log('delete ' + key);
+            } else {
+                let i = 0;
+                for (; i < ps.length; i++) {
+                    let pp = ps[i];
+                    if (pp.GPSTime > curr) break;
+                }
+                console.log("redis.execPromise('ltrim', key, i, ps.length);");
+            }
+            return msg;
+        })
+        .then((msg) => {
+            let ps = redis.ArrayToObject(msg);
+            if (ps && ps.length > 1) {
+                return __doMileage(ps);
+            }
+        })
+        // .then((part) => {
+        //     console.log(part.count + ":" + count);
+        //     for (let k in part)
+        //         if (k * 1 > lTime) lTime = k * 1;
+        //     if (lTime > 0) {
+        //         console.log("redis.execPromise('ltrim', key, 0, count);");
+        //     }
+        //     console.log(part.count);
+        //     console.log('part');
+        // })
+        .catch(console.log);
+    res.send("1");
 };
 
 /***
@@ -337,7 +426,7 @@ router.get('/', demo);
 router.post('/', _doPost);
 router.post('/', _doLocationPost);
 router.get('/day/:sn', _doDayGet);
-router.post('/single/:sn', doSingle);
+router.get('/clear/:sn', doSingle);
 // router.get('/last/:sn', getLast);
 router.get('/range/:sn/:start/:end', getRangeMileage);
 

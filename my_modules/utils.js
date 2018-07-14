@@ -55,6 +55,10 @@ Array.prototype.intersection = function (target) {
     return arr;
 };
 
+Array.prototype.insert = function (index, item) {
+    this.splice(index, 0, item);
+};
+
 // 跟据字段值查询数组
 Array.prototype.findByField = function (field, val) {
 
@@ -292,7 +296,7 @@ router.HttpGetPromise = function (url) {
         if (typeof(data) === 'string' && (data[0] === '{' || data[0] === '['))
             return JSON.parse(data);
         return data;
-    })
+    });
 };
 
 Number.prototype.toPadLeft = function (size, chat) {

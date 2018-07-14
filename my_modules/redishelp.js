@@ -5,6 +5,7 @@ const redis_pwd = process.env.REDIS_PASSWORD || "hyz_2018";
 const redis_port = process.env.REDIS_PORT || 6379;
 // const redis_port = 6380;
 const redis = require('redis');
+const util = require('util');
 let redisClient;
 let isConnection = false;
 
@@ -22,22 +23,22 @@ const build = (host, port, auth) => {
 redisClient.execPromise = function (cmd) {
     let args = Array.from(arguments).slice(1, arguments.length);
     let cb = null;
-    console.log('promise => ' + cmd + ' : ' + args.join(','));
     if (typeof args[args.length - 1] === 'function') {
         cb = args[args.length - 1];
         args = args.slice(0, args.length - 1);
     }
+    console.log('promise => ' + cmd + ' : ' + args.join(' '));
+
     return new Promise(function (resolve, reject) {
-        redisClient[cmd](args, function (err, result) {
+        let fn = function (err, result) {
             // 回调函数和Promise可同时使用
             if (cb) cb(err, result);
-            if (!err) {
-                resolve(result);
-            } else {
-                console.log(err);
-                reject(err);
-            }
-        });
+            err ? reject(err) : resolve(result);
+        };
+        if (args.length === 1) redisClient[cmd](args[0], fn);
+        else if (args.length === 2) redisClient[cmd](args[0], args[1], fn);
+        else if (args.length === 3) redisClient[cmd](args[0], args[1], args[2], fn);
+        else redisClient[cmd](args, fn);
     });
 };
 
@@ -45,6 +46,7 @@ const reg = new RegExp('},{', "g");
 
 redisClient.ArrayToObject = (arr) => {
     let result = [];
+    if (!arr) return [];
     for (let i = 0; i < arr.length; i++) {
         try {
             let jsr = arr[i].replace(reg, "}|-|{");
