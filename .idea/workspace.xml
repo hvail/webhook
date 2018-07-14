@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/mileage.js" afterPath="$PROJECT_DIR$/routes/mileage.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/my_modules/redishelp.js" afterPath="$PROJECT_DIR$/my_modules/redishelp.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,7 +15,7 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="mileage.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="mileage.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/mileage.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="261">
@@ -87,11 +87,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="redishelp.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="redishelp.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/my_modules/redishelp.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="677">
-              <caret line="48" column="24" lean-forward="false" selection-start-line="48" selection-start-column="24" selection-end-line="48" selection-end-column="24" />
+            <state relative-caret-position="242">
+              <caret line="28" column="5" lean-forward="true" selection-start-line="28" selection-start-column="5" selection-end-line="28" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -180,9 +180,9 @@
         <option value="$PROJECT_DIR$/routes/mileage-driving.js" />
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/my_modules/utils.js" />
-        <option value="$PROJECT_DIR$/my_modules/redishelp.js" />
         <option value="$PROJECT_DIR$/my_modules/mongo.js" />
         <option value="$PROJECT_DIR$/routes/mileage.js" />
+        <option value="$PROJECT_DIR$/my_modules/redishelp.js" />
       </list>
     </option>
   </component>
@@ -929,12 +929,12 @@
       <workItem from="1530794817302" duration="1818000" />
       <workItem from="1531136685599" duration="2257000" />
       <workItem from="1531376968574" duration="10768000" />
-      <workItem from="1531569860773" duration="10129000" />
+      <workItem from="1531569860773" duration="10278000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="261599000" />
+    <option name="totallyTimeSpent" value="261748000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -1405,14 +1405,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/my_modules/redishelp.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="677">
-          <caret line="48" column="24" lean-forward="false" selection-start-line="48" selection-start-column="24" selection-end-line="48" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/mongodb/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -1466,6 +1458,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="261">
           <caret line="310" column="9" lean-forward="false" selection-start-line="310" selection-start-column="9" selection-end-line="310" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/my_modules/redishelp.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="28" column="5" lean-forward="true" selection-start-line="28" selection-start-column="5" selection-end-line="28" selection-end-column="5" />
           <folding />
         </state>
       </provider>
