@@ -297,7 +297,6 @@ let _doPost = function (req, res, next) {
 const __List_Delete = (msg, key) => {
     let curr = new Date().getTime() / 1000;
     curr = curr - (curr % 300) - 300;
-    console.log(curr);
     let ps = redis.ArrayToObject(msg);
     if (!ps || !ps.length) return null;
     if (ps.last().GPSTime < curr) {
