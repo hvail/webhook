@@ -260,7 +260,8 @@ const __doMileage = (ps) => {
     // 4 计算和封装段
     let cPart = __doMileage_CalcPart(part);
     // 5 将每一段都写到数据库中
-    __doMileage_Save(cPart);
+    if (cPart && cPart.length > 0)
+        __doMileage_Save(cPart);
     return part;
 };
 
@@ -293,6 +294,30 @@ let _doPost = function (req, res, next) {
     } else next();
 };
 
+const __List_Delete = (msg, key) => {
+    let curr = new Date().getTime() / 1000;
+    curr = curr - (curr % 300) - 300;
+    console.log(curr);
+    let ps = redis.ArrayToObject(msg);
+    if (!ps || !ps.length) return null;
+    if (ps.last().GPSTime < curr) {
+        redis.execPromise('del', key);
+        console.log(`redis.execPromise('del', ${key});`);
+    } else {
+        let i = 0;
+        for (; i < ps.length; i++) {
+            let pp = ps[i];
+            if (pp.GPSTime > curr) break;
+        }
+        redis.execPromise('llen', key)
+            .then((l) => {
+                console.log(`total : ${l} ::: redis.execPromise('ltrim', ${key}, ${i}, ${ps.length});`);
+                redis.execPromise('ltrim', key, i, ps.length);
+            });
+    }
+    return msg;
+}
+
 let _doLocationPost = function (req, res, next) {
     let data = req.body;
     let sn = data.SerialNumber;
@@ -300,26 +325,7 @@ let _doLocationPost = function (req, res, next) {
     let key = redisMileageList.concat(sn);
     redis.execPromise('lrange', key, 0, -1)
         .then(msg => {
-            let curr = new Date().getTime() / 1000;
-            curr = curr - (curr % 300) - 300;
-            let ps = redis.ArrayToObject(msg);
-            if (!ps || !ps.length) return null;
-            if (ps.last().GPSTime < curr) {
-                redis.execPromise('del', key);
-                console.log(`redis.execPromise('del', ${key});`);
-            } else {
-                let i = 0;
-                for (; i < ps.length; i++) {
-                    let pp = ps[i];
-                    if (pp.GPSTime > curr) break;
-                }
-                redis.execPromise('llen', key)
-                    .then((l) => {
-                        console.log(`total : ${l} ::: redis.execPromise('ltrim', ${key}, ${i}, ${ps.length});`);
-                        redis.execPromise('ltrim', key, i, ps.length);
-                    });
-            }
-            return msg;
+            return __List_Delete(msg, key);
         })
         .then((msg) => {
             let ps = redis.ArrayToObject(msg);
@@ -346,26 +352,9 @@ let _doDayGet = (req, res, next) => {
 let doSingle = function (req, res, next) {
     let sn = req.params.sn;
     let key = redisMileageList.concat(sn);
-    // let count = 0, lTime = 0;
     redis.execPromise('lrange', key, 0, -1)
         .then(msg => {
-            let curr = new Date().getTime() / 1000;
-            curr = curr - (curr % 300);
-            let ps = redis.ArrayToObject(msg);
-            if (!ps || !ps.length) return null;
-            if (ps.last().GPSTime < curr) {
-                redis.execPromise('del', key);
-                console.log("redis.execPromise('del', key);");
-                console.log('delete ' + key);
-            } else {
-                let i = 0;
-                for (; i < ps.length; i++) {
-                    let pp = ps[i];
-                    if (pp.GPSTime > curr) break;
-                }
-                console.log("redis.execPromise('ltrim', key, i, ps.length);");
-            }
-            return msg;
+            return __List_Delete(msg, key);
         })
         .then((msg) => {
             let ps = redis.ArrayToObject(msg);
