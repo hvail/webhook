@@ -19,6 +19,7 @@ const post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
 // RPUSH & LRANGE
 const redisMileageList = "list-run-mileage-";
 const redisMileageDay = "day-mileage-";
+const redisMileageHashKey = "hash-day-mileage-total";
 const baiduSk = "inl7EljWEdaPIiDKoTHM3Z7QGMOsGTDT";
 const baiduApiUrl = "http://api.map.baidu.com/direction/v2/driving";
 
@@ -60,7 +61,6 @@ const __doMileage_Sort = (ps) => {
     let _currTime = 0;
     for (let i = 0; i < _res.length; i++) {
         let currPoint = _res[i];
-        // if (currPoint.UpMode > 1) continue;
         if (currPoint.GPSTime > _currTime) {
             result.push(currPoint);
             _currTime = currPoint.GPSTime;
@@ -121,7 +121,7 @@ const __doPathSearch = (start, end, cnDis) => {
 const __doMileage_findTimePoint = (start, end) => {
     let mt = end.GPSTime - start.GPSTime;
     let dmLat = (end.Lat - start.Lat) / mt, dmLng = (end.Lng - start.Lng) / mt;
-    let ms = end.GPSTime - (end.GPSTime % 300);
+    let ms = end.GPSTime - (end.GPSTime % calc_mid);
     // mLat mLng 表示的是相差值
     let mLat = (ms - start.GPSTime) * dmLat, mLng = (end.GPSTime - ms) * dmLng;
     let result = myUtil.Clone(end, {});
@@ -140,12 +140,12 @@ const __doMileage_SplitTime = (ps) => {
     // 5 分钟分割式
     let _parts = {};
     let cTime = new Date().getTime() / 1000;
-    let splitTime = 300;
+    let splitTime = calc_mid;
     for (let i = 0; i < ps.length; i++) {
         let gt = ps[i].GPSTime;
         let _st = gt - (gt % splitTime);
         if (cTime - _st <= splitTime) {
-            console.log('当前正在运行');
+            // console.log('当前正在运行');
             break;
         }
         if (ps[i].UpMode > 1) {
@@ -169,12 +169,12 @@ const __doMileage_SplitTime = (ps) => {
     for (let i = 0; i < keys.length - 1; i++) {
         let curr = keys[i], next = keys[i + 1];
         let _last = _parts[curr].last(), _next = _parts[next].first();
-        if (next - curr > 300) {
+        if (next - curr > calc_mid) {
             // 如果两段之间时间相差大于5分钟
             // 计算此段最后点和下段初始点的距离
             let cnDis = gpsUtil.GetLineDistance([_last, _next]);
-            if (cnDis < 300) {
-                // 如果距离小于300 则直接将此段最后点写入到下段的起始点
+            if (cnDis < calc_mid) {
+                // 如果距离小于 calc_mid(300) 则直接将此段最后点写入到下段的起始点
                 let nextFirst = myUtil.Clone(_last, {});
                 nextFirst.GPSTime = next;
                 _parts[next].insert(0, nextFirst);
@@ -206,11 +206,11 @@ const __doMileage_CalcPart = (part) => {
                 PointCount: _part.length - 1,
                 GPSTime: k * 1,
                 SerialNumber: sn,
-                MiddleTime: 300,
+                MiddleTime: calc_mid,
                 TimeString: new Date(k * 1000).FormatDate(4),
                 MaxSpeed: _part.max('Speed').toFixed(3) + " km/h"
             };
-            obj.Speed = (obj.Distance / 300 * 3.6).toFixed(3) + " km/h";
+            obj.Speed = (obj.Distance / calc_mid * 3.6).toFixed(3) + " km/h";
             result.push(obj);
         }
     }
@@ -296,7 +296,7 @@ let _doPost = function (req, res, next) {
 
 const __List_Delete = (msg, key) => {
     let curr = new Date().getTime() / 1000;
-    curr = curr - (curr % 300) - 300;
+    curr = curr - (curr % calc_mid) - calc_mid;
     let ps = redis.ArrayToObject(msg);
     if (!ps || !ps.length) return null;
     if (ps.last().GPSTime < curr) {
@@ -316,7 +316,7 @@ const __List_Delete = (msg, key) => {
                 });
     }
     return msg;
-}
+};
 
 let _doLocationPost = function (req, res, next) {
     let data = req.body;
@@ -329,6 +329,14 @@ let _doLocationPost = function (req, res, next) {
         })
         .then((msg) => {
             let ps = redis.ArrayToObject(msg);
+            let dis = gpsUtil.GetLineDistance(ps);
+            let hash = {SerialNumber: sn, Mileage: dis};
+            console.log(sn);
+            redis.execPromise('hset', redisMileageHashKey, sn, JSON.stringify(hash));
+            return msg;
+        })
+        .then((msg) => {
+            let ps = redis.ArrayToObject(msg);
             return __doMileage(ps);
         })
         .then(() => next())
@@ -336,15 +344,13 @@ let _doLocationPost = function (req, res, next) {
 };
 
 let _doDayGet = (req, res, next) => {
-    let {sn} = req.params;
-    let day = redisMileageDay.concat(sn);
-    redis.execPromise('lrange', day, 0, -1)
+    let {sns} = req.params;
+    let _sns = sns.split(',');
+    redis.execPromise('hmget', _sns)
         .then(msg => {
-            let ps = redis.ArrayToObject(msg);
-            res.status(200).send('' + gpsUtil.GetLineDistance(ps));
+            res.status(200).send(msg);
         })
         .catch(err => {
-            console.log(err);
             res.status(500).send(err);
         });
 };
@@ -414,7 +420,7 @@ let getRangeMileage = function (req, res, next) {
 router.get('/', demo);
 router.post('/', _doPost);
 router.post('/', _doLocationPost);
-router.get('/day/:sn', _doDayGet);
+router.get('/day/:sns', _doDayGet);
 router.get('/clear/:sn', doSingle);
 // router.get('/last/:sn', getLast);
 router.get('/range/:sn/:start/:end', getRangeMileage);

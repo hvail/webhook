@@ -27,8 +27,6 @@ redisClient.execPromise = function (cmd) {
         cb = args[args.length - 1];
         args = args.slice(0, args.length - 1);
     }
-    // console.log('promise => ' + cmd + ' : ' + args.join(' '));
-
     return new Promise(function (resolve, reject) {
         let fn = function (err, result) {
             // 回调函数和Promise可同时使用

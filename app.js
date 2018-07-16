@@ -11,6 +11,7 @@ const users = require('./routes/users');
 const fence = require('./routes/fence');
 const power = require('./routes/power');
 const mileage = require('./routes/mileage');
+const location = require('./routes/location');
 const network = require('./routes/network');
 const alarm_push_phone = require('./routes/push-alarm-phone');
 const webhooks = require('./routes/webhooks');
@@ -45,14 +46,22 @@ app.use('/', index);
 app.use('/mileage', mileage);
 
 /****************  轨迹点的处理 ******************/
+app.use('/location', location);
 app.use('/location', mileage);
 app.use('/location', fence);
 // 正常处理
-app.use('/location', (req, res) => {
-    res.send('1');
-});
+app.use('/location', (req, res) => res.send('1'));
 // 异常处理
 app.use('/location', (err, req, res) => {
+    res.send('-1');
+});
+
+/****************  轨迹点的处理 ******************/
+app.use('/power', power);
+// 正常处理
+app.use('/power', (req, res) => res.send('1'));
+// 异常处理
+app.use('/power', (err, req, res) => {
     res.send('-1');
 });
 
@@ -74,7 +83,7 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-    console.log('err');
+    console.log(err);
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
