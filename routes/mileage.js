@@ -348,7 +348,8 @@ let _doDayGet = (req, res, next) => {
     let _sns = sns.split(',');
     redis.execPromise('hmget', redisMileageHashKey, _sns)
         .then(msg => {
-            res.status(200).send(msg);
+            let ps = redis.ArrayToObject(msg);
+            res.status(200).send(ps);
         })
         .catch(err => {
             res.status(500).send(err);
