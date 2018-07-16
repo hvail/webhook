@@ -330,8 +330,7 @@ let _doLocationPost = function (req, res, next) {
         .then((msg) => {
             let ps = redis.ArrayToObject(msg);
             let dis = gpsUtil.GetLineDistance(ps);
-            let hash = {SerialNumber: sn, Mileage: dis};
-            console.log(sn);
+            let hash = {SerialNumber: sn, Mileage: dis, TimeZone: 8, Curr: new Date().getTime() / 1000};
             redis.execPromise('hset', redisMileageHashKey, sn, JSON.stringify(hash));
             return msg;
         })
@@ -349,7 +348,16 @@ let _doDayGet = (req, res, next) => {
     redis.execPromise('hmget', redisMileageHashKey, _sns)
         .then(msg => {
             let ps = redis.ArrayToObject(msg);
-            res.status(200).send(ps);
+            let result = [];
+            let now = new Date().getTime() / 1000;
+            now = now - (now % 86400);
+            for (let i = 0; i < ps.length; i++) {
+                let p = ps[i];
+                if (p.Curr + p.TimeZone * 3600 > now) {
+                    result.push(p);
+                }
+            }
+            res.status(200).send(result);
         })
         .catch(err => {
             res.status(500).send(err);
