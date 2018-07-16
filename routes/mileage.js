@@ -346,7 +346,7 @@ let _doLocationPost = function (req, res, next) {
 let _doDayGet = (req, res, next) => {
     let {sns} = req.params;
     let _sns = sns.split(',');
-    redis.execPromise('hmget', _sns)
+    redis.execPromise('hmget', redisMileageHashKey, _sns)
         .then(msg => {
             res.status(200).send(msg);
         })
