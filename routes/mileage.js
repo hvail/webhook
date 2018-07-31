@@ -227,29 +227,30 @@ let _readLeftList = function (key, sn, cb) {
  * @param next
  */
 let doLocationPost = function (req, res, next) {
-    let data = req.body;
-    let arr = [data];
-    let sn = data.SerialNumber;
-    if (util.isArray(data) && data.length > 0) {
-        sn = data[0].SerialNumber;
-        arr = data;
-    }
-    if (!!sn) {
-        let key = redisMileageList.concat(sn);
-        // 以下代码中存在一个时间先后的问题
-        redis.LRANGE(key, 0, -1, function (err, result) {
-            // 对数据进行排序
-            let objs = result.parseJSON();
-            objs = objs.concat(arr).sort((a, b) => a.GPSTime > b.GPSTime ? 1 : -1);
-            redis.del(key);
-            // 右进
-            redis.RPUSH(key, objs.stringifyJSON(), function (err, result) {
-                // 左出36
-                _readLeftList(key, sn);
-            });
-        });
-    }
     res.status(200).send("1");
+    // let data = req.body;
+    // let arr = [data];
+    // let sn = data.SerialNumber;
+    // if (util.isArray(data) && data.length > 0) {
+    //     sn = data[0].SerialNumber;
+    //     arr = data;
+    // }
+    // if (!!sn) {
+    //     let key = redisMileageList.concat(sn);
+    //     // 以下代码中存在一个时间先后的问题
+    //     redis.LRANGE(key, 0, -1, function (err, result) {
+    //         // 对数据进行排序
+    //         let objs = result.parseJSON();
+    //         objs = objs.concat(arr).sort((a, b) => a.GPSTime > b.GPSTime ? 1 : -1);
+    //         redis.del(key);
+    //         // 右进
+    //         redis.RPUSH(key, objs.stringifyJSON(), function (err, result) {
+    //             // 左出36
+    //             _readLeftList(key, sn);
+    //         });
+    //     });
+    // }
+    // res.status(200).send("1");
 };
 
 let doSingle = function (req, res, next) {

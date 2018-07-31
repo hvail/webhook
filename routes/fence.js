@@ -11,7 +11,7 @@ const util = require('util');
 const router = express.Router();
 const area = process.env.DATAAREA || "zh-cn";
 
-const fenceUrl = "http://v3.res-mongo.server." + area + ".sky1088.com/fence/sn/";
+const fenceUrl = "http://v3.res.server." + area + ".sky1088.com/fence/sn/";
 const FenceTypeEnum = [null, gpsUtil.IsPointInCircle, gpsUtil.IsPointInRect, gpsUtil.IsPointInPolygon];
 
 const FenceTriggerTitle = "Device %s has %s fence %s";
