@@ -110,40 +110,6 @@ let _event = function (req, res, next) {
         }
         doWebPush(push, eve);
     });
-    // request(`${GetPushUrlByType}Event/${sn}`, function (err, response, resultUrl) {
-    //     if (!resultUrl || err) return;
-    //     if (response.statusCode !== 200) {
-    //         console.log(`${GetPushUrlByType}Event/${sn} : ${response.statusCode}`);
-    //         return;
-    //     }
-    //     resultUrl = resultUrl.split(',');
-    //     request(GetLastPositionUrl + sn, function (err, response, position) {
-    //         try {
-    //             position = JSON.parse(position);
-    //         } catch (e) {
-    //             position = {};
-    //         }
-    //         for (let i = 0; i < eve.length; i++) {
-    //             if (!eve[i].AlarmType && eve[i].EventType) {
-    //                 eve[i].AlarmType = eve[i].EventType;
-    //                 eve[i].EventTime = eve[i].UpTime;
-    //             }
-    //             if (position.GPSTime && Math.abs(position.GPSTime - eve[i].UpTime) < 60) {
-    //                 eve[i].Lat = position.Lat;
-    //                 eve[i].Lng = position.Lng;
-    //                 eve[i].EventTime = eve[i].UpTime;
-    //                 eve[i].Lat_Gg = position.Lat_Gg;
-    //                 eve[i].Lat_Bd = position.Lat_Bd;
-    //                 eve[i].Lng_Gg = position.Lng_Gg;
-    //                 eve[i].Lng_Bd = position.Lng_Bd;
-    //             }
-    //             if (eve[i].AlarmType === 51) {
-    //                 eve[i].Message = "指纹录入成功";
-    //             }
-    //         }
-    //         doWebPush(resultUrl, eve);
-    //     });
-    // });
     res.send("1");
 };
 
