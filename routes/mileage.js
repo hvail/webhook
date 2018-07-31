@@ -377,16 +377,6 @@ let doSingle = function (req, res, next) {
                 return __doMileage(ps);
             }
         })
-        // .then((part) => {
-        //     console.log(part.count + ":" + count);
-        //     for (let k in part)
-        //         if (k * 1 > lTime) lTime = k * 1;
-        //     if (lTime > 0) {
-        //         console.log("redis.execPromise('ltrim', key, 0, count);");
-        //     }
-        //     console.log(part.count);
-        //     console.log('part');
-        // })
         .catch(console.log);
     res.send("1");
 };
