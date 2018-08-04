@@ -5,7 +5,7 @@
 const express = require('express');
 const request = require('request');
 const util = require('util');
-const api = request('api-base-hvail');
+const api = require('api-base-hvail');
 const myUtil = require('./../my_modules/utils');
 const area = process.env.DATAAREA || "zh-cn";
 const UIdPIX = area.replace("-", "").toUpperCase() + "_UId_";
