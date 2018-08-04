@@ -5,6 +5,7 @@
 const express = require('express');
 const request = require('request');
 const util = require('util');
+const api = request('api-base-hvail');
 const myUtil = require('./../my_modules/utils');
 const area = process.env.DATAAREA || "zh-cn";
 const UIdPIX = area.replace("-", "").toUpperCase() + "_UId_";
@@ -43,6 +44,7 @@ let getDemo = function (req, res, next) {
 
 let doPostAlarm = function (req, res, next) {
     let eve = req.body;
+    console.log(eve);
     if (eve.length)
         for (let i = 0; i < eve.length; i++) doEvent(eve[i]);
     res.status(200).send("1");
