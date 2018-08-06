@@ -13,7 +13,6 @@ const power = require('./routes/power');
 const mileage = require('./routes/mileage');
 const location = require('./routes/location');
 const network = require('./routes/network');
-const alarm_push_phone = require('./routes/push-alarm-phone');
 const webhooks = require('./routes/webhooks');
 const webtimer = require('./routes/webtimers');
 
@@ -64,15 +63,6 @@ app.use('/power', (req, res) => res.send('1'));
 app.use('/power', (err, req, res) => {
     res.send('-1');
 });
-
-// app.use('/users', users);
-// app.use('/fence', fence);
-// app.use('/power', power);
-// app.use('/push-alarm-phone', alarm_push_phone);
-// app.use('/webhook', webhooks);
-// app.use('/webtimer', webtimer);
-// app.use('/webhooks', webhooks);
-// app.use('/network', network);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

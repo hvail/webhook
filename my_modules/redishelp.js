@@ -4,6 +4,7 @@ const redis_host = process.env.REDIS_HOST || "10.0.253.5";
 const redis_pwd = process.env.REDIS_PASSWORD || "hyz_2018";
 const redis_port = process.env.REDIS_PORT || 6379;
 // const redis_port = 6380;
+const myUtil = require('./utils');
 const redis = require('redis');
 const util = require('util');
 let redisClient;
@@ -47,6 +48,14 @@ redisClient.ArrayToObject = (arr) => {
     if (!arr) return [];
     for (let i = 0; i < arr.length; i++) {
         try {
+            let ai = arr[i];
+            if (!ai) {
+                myUtil.logger(`arr ${i} is null`);
+                myUtil.logger(JSON.stringify(arr));
+                // console.log(`arr ${i} is null`);
+                // console.log(JSON.stringify(arr));
+                continue;
+            }
             let jsr = arr[i].replace(reg, "}|-|{");
             let jss = jsr.split("|-|");
             for (let j = 0; j < jss.length; j++) {

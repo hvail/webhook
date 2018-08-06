@@ -324,16 +324,15 @@ let _doLocationPost = function (req, res, next) {
     if (util.isArray(data) && data.length > 0) sn = data[0].SerialNumber;
     let key = redisMileageList.concat(sn);
     redis.execPromise('lrange', key, 0, -1)
-        .then(msg => {
-            return __List_Delete(msg, key);
-        })
-        .then((msg) => {
-            let ps = redis.ArrayToObject(msg);
-            let dis = gpsUtil.GetLineDistance(ps);
-            let hash = {SerialNumber: sn, Mileage: dis, TimeZone: 8, Curr: new Date().getTime() / 1000};
-            redis.execPromise('hset', redisMileageHashKey, sn, JSON.stringify(hash));
-            return msg;
-        })
+        .then(msg => (__List_Delete(msg, key)))
+        // 关闭LIST To HASH 的二次存储
+        // .then((msg) => {
+        //     let ps = redis.ArrayToObject(msg);
+        //     let dis = gpsUtil.GetLineDistance(ps);
+        //     let hash = {SerialNumber: sn, Mileage: dis, TimeZone: 8, Curr: new Date().getTime() / 1000};
+        //     redis.execPromise('hset', redisMileageHashKey, sn, JSON.stringify(hash));
+        //     return msg;
+        // })
         .then((msg) => {
             let ps = redis.ArrayToObject(msg);
             return __doMileage(ps);
@@ -345,6 +344,7 @@ let _doLocationPost = function (req, res, next) {
 let _doDayGet = (req, res, next) => {
     let {sns} = req.params;
     let _sns = sns.split(',');
+    // 这里采用Promise的轮询，不用HASH ,减少一次中转，就减少一次出错的可能
     redis.execPromise('hmget', redisMileageHashKey, _sns)
         .then(msg => {
             let ps = redis.ArrayToObject(msg);
@@ -368,9 +368,7 @@ let doSingle = function (req, res, next) {
     let sn = req.params.sn;
     let key = redisMileageList.concat(sn);
     redis.execPromise('lrange', key, 0, -1)
-        .then(msg => {
-            return __List_Delete(msg, key);
-        })
+        .then(msg => (__List_Delete(msg, key)))
         .then((msg) => {
             let ps = redis.ArrayToObject(msg);
             if (ps && ps.length > 1) {
