@@ -299,7 +299,7 @@ const __List_Delete = (ps, key) => {
     if (!ps) return null;
     if (ps.last().GPSTime < curr || ps.length.length === 0) {
         redis.execPromise('del', key);
-        // console.log(`redis.execPromise('del', ${key});`);
+        console.log(`redis.execPromise('del', ${key});`);
     } else {
         let i = 0;
         for (; i < ps.length; i++) {
