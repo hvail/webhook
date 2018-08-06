@@ -260,8 +260,7 @@ const __doMileage = (ps) => {
     // 4 计算和封装段
     let cPart = __doMileage_CalcPart(part);
     // 5 将每一段都写到数据库中
-    if (cPart && cPart.length > 0)
-        __doMileage_Save(cPart);
+    if (cPart && cPart.length > 0) __doMileage_Save(cPart);
     return part;
 };
 
@@ -279,29 +278,28 @@ let _doPost = function (req, res, next) {
         sn = data[0].SerialNumber;
         arr = data;
     }
-    let p_data = [];
-    for (let m = 0; m < arr.length; m++) {
-        p_data.push(JSON.stringify(arr[m]).toString());
-    }
+    let p_data = arr.map(o => (JSON.stringify(o)));
+    // for (let m = 0; m < arr.length; m++) {
+    //     p_data.push(JSON.stringify(arr[m]).toString());
+    // }
     if (!!sn) {
         let key = redisMileageList.concat(sn);
         let day = redisMileageDay.concat(sn);
         redis.execPromise('rpushx', day, p_data)
             .then((e) => __buildDayList(e, day, p_data))
-            .then(redis.execPromise('rpush', key, p_data))
+            .then(() => redis.execPromise('rpush', key, p_data))
             .then(() => next())
             .catch(next);
     } else next();
 };
 
-const __List_Delete = (msg, key) => {
+const __List_Delete = (ps, key) => {
     let curr = new Date().getTime() / 1000;
     curr = curr - (curr % calc_mid) - calc_mid;
-    let ps = redis.ArrayToObject(msg);
-    if (!ps || !ps.length) return null;
-    if (ps.last().GPSTime < curr) {
+    if (!ps) return null;
+    if (ps.last().GPSTime < curr || ps.length.length === 0) {
         redis.execPromise('del', key);
-        console.log(`redis.execPromise('del', ${key});`);
+        // console.log(`redis.execPromise('del', ${key});`);
     } else {
         let i = 0;
         for (; i < ps.length; i++) {
@@ -311,11 +309,11 @@ const __List_Delete = (msg, key) => {
         if (i > 0)
             redis.execPromise('llen', key)
                 .then((l) => {
-                    console.log(`total : ${l} ::: redis.execPromise('ltrim', ${key}, ${i}, ${ps.length});`);
+                    myUtil.logger(`total : ${l} ::: redis.execPromise('ltrim', ${key}, ${i}, ${ps.length});`);
                     redis.execPromise('ltrim', key, i, ps.length);
                 });
     }
-    return msg;
+    return ps;
 };
 
 let _doLocationPost = function (req, res, next) {
@@ -324,19 +322,9 @@ let _doLocationPost = function (req, res, next) {
     if (util.isArray(data) && data.length > 0) sn = data[0].SerialNumber;
     let key = redisMileageList.concat(sn);
     redis.execPromise('lrange', key, 0, -1)
-        .then(msg => (__List_Delete(msg, key)))
-        // 关闭LIST To HASH 的二次存储
-        // .then((msg) => {
-        //     let ps = redis.ArrayToObject(msg);
-        //     let dis = gpsUtil.GetLineDistance(ps);
-        //     let hash = {SerialNumber: sn, Mileage: dis, TimeZone: 8, Curr: new Date().getTime() / 1000};
-        //     redis.execPromise('hset', redisMileageHashKey, sn, JSON.stringify(hash));
-        //     return msg;
-        // })
-        .then((msg) => {
-            let ps = redis.ArrayToObject(msg);
-            return __doMileage(ps);
-        })
+        .then(msg => (redis.ArrayToObject(msg)))
+        .then(ps => (__List_Delete(ps, key)))
+        .then(ps => ( __doMileage(ps)))
         .then(() => next())
         .catch(next);
 };
@@ -344,33 +332,34 @@ let _doLocationPost = function (req, res, next) {
 let _doDayGet = (req, res, next) => {
     let {sns} = req.params;
     let _sns = sns.split(',');
+    res.send("");
     // 这里采用Promise的轮询，不用HASH ,减少一次中转，就减少一次出错的可能
-    redis.execPromise('hmget', redisMileageHashKey, _sns)
-        .then(msg => {
-            let ps = redis.ArrayToObject(msg);
-            let result = [];
-            let now = new Date().getTime() / 1000;
-            now = now - (now % 86400);
-            for (let i = 0; i < ps.length; i++) {
-                let p = ps[i];
-                if (p.Curr + p.TimeZone * 3600 > now) {
-                    result.push(p);
-                }
-            }
-            res.status(200).send(result);
-        })
-        .catch(err => {
-            res.status(500).send(err);
-        });
+    // redis.execPromise('hmget', redisMileageHashKey, _sns)
+    //     .then(msg => {
+    //         let ps = redis.ArrayToObject(msg);
+    //         let result = [];
+    //         let now = new Date().getTime() / 1000;
+    //         now = now - (now % 86400);
+    //         for (let i = 0; i < ps.length; i++) {
+    //             let p = ps[i];
+    //             if (p.Curr + p.TimeZone * 3600 > now) {
+    //                 result.push(p);
+    //             }
+    //         }
+    //         res.status(200).send(result);
+    //     })
+    //     .catch(err => {
+    //         res.status(500).send(err);
+    //     });
 };
 
 let doSingle = function (req, res, next) {
     let sn = req.params.sn;
     let key = redisMileageList.concat(sn);
     redis.execPromise('lrange', key, 0, -1)
-        .then(msg => (__List_Delete(msg, key)))
-        .then((msg) => {
-            let ps = redis.ArrayToObject(msg);
+        .then(msg => (redis.ArrayToObject(msg)))
+        .then(ps => (__List_Delete(ps, key)))
+        .then(ps => {
             if (ps && ps.length > 1) {
                 return __doMileage(ps);
             }
