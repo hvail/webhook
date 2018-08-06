@@ -25,7 +25,7 @@ let _doPush = function (phoneBind, eve) {
         console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警还有7天过期 最后时间 ${new Date(phoneBind.ExpireTime * 1000)}`);
     }
     console.log(JSON.stringify(phoneBind));
-    if (phoneBind.Status && phoneBind.Status * 1 === 1) {
+    if (phoneBind.Status && phoneBind.Status * 1 === 0) {
         console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警已经暂停 ${new Date(phoneBind.ExpireTime * 1000)}`);
         return;
     }
