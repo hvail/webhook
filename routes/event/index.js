@@ -9,7 +9,7 @@ const push_phone = require('./alarm-phone');
 const push_sms = require('./alarm-sms');
 
 const begin = (req, res, next) => {
-    console.log('post event begin');
+    // console.log('post event begin');
     res.send("1");
     next();
 };

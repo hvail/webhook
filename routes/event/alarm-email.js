@@ -17,9 +17,9 @@ let Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/phone/";
 let GetDeviceAlarmUrl = `http://v3.man.server.${area}.sky1088.com/custom/push-sms/field/BindTarget/`;
 
 let doPostAlarm = function (req, res, next) {
-    let eve = req.body;
-    console.log("alarm-email");
-    console.log(JSON.stringify(eve));
+    // let eve = req.body;
+    // console.log("alarm-email");
+    // console.log(JSON.stringify(eve));
     next();
 };
 
