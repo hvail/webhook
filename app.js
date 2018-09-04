@@ -6,15 +6,15 @@ const bodyParser = require('body-parser');
 const log4js = require('log4js');
 const fs = require('fs');
 
+// 正常处理
+const event = require('./routes/event');
+
 const index = require('./routes/index');
 const users = require('./routes/users');
 const fence = require('./routes/fence');
 const power = require('./routes/power');
 const mileage = require('./routes/mileage');
 const network = require('./routes/network');
-const alarm_push_phone = require('./routes/push-alarm-phone');
-const alarm_push_sms = require('./routes/push-alarm-sms');
-const alarm_push_email = require('./routes/push-alarm-email');
 const webhooks = require('./routes/webhooks');
 const webtimer = require('./routes/webtimers');
 
@@ -43,6 +43,15 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const begin = (req, res, next) => {
+    res.send("1");
+    next();
+};
+
+const end = (req, res) => {
+
+};
+
 /**独立性，唯一性接口**/
 // 转发接口
 app.use('/webhooks', webhooks);
@@ -50,10 +59,8 @@ app.use('/webhooks', webhooks);
 app.use('/webhooks/location', fence);
 // 电量数据过电量处理
 app.use('/webhooks/power', power);
-// 报警数据的全部处理及触发
-app.use('/webhooks/event', alarm_push_phone);
-app.use('/webhooks/event', alarm_push_sms);
-app.use('/webhooks/event', alarm_push_email);
+// 报警数据的触发
+app.use('/event', event);
 // 联网数据
 app.use('/webhooks/network', network);
 

@@ -11,7 +11,7 @@ const util = require('util');
 const router = express.Router();
 const area = process.env.DATAAREA || "zh-cn";
 
-const fenceUrl = "http://v3.res.server." + area + ".sky1088.com/fence/sn/";
+const fenceUrl = `http://v3.res.server.${area}.sky1088.com/fence/sn/`;
 const FenceTypeEnum = [null, gpsUtil.IsPointInCircle, gpsUtil.IsPointInRect, gpsUtil.IsPointInPolygon];
 
 const FenceTriggerTitle = "Device %s has %s fence %s";
@@ -35,7 +35,6 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     be.SerialNumber = sn;
     be.Description = "By Web Hooks";
     // 利用MQ进行消息中转
-    // console.log(JSON.stringify(be));
     myUtil.SendMqObject(ExchangeName, [be], sn);
 };
 

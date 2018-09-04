@@ -7,11 +7,10 @@ const request = require('request');
 const util = require('util');
 const api = require('api-base-hvail');
 const apiUtil = api.util;
-const myUtil = require('./../my_modules/utils');
 const area = process.env.DATAAREA || "zh-cn";
 const UIdPIX = area.replace("-", "").toUpperCase() + "_UId_";
 const router = express.Router();
-const Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/phone/";
+const Trigger = `http://v3.server-alarm.${area}.sky1088.com/alarm/phone/`;
 const GetDeviceAlarmUrl = `http://v3.man.server.${area}.sky1088.com/custom/alarm-phone/field/BindTarget/`;
 const AlarmType = [4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 31, 38, 39, 46];
 
@@ -48,7 +47,8 @@ let doPostAlarm = function (req, res, next) {
     let eve = req.body;
     if (eve.length)
         for (let i = 0; i < eve.length; i++) doEvent(eve[i]);
-    res.status(200).send("1");
+    next();
+    // res.status(200).send("1");
 };
 
 let doEvent = function (eve) {
@@ -65,7 +65,6 @@ let doEvent = function (eve) {
 };
 
 /* GET users listing. */
-router.get('/', getDemo);
 router.post('/', doPostAlarm);
 
 module.exports = router;

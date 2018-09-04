@@ -5,7 +5,7 @@
 let express = require('express');
 let request = require('request');
 let util = require('util');
-let myUtil = require('./../my_modules/utils');
+let myUtil = require('../../my_modules/utils');
 let area = process.env.DATAAREA || "zh-cn";
 let router = express.Router();
 
@@ -14,15 +14,16 @@ let getDemo = function (req, res, next) {
 };
 
 let Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/phone/";
-let GetDeviceAlarmUrl = `http://v3.manager-mongo.server.${area}.sky1088.com/custom/push-sms/field/BindTarget/`;
+let GetDeviceAlarmUrl = `http://v3.man.server.${area}.sky1088.com/custom/push-sms/field/BindTarget/`;
 
 let doPostAlarm = function (req, res, next) {
     let eve = req.body;
-    res.status(200).send("1");
+    console.log("alarm-email");
+    console.log(JSON.stringify(eve));
+    next();
 };
 
 /* GET users listing. */
-router.get('/', getDemo);
 router.post('/', doPostAlarm);
 
 module.exports = router;
