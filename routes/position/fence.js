@@ -4,9 +4,9 @@
 
 const express = require('express');
 const request = require('request');
-const gpsUtil = require('./../my_modules/gpsutils');
-const myUtil = require('./../my_modules/utils');
-const redis = require('./../my_modules/redishelp');
+const gpsUtil = require('../../my_modules/gpsutils');
+const myUtil = require('../../my_modules/utils');
+const redis = require('../../my_modules/redishelp');
 const util = require('util');
 const router = express.Router();
 const area = process.env.DATAAREA || "zh-cn";
@@ -34,8 +34,9 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     be.UpTime = time();
     be.SerialNumber = sn;
     be.Description = "By Web Hooks";
+    console.log(be);
     // 利用MQ进行消息中转
-    myUtil.SendMqObject(ExchangeName, [be], sn);
+    // myUtil.SendMqObject(ExchangeName, [be], sn);
 };
 
 let toCoordPoi = function (fence, p) {
@@ -81,7 +82,8 @@ let _readLastAndSet = function (sn, poi, cb) {
 let _location = function (req, res, next) {
     let pos = req.body;
     if (!pos) {
-        res.send('0');
+        console.log(pos);
+        next();
         return;
     }
     let _pos = [];
@@ -116,11 +118,10 @@ let _location = function (req, res, next) {
             console.log("GET " + getFenceUrl + " : " + response.statusCode + " ; " + result);
         }
     });
-    res.send("1");
 }
 
 router.get('/');
-router.post('/location', _location);
+router.post('/', _location);
 
 module.exports = router;
 

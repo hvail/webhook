@@ -8,10 +8,11 @@ const fs = require('fs');
 
 // 正常处理
 const event = require('./routes/event');
+const position = require('./routes/position');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
-const fence = require('./routes/fence');
+const fence = require('./routes/position/fence');
 const power = require('./routes/power');
 const mileage = require('./routes/mileage');
 const network = require('./routes/network');
@@ -43,15 +44,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const begin = (req, res, next) => {
-    res.send("1");
-    next();
-};
-
-const end = (req, res) => {
-
-};
-
 /**独立性，唯一性接口**/
 // 转发接口
 app.use('/webhooks', webhooks);
@@ -59,8 +51,12 @@ app.use('/webhooks', webhooks);
 app.use('/webhooks/location', fence);
 // 电量数据过电量处理
 app.use('/webhooks/power', power);
+
 // 报警数据的触发
 app.use('/event', event);
+// 轨迹数据的触发
+app.use('/position', position);
+
 // 联网数据
 app.use('/webhooks/network', network);
 
