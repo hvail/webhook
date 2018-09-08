@@ -4,6 +4,9 @@
 
 const express = require('express');
 const request = require('request');
+const apiBase = require('api-base-hvail');
+let {util: apiUtil} = apiBase;
+
 const gpsUtil = require('../../my_modules/gpsutils');
 const myUtil = require('../../my_modules/utils');
 const redis = require('../../my_modules/redishelp');
@@ -19,7 +22,7 @@ const EnterTitle = "entered";
 const LeaveTitle = "exited";
 
 const key_poi_calc = "HASH-spark-end-point";
-const ExchangeName = "hyz.protocol.BaseEvent";
+const ExchangeName = "hyz.fanout.event";
 
 const time = function () {
     return Math.round(new Date().getTime() / 1000);
@@ -81,8 +84,8 @@ let _readLastAndSet = function (sn, poi, cb) {
 
 let _location = function (req, res, next) {
     let pos = req.body;
+    console.log(pos);
     if (!pos) {
-        console.log(pos);
         next();
         return;
     }
@@ -91,6 +94,7 @@ let _location = function (req, res, next) {
     pos = _pos;
     let sn = pos[0].SerialNumber;
     let getFenceUrl = fenceUrl + sn;
+    apiUtil.PromiseGet(getFenceUrl).then(console.log);
     request(getFenceUrl, function (err, response, result) {
         if (response.statusCode !== 200 && result === "[]") {
             if (response.statusCode !== 200) console.log(result);
