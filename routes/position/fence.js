@@ -15,6 +15,7 @@ const router = express.Router();
 const area = process.env.DATAAREA || "zh-cn";
 
 const fenceUrl = `http://v3.res.server.${area}.sky1088.com/fence/sn/`;
+const mqPostUrl = `http://v3.mq-rabbit.server.${area}.sky1088.com/data`;
 const FenceTypeEnum = [null, gpsUtil.IsPointInCircle, gpsUtil.IsPointInRect, gpsUtil.IsPointInPolygon];
 
 const FenceTriggerTitle = "Device %s has %s fence %s";
@@ -39,6 +40,10 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     be.Description = "By Web Hooks";
     console.log(be);
     // 利用MQ进行消息中转
+    apiUtil.PromisePost(mqPostUrl, [be])
+        .then(msg => {
+            console.log(`${mqPostUrl} ==> ${msg}`);
+        })
     // myUtil.SendMqObject(ExchangeName, [be], sn);
 };
 
@@ -84,10 +89,6 @@ let _readLastAndSet = function (sn, poi, cb) {
 
 let _location = function (req, res, next) {
     let pos = req.body;
-    // if (!pos) {
-    //     next();
-    //     return;
-    // }
     let _pos = pos.filter(p => p !== "null");
     let sn = _pos[0].SerialNumber;
     let getFenceUrl = fenceUrl + sn;
@@ -104,6 +105,7 @@ let _location = function (req, res, next) {
                 });
             })
             .catch(e => console.log(e));
+    next();
 
     // request(getFenceUrl, function (err, response, result) {
     //     if (response.statusCode !== 200 && result === "[]") {
@@ -132,7 +134,7 @@ let _location = function (req, res, next) {
     //         console.log("GET " + getFenceUrl + " : " + response.statusCode + " ; " + result);
     //     }
     // });
-}
+};
 
 router.get('/');
 router.post('/', _location);
