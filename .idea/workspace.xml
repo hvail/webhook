@@ -80,8 +80,8 @@
       <file leaf-file-name="fence.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/position/fence.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="106" column="27" lean-forward="true" selection-start-line="106" selection-start-column="27" selection-end-line="106" selection-end-column="27" />
+            <state relative-caret-position="276">
+              <caret line="92" column="36" lean-forward="true" selection-start-line="92" selection-start-column="36" selection-end-line="92" selection-end-column="36" />
               <folding />
             </state>
           </provider>
@@ -159,6 +159,7 @@
       <find>fenceUrl</find>
       <find>myUtil</find>
       <find>send</find>
+      <find>_readLastAndSet</find>
     </findStrings>
     <replaceStrings>
       <replace>let</replace>
@@ -994,12 +995,12 @@
       <workItem from="1533864891112" duration="3329000" />
       <workItem from="1535797129911" duration="3358000" />
       <workItem from="1535818800225" duration="9834000" />
-      <workItem from="1536041600909" duration="12268000" />
+      <workItem from="1536041600909" duration="12695000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="246340000" />
+    <option name="totallyTimeSpent" value="246767000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -1412,8 +1413,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/position/fence.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="106" column="27" lean-forward="true" selection-start-line="106" selection-start-column="27" selection-end-line="106" selection-end-column="27" />
+        <state relative-caret-position="276">
+          <caret line="92" column="36" lean-forward="true" selection-start-line="92" selection-start-column="36" selection-end-line="92" selection-end-column="36" />
           <folding />
         </state>
       </provider>

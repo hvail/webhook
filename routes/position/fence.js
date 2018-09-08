@@ -91,9 +91,19 @@ let _location = function (req, res, next) {
     let _pos = pos.filter(p => p !== "null");
     let sn = _pos[0].SerialNumber;
     let getFenceUrl = fenceUrl + sn;
-    console.log(getFenceUrl);
-    // apiUtil.PromiseGet(getFenceUrl)
-    //     .then(JSON.parse)
+    let getLastUrl = "";
+    if (_pos.length > 0)
+        apiUtil.PromiseGet(getFenceUrl)
+            .then(JSON.parse)
+            .then(fences => {
+                fences.length > 0 && _readLastAndSet(sn, _pos.last(), function (poi) {
+                    if (poi !== null) _pos = poi.concat(_pos);
+                    for (let i = 0; i < fences.length; i++) {
+                        trigger(_pos, fences[i]);
+                    }
+                });
+            })
+            .catch(e => console.log(e));
 
     // request(getFenceUrl, function (err, response, result) {
     //     if (response.statusCode !== 200 && result === "[]") {
