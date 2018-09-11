@@ -14,12 +14,10 @@ const getWebhookUrl = `http://v3.manager-redis.server.${area}.sky1088.com/sales/
  * [{"Url":"http://gps2.bagomart.com/mobile/mb_gps_trajectory.php"}]
  */
 
-let doWebPush = function (arr, data) {
+const doWebPush = function (arr, data) {
     for (let i = 0; i < arr.length; i++)
         for (let j = 0; j < data.length; j++) {
-            console.log(arr[i]);
-            console.log(data[j]);
-            // apiUtil.PromisePost();
+            apiUtil.PromisePost(arr[i].Url, data[j]);
         }
 };
 
