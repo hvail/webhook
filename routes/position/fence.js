@@ -1,6 +1,6 @@
-/**
+/***
  * Created by hvail on 2017/9/25.
- */
+ **/
 
 const express = require('express');
 const request = require('request');
@@ -38,13 +38,11 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     be.UpTime = time();
     be.SerialNumber = sn;
     be.Description = "By Web Hooks";
-    console.log(be);
     // 利用MQ进行消息中转
     apiUtil.PromisePost(mqPostUrl, [be])
         .then(msg => {
             console.log(`${mqPostUrl} ==> ${msg}`);
         })
-    // myUtil.SendMqObject(ExchangeName, [be], sn);
 };
 
 let toCoordPoi = function (fence, p) {
@@ -92,7 +90,6 @@ let _location = function (req, res, next) {
     let _pos = pos.filter(p => p !== "null");
     let sn = _pos[0].SerialNumber;
     let getFenceUrl = fenceUrl + sn;
-    let getLastUrl = "";
     if (_pos.length > 0)
         apiUtil.PromiseGet(getFenceUrl)
             .then(JSON.parse)

@@ -10,6 +10,7 @@ const express = require('express');
 const router = express.Router();
 
 let fence = require('./fence');
+let webhooks = require('./webhooks');
 
 const begin = (req, res, next) => {
     // console.log('post event begin');
@@ -34,6 +35,7 @@ const error = function (err, req, res, next) {
 /* GET users listing. */
 router.post('/', begin);
 router.post('/', fence);
+router.post('/', webhooks);
 router.post('/', end);
 router.post('/', error);
 
