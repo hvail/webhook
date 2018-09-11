@@ -6,6 +6,7 @@ const request = require('request');
 const apiBase = require('api-base-hvail');
 let {util: apiUtil} = apiBase;
 const area = process.env.DATAAREA || "zh-cn";
+const router = express.Router();
 
 const getWebhookUrl = `http://v3.manager-redis.server.${area}.sky1088.com/sales/unit-group-hooks/field/Position`
 
