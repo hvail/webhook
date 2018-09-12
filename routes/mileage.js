@@ -179,18 +179,19 @@ const __doMileage_CalcPart = (part) => {
 };
 
 const _addRange = (arr, sn) => {
-
+    console.log(JSON.stringify(arr));
 };
 
 const __doMileage_Save = (dataArray) => {
     if (!util.isArray(dataArray)) dataArray = [dataArray];
     let sn = dataArray[0].SerialNumber;
-    let result = dataArray.length;
-    for (let i = 0; i < result; i++) {
-        let {SerialNumber, GPSTime} = dataArray[i];
-        // console.log(dataArray[i]);
-        // dataArray[i]._id = new mongo.ObjectID(SerialNumber.concat(GPSTime.toString(16)));
-    }
+    dataArray = dataArray.filter(d => d.Distance > 10);
+    // let result = dataArray.length;
+    // for (let i = 0; i < result; i++) {
+    //     let {SerialNumber, GPSTime} = dataArray[i];
+    // console.log(dataArray[i]);
+    // dataArray[i]._id = new mongo.ObjectID(SerialNumber.concat(GPSTime.toString(16)));
+    // }
     _addRange(dataArray, sn);
 };
 
@@ -274,24 +275,24 @@ const __List_Delete = (ps, key) => {
 //     let {sns} = req.params;
 //     let _sns = sns.split(',');
 //     res.send("");
-    // 这里采用Promise的轮询，不用HASH ,减少一次中转，就减少一次出错的可能
-    // redis.execPromise('hmget', redisMileageHashKey, _sns)
-    //     .then(msg => {
-    //         let ps = redis.ArrayToObject(msg);
-    //         let result = [];
-    //         let now = new Date().getTime() / 1000;
-    //         now = now - (now % 86400);
-    //         for (let i = 0; i < ps.length; i++) {
-    //             let p = ps[i];
-    //             if (p.Curr + p.TimeZone * 3600 > now) {
-    //                 result.push(p);
-    //             }
-    //         }
-    //         res.status(200).send(result);
-    //     })
-    //     .catch(err => {
-    //         res.status(500).send(err);
-    //     });
+// 这里采用Promise的轮询，不用HASH ,减少一次中转，就减少一次出错的可能
+// redis.execPromise('hmget', redisMileageHashKey, _sns)
+//     .then(msg => {
+//         let ps = redis.ArrayToObject(msg);
+//         let result = [];
+//         let now = new Date().getTime() / 1000;
+//         now = now - (now % 86400);
+//         for (let i = 0; i < ps.length; i++) {
+//             let p = ps[i];
+//             if (p.Curr + p.TimeZone * 3600 > now) {
+//                 result.push(p);
+//             }
+//         }
+//         res.status(200).send(result);
+//     })
+//     .catch(err => {
+//         res.status(500).send(err);
+//     });
 // };
 
 // let doSingle = function (req, res, next) {

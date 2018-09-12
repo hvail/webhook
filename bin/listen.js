@@ -8,8 +8,8 @@ const {util: apiUtil} = require('api-base-hvail');
 
 let listenMsg = (msg, type) => {
     let arr = JSON.parse(msg.content.toString());
-    apiUtil.PromisePost('http://119.23.27.9:3100/mileage', arr)
-        .then(msg => console.log('http://119.23.27.9:3100/mileage :: ' + msg));
+    apiUtil.PromisePost('http://core.mileage.sky1088.com/mileage', arr)
+        .then(msg => console.log('http://core.mileage.sky1088.com/mileage :: ' + msg));
 };
 
 let listenMq = (custom) => {
