@@ -17,10 +17,11 @@ const getWebhookUrl = `http://v3.manager-redis.server.${area}.sky1088.com/sales/
 const doWebPush = function (arr, data) {
     for (let i = 0; i < arr.length; i++)
         for (let j = 0; j < data.length; j++) {
-            apiUtil.PromisePost(arr[i].Url, data[j]).then(msg => {
-                console.log(arr[i].Url);
-                console.log(msg);
-            });
+            apiUtil.PromisePost(arr[i].Url, data[j])
+            //     .then(msg => {
+            //     console.log(arr[i].Url);
+            //     console.log(msg);
+            // });
         }
 };
 
