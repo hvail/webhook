@@ -3,7 +3,8 @@
   "version": "2.3.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "repo": "node ./bin/listen"
   },
   "dependencies": {
     "api-base-hvail": "^2.1.2",

@@ -13,3 +13,4 @@ ADD views                       /usr/local/web/views
 EXPOSE 8080
 
 CMD ["npm", "start"]
+# CMD ["node", "./bin/listen"]
