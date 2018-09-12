@@ -5,7 +5,6 @@
 const myUtil = require('./../my_modules/utils');
 const gpsUtil = require('./../my_modules/gpsutils');
 const redis = require('./../my_modules/redishelp');
-// const mongo = require('./../my_modules/mongo');
 const request = require('request');
 const express = require('express');
 const util = require('util');
@@ -23,16 +22,16 @@ const redisMileageHashKey = "hash-day-mileage-total";
 const baiduSk = "inl7EljWEdaPIiDKoTHM3Z7QGMOsGTDT";
 const baiduApiUrl = "http://api.map.baidu.com/direction/v2/driving";
 
-const drivingApi = (origin, dest) => {
-    return `${baiduApiUrl}?origin=${origin.Lat_Bd},${origin.Lng_Bd}&alternatives=1&destination=${dest.Lat_Bd},${dest.Lng_Bd}&ak=${baiduSk}`;
-};
-
-const dbConfig = function (sn) {
-    return {
-        dbName: 'MileageResource',
-        colName: `Mileage-${sn}`
-    };
-};
+// const drivingApi = (origin, dest) => {
+//     return `${baiduApiUrl}?origin=${origin.Lat_Bd},${origin.Lng_Bd}&alternatives=1&destination=${dest.Lat_Bd},${dest.Lng_Bd}&ak=${baiduSk}`;
+// };
+//
+// const dbConfig = function (sn) {
+//     return {
+//         dbName: 'MileageResource',
+//         colName: `Mileage-${sn}`
+//     };
+// };
 
 let demo = function (req, res, next) {
     res.send('mileage v2.0.0');
@@ -85,39 +84,6 @@ const __doMileage_IsMileage = (ps) => {
     return false;
 };
 
-const __doPathSearch = (start, end, cnDis) => {
-    let url = drivingApi(start, end);
-    return myUtil.HttpGetPromise(url)
-        .then((res) => res.result.routes)
-        .then((routes) => {
-            for (let i = 0; i < routes.length; i++) {
-                let route = routes[i];
-                let Rou_Dis = route.distance;
-                let steps = route.steps;
-                let arr = [];
-                for (let k = 0; k < steps.length; k++) {
-                    let path = steps[k].path;
-                    let stepArr = path.split(';');
-                    for (let j = 0; j < stepArr.length; j++) {
-                        let sArr = stepArr[j].split(',');
-                        let obj = {Lat: sArr[1], Lng: sArr[0]};
-                        arr.push(obj);
-                    }
-                }
-                let currDis = 999;
-                let k = 0;
-                for (; k < arr.length; k++) {
-                    let ak = arr[k];
-                    let dis = gpsUtil.GetDistance(ak.Lat, ak.Lng, end.Lat_Bd, end.Lng_Bd);
-                    if (dis > currDis) break;
-                    currDis = dis;
-                }
-                arr = arr.slice(0, k);
-                arr.push({Lat: end.Lat_Bd, Lng: end.Lng_Bd});
-            }
-        });
-};
-
 const __doMileage_findTimePoint = (start, end) => {
     let mt = end.GPSTime - start.GPSTime;
     let dmLat = (end.Lat - start.Lat) / mt, dmLng = (end.Lng - start.Lng) / mt;
@@ -148,10 +114,6 @@ const __doMileage_SplitTime = (ps) => {
             // console.log('当前正在运行');
             break;
         }
-        if (ps[i].UpMode > 1) {
-            // _cells.push(ps[i]);
-            continue;
-        }
         if (!_parts[_st]) _parts[_st] = [];
         _parts[_st].push(ps[i]);
     }
@@ -178,7 +140,6 @@ const __doMileage_SplitTime = (ps) => {
                 let nextFirst = myUtil.Clone(_last, {});
                 nextFirst.GPSTime = next;
                 _parts[next].insert(0, nextFirst);
-
                 // } else if (cnDis < 1000) {
                 // 如果距离小于1000 则计算其运行路线(要求异步，难度较高，后定)
                 // __doPathSearch(_last, _next, cnDis);
@@ -217,26 +178,9 @@ const __doMileage_CalcPart = (part) => {
     return result;
 };
 
-// let _addRange = function (dataArray, sn, isLoad) {
-//     mongo.add(dataArray, dbConfig(sn), function (err, data) {
-//         if (err) {
-//             // 如果是批量出错，则删除其出错的那行
-//             if (err.code === 11000) {
-//                 let result = dataArray.length;
-//                 for (let i = 0; i < result; i++) {
-//                     if (err.message.indexOf(dataArray[i]._id.toString()) > 0) {
-//                         mongo.del(mongo.GetByMasterId(dataArray[i]._id), dbConfig(sn));
-//                         break;
-//                     }
-//                 }
-//                 !isLoad && _addRange(dataArray, sn, true);
-//             } else {
-//                 console.log(err.code);
-//                 console.log(err);
-//             }
-//         }
-//     });
-// };
+const _addRange = (arr, sn) => {
+
+};
 
 const __doMileage_Save = (dataArray) => {
     if (!util.isArray(dataArray)) dataArray = [dataArray];
@@ -244,10 +188,10 @@ const __doMileage_Save = (dataArray) => {
     let result = dataArray.length;
     for (let i = 0; i < result; i++) {
         let {SerialNumber, GPSTime} = dataArray[i];
-        console.log(dataArray[i]);
+        // console.log(dataArray[i]);
         // dataArray[i]._id = new mongo.ObjectID(SerialNumber.concat(GPSTime.toString(16)));
     }
-    // _addRange(dataArray, sn);
+    _addRange(dataArray, sn);
 };
 
 const __doMileage = (ps) => {
@@ -326,10 +270,10 @@ const __List_Delete = (ps, key) => {
     return ps;
 };
 
-let _doDayGet = (req, res, next) => {
-    let {sns} = req.params;
-    let _sns = sns.split(',');
-    res.send("");
+// let _doDayGet = (req, res, next) => {
+//     let {sns} = req.params;
+//     let _sns = sns.split(',');
+//     res.send("");
     // 这里采用Promise的轮询，不用HASH ,减少一次中转，就减少一次出错的可能
     // redis.execPromise('hmget', redisMileageHashKey, _sns)
     //     .then(msg => {
@@ -348,64 +292,64 @@ let _doDayGet = (req, res, next) => {
     //     .catch(err => {
     //         res.status(500).send(err);
     //     });
-};
+// };
 
-let doSingle = function (req, res, next) {
-    let sn = req.params.sn;
-    let key = redisMileageList.concat(sn);
-    redis.execPromise('lrange', key, 0, -1)
-        .then(msg => (redis.ArrayToObject(msg)))
-        .then(ps => (__List_Delete(ps, key)))
-        .then(ps => {
-            if (ps && ps.length > 1) {
-                return __doMileage(ps);
-            }
-        })
-        .catch(console.log);
-    res.send("1");
-};
+// let doSingle = function (req, res, next) {
+//     let sn = req.params.sn;
+//     let key = redisMileageList.concat(sn);
+//     redis.execPromise('lrange', key, 0, -1)
+//         .then(msg => (redis.ArrayToObject(msg)))
+//         .then(ps => (__List_Delete(ps, key)))
+//         .then(ps => {
+//             if (ps && ps.length > 1) {
+//                 return __doMileage(ps);
+//             }
+//         })
+//         .catch(console.log);
+//     res.send("1");
+// };
 
-/***
- * 获取设备区间的里程
- * @param req
- * @param res
- * @param next
- */
-let getRangeMileage = function (req, res, next) {
-    let {sn, start, end} = req.params;
-    let filter = {};
-    filter.GPSTime = {"$gt": start * 1, "$lt": end * 1};
-    let obj = dbConfig(sn);
-    obj.sort = {"GPSTime": 1};
-    mongo.find(filter, obj, function (err, data) {
-        if (err || !data || data.length < 1)
-            res.send("[]");
-        else {
-            let result = [];
-            for (let i = 0; i < data.length; i++) {
-                let di = data[i];
-                let ip = 1;
-                for (let j = 0; j < result.length; j++) {
-                    let ri = result[j];
-                    if (ri.GPSTime === di.GPSTime) {
-                        ip = 0;
-                        break;
-                    }
-                }
-                if (ip) result.push(di);
-            }
-            res.send(result);
-        }
-    });
-};
+// /***
+//  * 获取设备区间的里程
+//  * @param req
+//  * @param res
+//  * @param next
+//  */
+// let getRangeMileage = function (req, res, next) {
+//     let {sn, start, end} = req.params;
+//     let filter = {};
+//     filter.GPSTime = {"$gt": start * 1, "$lt": end * 1};
+//     let obj = dbConfig(sn);
+//     obj.sort = {"GPSTime": 1};
+//     mongo.find(filter, obj, function (err, data) {
+//         if (err || !data || data.length < 1)
+//             res.send("[]");
+//         else {
+//             let result = [];
+//             for (let i = 0; i < data.length; i++) {
+//                 let di = data[i];
+//                 let ip = 1;
+//                 for (let j = 0; j < result.length; j++) {
+//                     let ri = result[j];
+//                     if (ri.GPSTime === di.GPSTime) {
+//                         ip = 0;
+//                         break;
+//                     }
+//                 }
+//                 if (ip) result.push(di);
+//             }
+//             res.send(result);
+//         }
+//     });
+// };
 
 /* GET users listing. */
 router.get('/', demo);
 router.post('/', _doPost);
 router.post('/', _doLocationPost);
-router.get('/day/:sns', _doDayGet);
-router.get('/clear/:sn', doSingle);
-// router.get('/last/:sn', getLast);
-router.get('/range/:sn/:start/:end', getRangeMileage);
+// router.get('/day/:sns', _doDayGet);
+// router.get('/clear/:sn', doSingle);
+// // router.get('/last/:sn', getLast);
+// router.get('/range/:sn/:start/:end', getRangeMileage);
 
 module.exports = router;
