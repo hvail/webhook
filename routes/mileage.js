@@ -7,13 +7,16 @@ const gpsUtil = require('./../my_modules/gpsutils');
 const redis = require('./../my_modules/redishelp');
 const request = require('request');
 const express = require('express');
+const apiBase = require('api-base-hvail');
 const util = require('util');
 const router = express.Router();
 const area = process.env.DATAAREA || "zh-cn";
 
+const {util: apiUtil} = apiBase;
+
 const calc_mid = 5 * 60;              // 计算间隔5分钟
 const calc_length = 2 * calc_mid;    // 单次读取长度,2个计算周期 10分钟计算一次以减少系统压力和提高响应速度
-const post_url = `http://v3.res.server.${area}.sky1088.com/mileage`;
+const mq_url = `http://v3.mq-rabbit.server.${area}.sky1088.com/data`;
 // 存储规则为右进左出
 // RPUSH & LRANGE
 const redisMileageList = "list-run-mileage-";
@@ -178,21 +181,21 @@ const __doMileage_CalcPart = (part) => {
     return result;
 };
 
-const _addRange = (arr, sn) => {
-    console.log(JSON.stringify(arr));
+const _addRange = (arr) => {
+    arr = arr.map(p => {
+        p.Type = "MileageCalc";
+        return p;
+    });
+    apiUtil.PromisePost(mq_url, arr)
+        .then(msg => console.log(`${mq_url} :: ${msg}`))
+        .catch(e => console.log(e));
 };
 
 const __doMileage_Save = (dataArray) => {
     if (!util.isArray(dataArray)) dataArray = [dataArray];
     let sn = dataArray[0].SerialNumber;
     dataArray = dataArray.filter(d => d.Distance > 10);
-    // let result = dataArray.length;
-    // for (let i = 0; i < result; i++) {
-    //     let {SerialNumber, GPSTime} = dataArray[i];
-    // console.log(dataArray[i]);
-    // dataArray[i]._id = new mongo.ObjectID(SerialNumber.concat(GPSTime.toString(16)));
-    // }
-    _addRange(dataArray, sn);
+    if (dataArray.length > 0) _addRange(dataArray, sn);
 };
 
 const __doMileage = (ps) => {
@@ -254,7 +257,6 @@ const __List_Delete = (ps, key) => {
     if (!ps) return null;
     if (ps.last().GPSTime < curr || ps.length.length === 0) {
         redis.execPromise('del', key);
-        console.log(`redis.execPromise('del', ${key});`);
     } else {
         let i = 0;
         for (; i < ps.length; i++) {
