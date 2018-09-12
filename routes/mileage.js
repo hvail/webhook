@@ -5,7 +5,7 @@
 const myUtil = require('./../my_modules/utils');
 const gpsUtil = require('./../my_modules/gpsutils');
 const redis = require('./../my_modules/redishelp');
-const mongo = require('./../my_modules/mongo');
+// const mongo = require('./../my_modules/mongo');
 const request = require('request');
 const express = require('express');
 const util = require('util');
@@ -217,27 +217,26 @@ const __doMileage_CalcPart = (part) => {
     return result;
 };
 
-let _addRange = function (dataArray, sn, isLoad) {
-    mongo.add(dataArray, dbConfig(sn), function (err, data) {
-        if (err) {
-            // 如果是批量出错，则删除其出错的那行
-            if (err.code === 11000) {
-                let result = dataArray.length;
-                // console.log(err.message + " -- " + result);
-                for (let i = 0; i < result; i++) {
-                    if (err.message.indexOf(dataArray[i]._id.toString()) > 0) {
-                        mongo.del(mongo.GetByMasterId(dataArray[i]._id), dbConfig(sn));
-                        break;
-                    }
-                }
-                !isLoad && _addRange(dataArray, sn, true);
-            } else {
-                console.log(err.code);
-                console.log(err);
-            }
-        }
-    });
-};
+// let _addRange = function (dataArray, sn, isLoad) {
+//     mongo.add(dataArray, dbConfig(sn), function (err, data) {
+//         if (err) {
+//             // 如果是批量出错，则删除其出错的那行
+//             if (err.code === 11000) {
+//                 let result = dataArray.length;
+//                 for (let i = 0; i < result; i++) {
+//                     if (err.message.indexOf(dataArray[i]._id.toString()) > 0) {
+//                         mongo.del(mongo.GetByMasterId(dataArray[i]._id), dbConfig(sn));
+//                         break;
+//                     }
+//                 }
+//                 !isLoad && _addRange(dataArray, sn, true);
+//             } else {
+//                 console.log(err.code);
+//                 console.log(err);
+//             }
+//         }
+//     });
+// };
 
 const __doMileage_Save = (dataArray) => {
     if (!util.isArray(dataArray)) dataArray = [dataArray];
@@ -245,9 +244,10 @@ const __doMileage_Save = (dataArray) => {
     let result = dataArray.length;
     for (let i = 0; i < result; i++) {
         let {SerialNumber, GPSTime} = dataArray[i];
-        dataArray[i]._id = new mongo.ObjectID(SerialNumber.concat(GPSTime.toString(16)));
+        console.log(dataArray[i]);
+        // dataArray[i]._id = new mongo.ObjectID(SerialNumber.concat(GPSTime.toString(16)));
     }
-    _addRange(dataArray, sn);
+    // _addRange(dataArray, sn);
 };
 
 const __doMileage = (ps) => {
@@ -279,9 +279,6 @@ let _doPost = function (req, res, next) {
         arr = data;
     }
     let p_data = arr.map(o => (JSON.stringify(o)));
-    // for (let m = 0; m < arr.length; m++) {
-    //     p_data.push(JSON.stringify(arr[m]).toString());
-    // }
     if (!!sn) {
         let key = redisMileageList.concat(sn);
         let day = redisMileageDay.concat(sn);
@@ -291,6 +288,19 @@ let _doPost = function (req, res, next) {
             .then(() => next())
             .catch(next);
     } else next();
+};
+
+let _doLocationPost = function (req, res, next) {
+    let data = req.body;
+    let sn = data.SerialNumber;
+    if (util.isArray(data) && data.length > 0) sn = data[0].SerialNumber;
+    let key = redisMileageList.concat(sn);
+    redis.execPromise('lrange', key, 0, -1)
+        .then(msg => (redis.ArrayToObject(msg)))
+        .then(ps => (__List_Delete(ps, key)))
+        .then(ps => ( __doMileage(ps)))
+        .catch(e => console.log(e));
+    res.send("1");
 };
 
 const __List_Delete = (ps, key) => {
@@ -314,19 +324,6 @@ const __List_Delete = (ps, key) => {
                 });
     }
     return ps;
-};
-
-let _doLocationPost = function (req, res, next) {
-    let data = req.body;
-    let sn = data.SerialNumber;
-    if (util.isArray(data) && data.length > 0) sn = data[0].SerialNumber;
-    let key = redisMileageList.concat(sn);
-    redis.execPromise('lrange', key, 0, -1)
-        .then(msg => (redis.ArrayToObject(msg)))
-        .then(ps => (__List_Delete(ps, key)))
-        .then(ps => ( __doMileage(ps)))
-        .then(() => next())
-        .catch(next);
 };
 
 let _doDayGet = (req, res, next) => {
