@@ -158,10 +158,8 @@ const __doMileage_CalcPart = (part) => {
 };
 
 const _addRange = (arr) => {
-    arr = arr.map(p => {
-        p.Type = "MileageCalc";
-        return p;
-    });
+    if (!arr) return;
+    if (!Array.isArray(arr)) arr = [arr];
     apiUtil.PromisePost(mq_url, arr)
         .then(msg => console.log(`${mq_url} :: ${msg}`))
         .catch(e => console.log(e));
@@ -227,6 +225,21 @@ let _doLocationPost = function (req, res, next) {
     res.send("1");
 };
 
+const _doRunLocations = (arr, sn) => {
+    let result = {
+        SerialNumber: sn,
+        MaxSpeed: arr.max(p => p.Speed),
+        StartTime: arr.first().GPSTime,
+        EndTime: arr.last().GPSTime,
+        Distance: gpsUtil.GetLineDistance(arr),
+        PointCount: arr.length,
+        Type: "MileageCalc",
+    };
+    result.MiddleTime = result.EndTime - result.StartTime;
+    result.GPSTime = result.StartTime;
+    return result;
+};
+
 const _doList = (req, res, next) => {
     let data = req.body;
     if (!Array.isArray(data)) data = [data];
@@ -268,8 +281,10 @@ const _calcMileage = (req, res, next) => {
         .then(arr => {
             if (arr.length > 1) {
                 console.log(`${sn} 开始执行里程计算 开始: ${arr.first().GPSTime} , 结束: ${arr.last().GPSTime} , 数量: ${arr.length}`);
+                return _doRunLocations(arr, sn);
             }
         })
+        .then(result => _addRange(result))
         .then(() => redis.execPromise('del', key))
         .catch(e => console.log('_calcMileage ' + e));
     res.send("1");
