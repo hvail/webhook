@@ -230,6 +230,7 @@ let _doLocationPost = function (req, res, next) {
 const _doList = (req, res, next) => {
     let data = req.body;
     if (!Array.isArray(data)) data = [data];
+    let sn = data.first().SerialNumber;
     // 此处只处理存放到Redis中即可
     let key = `${listKey}_${sn}`;
     redis.execPromise('rpushx', key, data);
@@ -269,7 +270,7 @@ const _calcMileage = (req, res, next) => {
             }
         })
         .then(() => redis.execPromise('del', key))
-        .catch(e => console.log(e));
+        .catch(e => console.log('_calcMileage ' + e));
     res.send("1");
 };
 
