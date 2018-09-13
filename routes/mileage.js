@@ -241,7 +241,8 @@ const _timerMileage = (req, res, next) => {
                     .then(() => (redis.execPromise('expire', timerKey, _timerLength)));
             }
         });
-    next();
+    res.send("1");
+    // next();
 };
 
 const __List_Delete = (ps, key) => {
@@ -268,7 +269,7 @@ const __List_Delete = (ps, key) => {
 /* GET users listing. */
 router.get('/', demo);
 router.post('/', _timerMileage);
-router.post('/', _doPost);
-router.post('/', _doLocationPost);
+// router.post('/', _doPost);
+// router.post('/', _doLocationPost);
 
 module.exports = router;
