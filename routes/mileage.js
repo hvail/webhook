@@ -269,8 +269,8 @@ const __List_Delete = (ps, key) => {
 
 /* GET users listing. */
 router.get('/', demo);
-router.post('/', _doPost);
 router.post('/', _timerMileage);
+router.post('/', _doPost);
 router.post('/', _doLocationPost);
 
 module.exports = router;
