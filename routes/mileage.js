@@ -247,10 +247,10 @@ const _timerMileage = (req, res, next) => {
     redis.execPromise('exists', key)
         .then(_is => {
             if (_is) {
-                console.log(`${key} 存在`);
+                // console.log(`${key} 存在`);
                 return redis.execPromise('expire', key, _timerLength);
             } else {
-                console.log(`${key} 不存在`);
+                // console.log(`${key} 不存在`);
                 return redis.execPromise('set', key, new Date().getTime())
                     .then(() => (redis.execPromise('expire', key, _timerLength)));
             }
