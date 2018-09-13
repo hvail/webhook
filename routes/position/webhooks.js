@@ -3,12 +3,11 @@
  */
 const express = require('express');
 const request = require('request');
-const apiBase = require('api-base-hvail');
-let {util: apiUtil} = apiBase;
+let {util: apiUtil} = require('api-base-hvail');
 const area = process.env.DATAAREA || "zh-cn";
 const router = express.Router();
 
-const getWebhookUrl = `http://v3.manager-redis.server.${area}.sky1088.com/sales/unit-group-hooks/field/Position`
+const getWebhookUrl = `http://v3.manager-redis.server.${area}.sky1088.com/sales/unit-group-hooks/field/Position`;
 
 /**
  * [{"Url":"http://gps2.bagomart.com/mobile/mb_gps_trajectory.php"}]
@@ -17,11 +16,7 @@ const getWebhookUrl = `http://v3.manager-redis.server.${area}.sky1088.com/sales/
 const doWebPush = function (arr, data) {
     for (let i = 0; i < arr.length; i++)
         for (let j = 0; j < data.length; j++) {
-            apiUtil.PromisePost(arr[i].Url, data[j])
-            //     .then(msg => {
-            //     console.log(arr[i].Url);
-            //     console.log(msg);
-            // });
+            apiUtil.PromisePost(arr[i].Url, data[j]);
         }
 };
 
@@ -31,11 +26,9 @@ const _location = (req, res, next) => {
     let sn = _pos[0].SerialNumber;
 
     let url = `${getWebhookUrl}/${sn}`;
-    apiUtil.PromiseGet(url)
-        .then(JSON.parse)
+    apiUtil.PromiseGet(url).then(JSON.parse)
         .then(arr => (arr && arr.length) && doWebPush(arr, _pos))
         .catch(e => console.log(e));
-
     next();
 };
 

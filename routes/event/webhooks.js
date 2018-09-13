@@ -7,6 +7,8 @@ let util = require('util');
 let area = process.env.DATAAREA || "zh-cn";
 let router = express.Router();
 
+const getWebhookUrl = `http://v3.manager-redis.server.${area}.sky1088.com/sales/unit-group-hooks/field/Event`;
+
 let getDemo = function (req, res, next) {
     res.send('alarm sms push system 1.1.0.0');
 };
