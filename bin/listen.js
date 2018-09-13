@@ -29,3 +29,5 @@ redis.on('pmessage', (pattern, channel, message) => {
     console.log('redis event');
     console.log(message);
 });
+
+console.log("程序启动完成");
