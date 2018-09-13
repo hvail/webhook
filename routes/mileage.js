@@ -228,7 +228,7 @@ let _doLocationPost = function (req, res, next) {
 const _doRunLocations = (arr, sn) => {
     let result = {
         SerialNumber: sn,
-        MaxSpeed: arr.max(p => p.Speed),
+        MaxSpeed: arr.reduce((min, p) => p.Speed < min ? p.Speed : min, arr[0].Speed), // arr.max(p => p.Speed),
         StartTime: arr.first().GPSTime,
         EndTime: arr.last().GPSTime,
         Distance: gpsUtil.GetLineDistance(arr),
@@ -237,6 +237,7 @@ const _doRunLocations = (arr, sn) => {
     };
     result.MiddleTime = result.EndTime - result.StartTime;
     result.GPSTime = result.StartTime;
+    console.log(JSON.stringify(result));
     return result;
 };
 
