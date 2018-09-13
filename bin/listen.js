@@ -30,4 +30,6 @@ redis.on('pmessage', (pattern, channel, message) => {
     console.log(message);
 });
 
+redis.psubscribe(('__key*__:expired');
+
 console.log("程序启动完成");
