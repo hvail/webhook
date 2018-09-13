@@ -223,7 +223,7 @@ let _doLocationPost = function (req, res, next) {
 
 // 倒计时里程算法
 // 15分钟为一区间里程
-const _timerLength = 900;
+const _timerLength = 90;
 const _timerMileage = (req, res, next) => {
     let data = req.body;
     if (!Array.isArray(data)) data = [data];
