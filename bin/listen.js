@@ -7,6 +7,10 @@ const redis = require('./../my_modules/redishelp');
 
 const {util: apiUtil} = require('api-base-hvail');
 
+const exPattern = /^Mileage_Timer_(\d{1,16})$/;
+
+console.log("Mileage_Timer_0028231712090269".match(exPattern));
+
 const _env = process.env || {};
 const host = _env.MQ_RABBIT_HOST || "119.23.27.9",
     name = _env.MQ_RABBIT_NAME || "hvail",
@@ -26,8 +30,11 @@ let listenMq = (custom) => {
 let MQ = new mqClient(host, name, pwd, listenMq);
 
 redis.on('pmessage', (pattern, channel, message) => {
-    console.log('redis event');
     console.log(message);
+    let gs = message.match(exPattern);
+    if (gs) {
+        apiUtil.PromisePost('http://core.mileage.sky1088.com/mileage/clear', {SerialNumber: gs[1]});
+    }
 });
 
 redis.psubscribe('__key*__:expired');

@@ -24,6 +24,12 @@ const redisMileageHashKey = "hash-day-mileage-total";
 const baiduSk = "inl7EljWEdaPIiDKoTHM3Z7QGMOsGTDT";
 const baiduApiUrl = "http://api.map.baidu.com/direction/v2/driving";
 
+// 设置或修改计时器
+const timerKey = "Mileage_Timer";
+const listKey = "Mileage_Position_List";
+// 15分钟为一区间里程
+const _timerLength = 900;
+
 let demo = function (req, res, next) {
     res.send('mileage v2.0.0');
 };
@@ -221,28 +227,49 @@ let _doLocationPost = function (req, res, next) {
     res.send("1");
 };
 
+const _doList = (req, res, next) => {
+    let data = req.body;
+    if (!Array.isArray(data)) data = [data];
+    // 此处只处理存放到Redis中即可
+    let key = `${listKey}_${sn}`;
+    redis.execPromise('rpushx', key, data);
+    next();
+};
+
 // 倒计时里程算法
-// 15分钟为一区间里程
-const _timerLength = 90;
 const _timerMileage = (req, res, next) => {
     let data = req.body;
     if (!Array.isArray(data)) data = [data];
     let sn = data.first().SerialNumber;
-    // 设置或修改计时器
-    let timerKey = `Mileage_Timer_${sn}`;
-    redis.execPromise('exists', timerKey)
+    let key = `${timerKey}_${sn}`;
+    redis.execPromise('exists', key)
         .then(_is => {
             if (_is) {
-                console.log(`${timerKey} 存在`);
-                return redis.execPromise('expire', timerKey, _timerLength);
+                console.log(`${key} 存在`);
+                return redis.execPromise('expire', key, _timerLength);
             } else {
-                console.log(`${timerKey} 不存在`);
-                return redis.execPromise('set', timerKey, new Date().getTime())
-                    .then(() => (redis.execPromise('expire', timerKey, _timerLength)));
+                console.log(`${key} 不存在`);
+                return redis.execPromise('set', key, new Date().getTime())
+                    .then(() => (redis.execPromise('expire', key, _timerLength)));
             }
         });
     res.send("1");
-    // next();
+};
+
+const _calcMileage = (req, res, next) => {
+    let {SerialNumber: sn} = req.body;
+    // 收到到期通知，表示这段里程已经结束
+    // 读取列表LIST，进行里程换算
+    let key = `${listKey}_${sn}`;
+    redis.execPromise('lrange', key, 0, -1)
+        .then(msg => (redis.ArrayToObject(msg)))
+        .then(arr => {
+            if (arr.length > 1) {
+                console.log(`${sn} 开始执行里程计算 开始: ${arr.first().GPSTime} , 结束: ${arr.last().GPSTime} , 数量: ${arr.length}`);
+            }
+        })
+        .catch(e => console.log(e));
+    res.send("1");
 };
 
 const __List_Delete = (ps, key) => {
@@ -268,7 +295,9 @@ const __List_Delete = (ps, key) => {
 
 /* GET users listing. */
 router.get('/', demo);
+router.post('/', _doList);
 router.post('/', _timerMileage);
+router.post('/clean', _calcMileage);
 // router.post('/', _doPost);
 // router.post('/', _doLocationPost);
 
