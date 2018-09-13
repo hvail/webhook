@@ -268,6 +268,7 @@ const _calcMileage = (req, res, next) => {
                 console.log(`${sn} 开始执行里程计算 开始: ${arr.first().GPSTime} , 结束: ${arr.last().GPSTime} , 数量: ${arr.length}`);
             }
         })
+        .then(() => redis.execPromise('del', key))
         .catch(e => console.log(e));
     res.send("1");
 };

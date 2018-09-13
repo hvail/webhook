@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/listen.js" afterPath="$PROJECT_DIR$/bin/listen.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/mileage.js" afterPath="$PROJECT_DIR$/routes/mileage.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -31,8 +30,8 @@
       <file leaf-file-name="mileage.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/mileage.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="23" column="51" lean-forward="true" selection-start-line="23" selection-start-column="51" selection-end-line="23" selection-end-column="51" />
+            <state relative-caret-position="213">
+              <caret line="284" column="27" lean-forward="true" selection-start-line="284" selection-start-column="27" selection-end-line="284" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -118,7 +117,6 @@
       <find>_arr</find>
       <find>sn</find>
       <find>degreeToRad</find>
-      <find>del</find>
       <find>promises</find>
       <find>drivingApi</find>
       <find>TimeString</find>
@@ -145,6 +143,7 @@
       <find>gpsUtil</find>
       <find>__doMileage</find>
       <find>lrange</find>
+      <find>del</find>
     </findStrings>
     <replaceStrings>
       <replace>let</replace>
@@ -941,7 +940,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="297162000" />
+    <option name="totallyTimeSpent" value="297307000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1358" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1262,8 +1261,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/mileage.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="23" column="51" lean-forward="true" selection-start-line="23" selection-start-column="51" selection-end-line="23" selection-end-column="51" />
+        <state relative-caret-position="213">
+          <caret line="284" column="27" lean-forward="true" selection-start-line="284" selection-start-column="27" selection-end-line="284" selection-end-column="27" />
           <folding />
         </state>
       </provider>
