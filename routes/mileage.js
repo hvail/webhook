@@ -2,7 +2,6 @@
  * 里程的计算
  * Created by hvail on 2017/10/27.
  */
-const myUtil = require('./../my_modules/utils');
 const gpsUtil = require('./../my_modules/gpsutils');
 const redis = require('./../my_modules/redishelp');
 const request = require('request');
@@ -71,7 +70,7 @@ const __doMileage_findTimePoint = (start, end) => {
     let ms = end.GPSTime - (end.GPSTime % calc_mid);
     // mLat mLng 表示的是相差值
     let mLat = (ms - start.GPSTime) * dmLat, mLng = (end.GPSTime - ms) * dmLng;
-    let result = myUtil.Clone(end, {});
+    let result = Object.assign({}, end);
     result.GPSTime = ms;
     result.Lat = start.Lat + mLat;
     result.Lng = start.Lng + mLng;
@@ -113,7 +112,7 @@ const __doMileage_SplitTime = (ps) => {
             let cnDis = gpsUtil.GetLineDistance([_last, _next]);
             if (cnDis < calc_mid) {
                 // 如果距离小于 calc_mid(300) 则直接将此段最后点写入到下段的起始点
-                let nextFirst = myUtil.Clone(_last, {});
+                let nextFirst = Object.assign({}, _last);
                 nextFirst.GPSTime = next;
                 _parts[next].insert(0, nextFirst);
                 // } else if (cnDis < 1000) {
@@ -260,7 +259,6 @@ const __List_Delete = (ps, key) => {
         if (i > 0)
             redis.execPromise('llen', key)
                 .then((l) => {
-                    // myUtil.logger(`total : ${l} ::: redis.execPromise('ltrim', ${key}, ${i}, ${ps.length});`);
                     redis.execPromise('ltrim', key, i, ps.length);
                 });
     }
