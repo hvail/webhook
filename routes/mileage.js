@@ -25,30 +25,8 @@ const redisMileageHashKey = "hash-day-mileage-total";
 const baiduSk = "inl7EljWEdaPIiDKoTHM3Z7QGMOsGTDT";
 const baiduApiUrl = "http://api.map.baidu.com/direction/v2/driving";
 
-// const drivingApi = (origin, dest) => {
-//     return `${baiduApiUrl}?origin=${origin.Lat_Bd},${origin.Lng_Bd}&alternatives=1&destination=${dest.Lat_Bd},${dest.Lng_Bd}&ak=${baiduSk}`;
-// };
-//
-// const dbConfig = function (sn) {
-//     return {Ty
-//         dbName: 'MileageResource',
-//         colName: `Mileage-${sn}`
-//     };
-// };
-
 let demo = function (req, res, next) {
     res.send('mileage v2.0.0');
-};
-
-const __buildDayList = (m, key, data) => {
-    if (m === 0) {
-        let expire = new Date().getTime() / 1000;
-        // 默认8时区
-        expire = expire + (86400 - expire % 86400) - (8 * 3600);
-        return redis.execPromise('rpush', key, data)
-            .then(redis.execPromise('expireat', key, expire))
-    }
-    return 1;
 };
 
 /***
@@ -113,10 +91,7 @@ const __doMileage_SplitTime = (ps) => {
     for (let i = 0; i < ps.length; i++) {
         let gt = ps[i].GPSTime;
         let _st = gt - (gt % splitTime);
-        if (cTime - _st <= splitTime) {
-            // console.log('当前正在运行');
-            break;
-        }
+        if (cTime - _st <= splitTime) break;
         if (!_parts[_st]) _parts[_st] = [];
         _parts[_st].push(ps[i]);
     }
@@ -127,9 +102,7 @@ const __doMileage_SplitTime = (ps) => {
             continue;
         }
         let dis = gpsUtil.GetLineDistance(_parts[k]);
-        if (dis > 0) {
-            keys.push(k);
-        }
+        if (dis > 0) keys.push(k);
     }
     for (let i = 0; i < keys.length - 1; i++) {
         let curr = keys[i], next = keys[i + 1];
@@ -146,9 +119,7 @@ const __doMileage_SplitTime = (ps) => {
                 // } else if (cnDis < 1000) {
                 // 如果距离小于1000 则计算其运行路线(要求异步，难度较高，后定)
                 // __doPathSearch(_last, _next, cnDis);
-
             }
-            // console.log(new Date(curr * 1000).FormatDate() + "/" + new Date(next * 1000).FormatDate() + " : " + gpsUtil.GetLineDistance([_parts[curr].last(), _parts[next].first()]));
         } else {
             // 如果两段之间时间相邻近，找寻中间点
             let md = __doMileage_findTimePoint(_last, _next);
@@ -231,7 +202,7 @@ let _doPost = function (req, res, next) {
         let key = redisMileageList.concat(sn);
         let day = redisMileageDay.concat(sn);
         redis.execPromise('rpushx', day, p_data)
-            .then((e) => __buildDayList(e, day, p_data))
+        // .then((e) => __buildDayList(e, day, p_data))
             .then(() => redis.execPromise('rpush', key, p_data))
             .then(() => next())
             .catch(next);
@@ -251,6 +222,24 @@ let _doLocationPost = function (req, res, next) {
     res.send("1");
 };
 
+// 倒计时里程算法
+// 15分钟为一区间里程
+const _timerLength = 900;
+const _timerMileage = (req, res, next) => {
+    let data = req.body;
+    if (!Array.isArray(data)) data = [data];
+    let sn = data.first().SerialNumber;
+    // 设置或修改计时器
+    let timerKey = `Mileage_Timer_${sn}`;
+    redis.execPromise('exists', timerKey)
+        .then(_is => {
+            if (_is) console.log(`${timerKey} 存在`);
+            else console.log(`${timerKey} 存在`);
+        });
+    // redis.execPromise('expire', _timerLength);
+    next();
+};
+
 const __List_Delete = (ps, key) => {
     let curr = new Date().getTime() / 1000;
     curr = curr - (curr % calc_mid) - calc_mid;
@@ -266,93 +255,17 @@ const __List_Delete = (ps, key) => {
         if (i > 0)
             redis.execPromise('llen', key)
                 .then((l) => {
-                    myUtil.logger(`total : ${l} ::: redis.execPromise('ltrim', ${key}, ${i}, ${ps.length});`);
+                    // myUtil.logger(`total : ${l} ::: redis.execPromise('ltrim', ${key}, ${i}, ${ps.length});`);
                     redis.execPromise('ltrim', key, i, ps.length);
                 });
     }
     return ps;
 };
 
-// let _doDayGet = (req, res, next) => {
-//     let {sns} = req.params;
-//     let _sns = sns.split(',');
-//     res.send("");
-// 这里采用Promise的轮询，不用HASH ,减少一次中转，就减少一次出错的可能
-// redis.execPromise('hmget', redisMileageHashKey, _sns)
-//     .then(msg => {
-//         let ps = redis.ArrayToObject(msg);
-//         let result = [];
-//         let now = new Date().getTime() / 1000;
-//         now = now - (now % 86400);
-//         for (let i = 0; i < ps.length; i++) {
-//             let p = ps[i];
-//             if (p.Curr + p.TimeZone * 3600 > now) {
-//                 result.push(p);
-//             }
-//         }
-//         res.status(200).send(result);
-//     })
-//     .catch(err => {
-//         res.status(500).send(err);
-//     });
-// };
-
-// let doSingle = function (req, res, next) {
-//     let sn = req.params.sn;
-//     let key = redisMileageList.concat(sn);
-//     redis.execPromise('lrange', key, 0, -1)
-//         .then(msg => (redis.ArrayToObject(msg)))
-//         .then(ps => (__List_Delete(ps, key)))
-//         .then(ps => {
-//             if (ps && ps.length > 1) {
-//                 return __doMileage(ps);
-//             }
-//         })
-//         .catch(console.log);
-//     res.send("1");
-// };
-
-// /***
-//  * 获取设备区间的里程
-//  * @param req
-//  * @param res
-//  * @param next
-//  */
-// let getRangeMileage = function (req, res, next) {
-//     let {sn, start, end} = req.params;
-//     let filter = {};
-//     filter.GPSTime = {"$gt": start * 1, "$lt": end * 1};
-//     let obj = dbConfig(sn);
-//     obj.sort = {"GPSTime": 1};
-//     mongo.find(filter, obj, function (err, data) {
-//         if (err || !data || data.length < 1)
-//             res.send("[]");
-//         else {
-//             let result = [];
-//             for (let i = 0; i < data.length; i++) {
-//                 let di = data[i];
-//                 let ip = 1;
-//                 for (let j = 0; j < result.length; j++) {
-//                     let ri = result[j];
-//                     if (ri.GPSTime === di.GPSTime) {
-//                         ip = 0;
-//                         break;
-//                     }
-//                 }
-//                 if (ip) result.push(di);
-//             }
-//             res.send(result);
-//         }
-//     });
-// };
-
 /* GET users listing. */
 router.get('/', demo);
 router.post('/', _doPost);
+router.post('/', _timerMileage);
 router.post('/', _doLocationPost);
-// router.get('/day/:sns', _doDayGet);
-// router.get('/clear/:sn', doSingle);
-// // router.get('/last/:sn', getLast);
-// router.get('/range/:sn/:start/:end', getRangeMileage);
 
 module.exports = router;
