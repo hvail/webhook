@@ -233,7 +233,8 @@ const _doList = (req, res, next) => {
     let sn = data.first().SerialNumber;
     // 此处只处理存放到Redis中即可
     let key = `${listKey}_${sn}`;
-    redis.execPromise('rpush', key, data);
+    let p_data = data.map(o => (JSON.stringify(o)));
+    redis.execPromise('rpush', key, p_data);
     next();
 };
 

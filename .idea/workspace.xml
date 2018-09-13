@@ -31,7 +31,7 @@
         <entry file="file://$PROJECT_DIR$/routes/mileage.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="153">
-              <caret line="232" column="39" lean-forward="true" selection-start-line="232" selection-start-column="39" selection-end-line="232" selection-end-column="39" />
+              <caret line="235" column="52" lean-forward="true" selection-start-line="235" selection-start-column="52" selection-end-line="235" selection-end-column="52" />
               <folding />
             </state>
           </provider>
@@ -114,7 +114,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_arr</find>
       <find>sn</find>
       <find>degreeToRad</find>
       <find>promises</find>
@@ -144,6 +143,7 @@
       <find>__doMileage</find>
       <find>lrange</find>
       <find>del</find>
+      <find>rpush</find>
     </findStrings>
     <replaceStrings>
       <replace>let</replace>
@@ -940,7 +940,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="297600000" />
+    <option name="totallyTimeSpent" value="297820000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1358" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1262,7 +1262,7 @@
     <entry file="file://$PROJECT_DIR$/routes/mileage.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
-          <caret line="232" column="39" lean-forward="true" selection-start-line="232" selection-start-column="39" selection-end-line="232" selection-end-column="39" />
+          <caret line="235" column="52" lean-forward="true" selection-start-line="235" selection-start-column="52" selection-end-line="235" selection-end-column="52" />
           <folding />
         </state>
       </provider>
