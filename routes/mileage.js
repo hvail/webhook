@@ -300,7 +300,7 @@ const __List_Delete = (ps, key) => {
 router.get('/', demo);
 router.post('/', _doList);
 router.post('/', _timerMileage);
-router.post('/clean', _calcMileage);
+router.post('/clear', _calcMileage);
 // router.post('/', _doPost);
 // router.post('/', _doLocationPost);
 
