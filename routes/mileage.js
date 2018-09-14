@@ -86,7 +86,7 @@ const __doMileage_Save = (dataArray) => {
 const _doRunLocations = (arr, sn) => {
     let result = {
         SerialNumber: sn,
-        MaxSpeed: arr.max('Speed').toFixed(3),
+        MaxSpeed: 0,
         StartTime: arr.first().GPSTime,
         EndTime: arr.last().GPSTime,
         Distance: gpsUtil.GetLineDistance(arr),
