@@ -118,16 +118,9 @@ const _timerMileage = (req, res, next) => {
     let sn = data.first().SerialNumber;
     let key = `${timerKey}_${sn}`;
     redis.execPromise('exists', key)
-        .then(_is => {
-            if (_is) {
-                // console.log(`${key} 存在`);
-                return redis.execPromise('expire', key, _timerLength);
-            } else {
-                // console.log(`${key} 不存在`);
-                return redis.execPromise('set', key, new Date().getTime())
-                    .then(() => (redis.execPromise('expire', key, _timerLength)));
-            }
-        });
+        .then(_is => (_is ?
+            redis.execPromise('expire', key, _timerLength) :
+            redis.execPromise('set', key, new Date().getTime()).then(() => (redis.execPromise('expire', key, _timerLength)))));
     res.send("1");
 };
 
@@ -140,7 +133,7 @@ const _calcMileage = (req, res, next) => {
         .then(msg => (redis.ArrayToObject(msg)))
         .then(arr => {
             if (arr.length > 1) {
-                console.log(`${sn} 开始执行里程计算 开始: ${arr.first().GPSTime} , 结束: ${arr.last().GPSTime} , 数量: ${arr.length}`);
+                // console.log(`${sn} 开始执行里程计算 开始: ${arr.first().GPSTime} , 结束: ${arr.last().GPSTime} , 数量: ${arr.length}`);
                 return _doRunLocations(arr, sn);
             }
         })
