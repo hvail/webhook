@@ -33,54 +33,12 @@ let demo = function (req, res, next) {
     res.send('mileage v2.0.0');
 };
 
-const __doMileage_findTimePoint = (start, end) => {
-    let mt = end.GPSTime - start.GPSTime;
-    let dmLat = (end.Lat - start.Lat) / mt, dmLng = (end.Lng - start.Lng) / mt;
-    let ms = end.GPSTime - (end.GPSTime % calc_mid);
-    // mLat mLng 表示的是相差值
-    let mLat = (ms - start.GPSTime) * dmLat, mLng = (end.GPSTime - ms) * dmLng;
-    let result = Object.assign({}, end);
-    result.GPSTime = ms;
-    result.Lat = start.Lat + mLat;
-    result.Lng = start.Lng + mLng;
-    return result;
-};
-
-const __doMileage_CalcPart = (part) => {
-    let result = [];
-    for (let k in part) {
-        if (part.hasOwnProperty(k)) {
-            let _part = part[k];
-            let sn = _part.first().SerialNumber;
-            let obj = {
-                Distance: gpsUtil.GetLineDistance(_part),
-                PointCount: _part.length - 1,
-                GPSTime: k * 1,
-                SerialNumber: sn,
-                MiddleTime: calc_mid,
-                TimeString: new Date(k * 1000).FormatDate(4),
-                MaxSpeed: _part.max('Speed').toFixed(3) + " km/h"
-            };
-            obj.Speed = (obj.Distance / calc_mid * 3.6).toFixed(3) + " km/h";
-            result.push(obj);
-        }
-    }
-    return result;
-};
-
 const _addRange = (arr) => {
     if (!arr) return;
     if (!Array.isArray(arr)) arr = [arr];
     apiUtil.PromisePost(mq_url, arr)
-        .then(msg => console.log(`${mq_url} :: ${msg}`))
+    // .then(msg => console.log(`${mq_url} :: ${msg}`))
         .catch(e => console.log(e));
-};
-
-const __doMileage_Save = (dataArray) => {
-    if (!util.isArray(dataArray)) dataArray = [dataArray];
-    let sn = dataArray[0].SerialNumber;
-    dataArray = dataArray.filter(d => d.Distance > 10);
-    if (dataArray.length > 0) _addRange(dataArray, sn);
 };
 
 const _doRunLocations = (arr, sn) => {
@@ -95,8 +53,8 @@ const _doRunLocations = (arr, sn) => {
     };
     result.MiddleTime = result.EndTime - result.StartTime;
     result.GPSTime = result.StartTime;
-    result.Speed = result.Distance / result.MiddleTime * 3.6;
-    console.log(JSON.stringify(result));
+    result.Speed = (result.Distance / result.MiddleTime * 3.6).toFixed(3) + " km/h";
+    // console.log(JSON.stringify(result));
     return result;
 };
 
