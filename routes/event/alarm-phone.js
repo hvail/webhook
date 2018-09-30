@@ -20,11 +20,11 @@ let _doPush = function (phoneBind, eve) {
     if (phoneBind.ExpireTime < curr) {
         console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警已经过期 最后时间 ${new Date(phoneBind.ExpireTime * 1000)}`);
         return;
-    } else if ((phoneBind.ExpireTime - 7 * 86400) < curr) {
+        // } else if ((phoneBind.ExpireTime - 7 * 86400) < curr) {
         // console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警还有7天过期 最后时间 ${new Date(phoneBind.ExpireTime * 1000)}`);
     }
     // console.log(JSON.stringify(phoneBind));
-    if (phoneBind.Status && phoneBind.Status * 1 === 0) {
+    if (phoneBind.Status * 1 === 0) {
         console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警已经暂停 ${new Date(phoneBind.ExpireTime * 1000)}`);
         return;
     }
@@ -48,7 +48,6 @@ let doPostAlarm = function (req, res, next) {
     if (eve.length)
         for (let i = 0; i < eve.length; i++) doEvent(eve[i]);
     next();
-    // res.status(200).send("1");
 };
 
 let doEvent = function (eve) {
