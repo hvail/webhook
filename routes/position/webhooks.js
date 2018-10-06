@@ -9,8 +9,12 @@ const getWebhookUrl = `http://dealer.support.sky1088.com/device/push/Position`;
 const doWebPush = function (arr, data) {
     console.log(arr);
     for (let i = 0; i < arr.length; i++)
-        for (let j = 0; j < data.length; j++) {
-            apiUtil.PromisePost(arr[i].Url, data[j]);
+        if (!arr[i]) {
+            console.log(data);
+        } else {
+            for (let j = 0; j < data.length; j++) {
+                apiUtil.PromisePost(arr[i].Url, data[j]);
+            }
         }
 };
 const _location = (req, res, next) => {
