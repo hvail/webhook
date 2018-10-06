@@ -3,25 +3,34 @@
  */
 let express = require('express');
 let request = require('request');
-let util = require('util');
-let area = process.env.DATAAREA || "zh-cn";
+let {util: apiUtil} = require('api-base-hvail');
 let router = express.Router();
 
-// const getWebhookUrl = `http://v3.manager-redis.server.${area}.sky1088.com/sales/unit-group-hooks/field/Event`;
 const getWebhookUrl = `http://dealer.support.sky1088.com/device/push/Event`;
 
 let getDemo = function (req, res, next) {
-    res.send('alarm sms push system 1.2.0.0');
+    res.send('alarm push system 1.2.0.0');
 };
 
-let Trigger = "http://v3.server-alarm.zh-cn.sky1088.com/alarm/phone/";
-let GetDeviceAlarmUrl = `http://v3.man.server.${area}.sky1088.com/custom/push-sms/field/BindTarget/`;
+const doWebPush = function (arr, data) {
+    console.log(data);
+    for (let i = 0; i < arr.length; i++)
+        for (let j = 0; j < data.length; j++) {
+            apiUtil.PromisePost(arr[i].Url, data[j]);
+        }
+};
 
-let doPostAlarm = function (req, res, next) {
+const _location = (req, res, next) => {
+    let pos = req.body;
+    let _pos = pos.filter(p => p !== "null");
+    let sn = _pos[0].SerialNumber;
+    let url = `${getWebhookUrl}/${sn}`;
+    apiUtil.PromiseGet(url).then(JSON.parse)
+        .then(arr => (arr && arr.length) && doWebPush(arr, _pos))
+        .catch(e => console.log(e));
     next();
 };
-
-/* GET users listing. */
-router.post('/', doPostAlarm);
+router.get('/', getDemo);
+router.post('/', _location);
 
 module.exports = router;
