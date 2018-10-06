@@ -25,6 +25,7 @@ const _location = (req, res, next) => {
     let _pos = pos.filter(p => p !== "null");
     let sn = _pos[0].SerialNumber;
     let url = `${getWebhookUrl}/${sn}`;
+    console.log(url);
     apiUtil.PromiseGet(url).then(JSON.parse)
         .then(arr => (arr && arr.length > 0) && doWebPush(arr, _pos))
         .catch(e => console.log(e));
