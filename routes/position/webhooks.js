@@ -7,7 +7,8 @@ let {util: apiUtil} = require('api-base-hvail');
 const area = process.env.DATAAREA || "zh-cn";
 const router = express.Router();
 
-const getWebhookUrl = `http://v3.manager-redis.server.${area}.sky1088.com/sales/unit-group-hooks/field/Position`;
+// const getWebhookUrl = `http://v3.manager-redis.server.${area}.sky1088.com/sales/unit-group-hooks/field/Position`;
+const getWebhookUrl = `http://dealer.support.sky1088.com/device/push/Position`;
 
 /**
  * [{"Url":"http://gps2.bagomart.com/mobile/mb_gps_trajectory.php"}]
