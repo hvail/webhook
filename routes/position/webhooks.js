@@ -7,15 +7,13 @@ let {util: apiUtil} = require('api-base-hvail');
 const router = express.Router();
 const getWebhookUrl = `http://dealer.support.sky1088.com/device/push/Position`;
 const doWebPush = function (arr, data) {
-    console.log(arr);
+    // console.log(arr);
     for (let i = 0; i < arr.length; i++)
-        if (!arr[i]) {
-            console.log(data);
-        } else {
+        if (arr[i]) {
             for (let j = 0; j < data.length; j++) {
                 apiUtil.PromisePost(arr[i].Url, data[j]);
             }
-        }
+        } else console.log(data);
 };
 const _location = (req, res, next) => {
     let pos = req.body;
