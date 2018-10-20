@@ -10,7 +10,8 @@ const apiUtil = api.util;
 const area = process.env.DATAAREA || "zh-cn";
 const UIdPIX = area.replace("-", "").toUpperCase() + "_UId_";
 const router = express.Router();
-const Trigger = `http://v3.server-alarm.${area}.sky1088.com/alarm/phone/`;
+// const Trigger = `http://v3.server-alarm.${area}.sky1088.com/alarm/phone/`;
+const Trigger = `http://push.core.sky1088.com/alarm/phone/`;
 const GetDeviceAlarmUrl = `http://v3.man.server.${area}.sky1088.com/custom/alarm-phone/field/BindTarget/`;
 const AlarmType = [4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 31, 38, 39, 46];
 
@@ -36,7 +37,9 @@ let _doPush = function (phoneBind, eve) {
         CallAccount: UIdPIX + phoneBind.UId,
         SerialNumber: eve.SerialNumber
     };
-    apiUtil.PromisePost(Trigger + phoneBind.AlarmTarget, _eve).catch(err => console.log(err));
+    apiUtil.PromisePost(Trigger + phoneBind.AlarmTarget, _eve)
+        .then(ss => console.log(Trigger + phoneBind.AlarmTarget))
+        .catch(err => console.log(err));
 };
 
 let getDemo = function (req, res, next) {

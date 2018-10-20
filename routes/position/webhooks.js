@@ -11,7 +11,9 @@ const doWebPush = function (arr, data) {
     for (let i = 0; i < arr.length; i++)
         if (arr[i]) {
             for (let j = 0; j < data.length; j++) {
-                apiUtil.PromisePost(arr[i].Url, data[j]);
+                if (arr[i] && arr[i].Url)
+                    apiUtil.PromisePost(arr[i].Url, data[j])
+                        .catch(e => console.log(arr[i].Url + ":" + e));
             }
         } else console.log(data);
 };
