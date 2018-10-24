@@ -38,7 +38,7 @@ let _doPush = function (phoneBind, eve) {
         SerialNumber: eve.SerialNumber
     };
     apiUtil.PromisePost(Trigger + phoneBind.AlarmTarget, _eve)
-        .then(ss => console.log(Trigger + phoneBind.AlarmTarget + " : " + ss + "(" + JSON.stringify(_eve) + ")"))
+    // .then(ss => console.log(Trigger + phoneBind.AlarmTarget + " : " + ss + "(" + JSON.stringify(_eve) + ")"))
         .catch(err => console.log(err));
 };
 
