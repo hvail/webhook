@@ -4,9 +4,9 @@
 const express = require('express');
 const router = express.Router();
 
-const push_email = require('./alarm-email');
-const push_phone = require('./alarm-phone');
-const push_sms = require('./alarm-sms');
+// const push_email = require('./alarm-email');
+// const push_phone = require('./alarm-phone');
+// const push_sms = require('./alarm-sms');
 const webhooks = require('./webhooks');
 
 const begin = (req, res, next) => {
@@ -30,9 +30,9 @@ const error = function (err, req, res, next) {
 
 /* GET users listing. */
 router.post('/', begin);
-router.post('/', push_sms);
-router.post('/', push_phone);
-router.post('/', push_email);
+// router.post('/', require('./alarm-sms'));
+router.post('/', require('./alarm-phone'));
+// router.post('/', require('./alarm-email'));
 router.post('/', webhooks);
 router.post('/', end);
 router.post('/', error);
