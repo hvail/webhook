@@ -45,9 +45,14 @@ let getDemo = function (req, res, next) {
 
 let doPostAlarm = function (req, res, next) {
     let eve = req.body;
+    if (!Array.isArray(eve)) eve = [eve];
     if (eve.length)
         for (let i = 0; i < eve.length; i++) doEvent(eve[i]);
     next();
+};
+
+let stop = (e) => {
+    throw e;
 };
 
 let doEvent = function (eve) {
@@ -62,7 +67,7 @@ let doEvent = function (eve) {
             console.log(ds);
             for (let i = 0; i < ds.length; i++) _doPush(ds[i], eve);
         })
-        .catch(console.log(DeviceAttrUrl))
+        .catch(e => console.log('ERROR : ' + DeviceAttrUrl) && stop(e))
         .catch(console.log);
     // request(DeviceAttrUrl, function (err, response, data) {
     //     if (data !== null && data !== "[]") {
