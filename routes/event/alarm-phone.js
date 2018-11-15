@@ -28,15 +28,17 @@ let _doPush = function (phoneBind, eve) {
         // console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警已经暂停 ${new Date(phoneBind.ExpireTime * 1000)}`);
         return;
     }
+
     let _eve = {
         DisplayName: phoneBind.BindTarget,
         AlarmType: eve.EventType,
         EventTime: eve.UpTime,
         CallPhone: phoneBind.Phone,
         CallAccount: UIdPIX + phoneBind.UId,
-        SerialNumber: eve.SerialNumber
+        SerialNumber: eve.SerialNumber,
+        DataArea: area
     };
-    apiUtil.PromisePost(Trigger + phoneBind.AlarmTarget, _eve).catch(err => console.log(err));
+    apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}?template=10000`, _eve).catch(err => console.log(err));
 };
 
 let getDemo = function (req, res, next) {
@@ -58,13 +60,13 @@ let stop = (e) => {
 let doEvent = function (eve) {
     if (!eve.SerialNumber) return;
     if (AlarmType.indexOf(eve.EventType) < 0)  return;
-    let DeviceAttrUrl = GetDeviceAlarmUrl + eve.SerialNumber;
-    console.log(eve);
-    console.log(DeviceAttrUrl);
+    let DeviceAttrUrl = `${GetDeviceAlarmUrl}${eve.SerialNumber}`;
+    // console.log(eve);
+    // console.log(DeviceAttrUrl);
     // 查询此设备所对应的电话报警信息
     apiUtil.PromiseGet(DeviceAttrUrl).then(JSON.parse)
         .then(ds => {
-            console.log(ds);
+            (ds.length > 0) && console.log(ds);
             for (let i = 0; i < ds.length; i++) _doPush(ds[i], eve);
         })
         .catch(e => console.log('ERROR : ' + DeviceAttrUrl) && stop(e))
