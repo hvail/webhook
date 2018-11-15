@@ -8,7 +8,7 @@ const util = require('util');
 const api = require('api-base-hvail');
 const apiUtil = api.util;
 const area = process.env.DATAAREA || "zh-cn";
-const UIdPIX = area.replace("-", "").toUpperCase() + "_UId_";
+const UIdPIX = area.replace(/-/g, "").toUpperCase() + "_UId_";
 const router = express.Router();
 const Trigger = `http://push.core.sky1088.com/alarm/phone/`;
 const GetDeviceAlarmUrl = `http://v3.man.server.${area}.sky1088.com/custom/alarm-phone/field/BindTarget/`;
@@ -62,8 +62,6 @@ let doEvent = function (eve) {
     if (!eve.SerialNumber) return;
     if (AlarmType.indexOf(eve.EventType) < 0)  return;
     let DeviceAttrUrl = `${GetDeviceAlarmUrl}${eve.SerialNumber}`;
-    // console.log(eve);
-    // console.log(DeviceAttrUrl);
     // 查询此设备所对应的电话报警信息
     apiUtil.PromiseGet(DeviceAttrUrl).then(JSON.parse)
         .then(ds => {
