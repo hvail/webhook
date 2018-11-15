@@ -3,7 +3,7 @@
   "version": "2.3.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/mqlisten"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "api-base-hvail": "^2.4.5",

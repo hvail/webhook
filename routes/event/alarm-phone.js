@@ -36,8 +36,7 @@ let _doPush = function (phoneBind, eve) {
         CallAccount: UIdPIX + phoneBind.UId,
         SerialNumber: eve.SerialNumber
     };
-    apiUtil.PromisePost(Trigger + phoneBind.AlarmTarget, _eve)
-        .catch(err => console.log(err));
+    apiUtil.PromisePost(Trigger + phoneBind.AlarmTarget, _eve).catch(err => console.log(err));
 };
 
 let getDemo = function (req, res, next) {
@@ -55,14 +54,22 @@ let doEvent = function (eve) {
     if (!eve.SerialNumber) return;
     if (AlarmType.indexOf(eve.EventType) < 0)  return;
     let DeviceAttrUrl = GetDeviceAlarmUrl + eve.SerialNumber;
-    // console.log(eve);
+    console.log(eve);
+    console.log(DeviceAttrUrl);
     // 查询此设备所对应的电话报警信息
-    request(DeviceAttrUrl, function (err, response, data) {
-        if (data !== null && data !== "[]") {
-            let ds = JSON.parse(data);
+    apiUtil.PromiseGet(DeviceAttrUrl).then(JSON.parse)
+        .then(ds => {
+            console.log(ds);
             for (let i = 0; i < ds.length; i++) _doPush(ds[i], eve);
-        }
-    });
+        })
+        .catch(console.log(DeviceAttrUrl))
+        .catch(console.log);
+    // request(DeviceAttrUrl, function (err, response, data) {
+    //     if (data !== null && data !== "[]") {
+    //         let ds = JSON.parse(data);
+    //         for (let i = 0; i < ds.length; i++) _doPush(ds[i], eve);
+    //     }
+    // });
 };
 
 /* GET users listing. */
