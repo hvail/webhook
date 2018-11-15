@@ -38,6 +38,7 @@ let _doPush = function (phoneBind, eve) {
         SerialNumber: eve.SerialNumber,
         DataArea: area
     };
+    console.log(`${Trigger}${phoneBind.AlarmTarget}?template=10000 :: ${JSON.stringify(_eve)}`);
     apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}?template=10000`, _eve).catch(err => console.log(err));
 };
 
