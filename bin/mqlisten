@@ -1,1 +1,32 @@
 // 监听rabbit的数据流，直接传达到 webhooks 时间处理
+/***
+ * Created by hvail on 2018/9/12.
+ */
+let mq = require('hvail-rabbitmq');
+let mqClient = mq.MqCustom;
+// const redis = require('./../my_modules/redishelp');
+const {util: apiUtil} = require('api-base-hvail');
+const exPattern = /^Mileage_Timer_(\d{1,16})$/;
+console.log("Mileage_Timer_0028231712090269".match(exPattern));
+const _env = process.env || {};
+const host = _env.MQ_RABBIT_HOST || "119.23.27.9", name = _env.MQ_RABBIT_NAME || "hvail",
+    pwd = _env.MQ_RABBIT_PASSWORD || "hvail";
+const change = "hyz.fanout.event";
+const lisStart = _env.LISTEN_START || null;
+
+let listenMsg = (msg, type) => {
+    let tag = msg.fields.routingKey;
+    tag = tag.replace(change, "").substr(1);
+    if (!lisStart || tag.indexOf(lisStart) === 0) {
+        let es = JSON.parse(msg.content.toString());
+        console.log(es);
+        console.log(tag);
+    }
+};
+
+let listenMq = (custom) => {
+    custom.listen(change, "run.event.push.ah", (msg) => listenMsg(msg, "position"));
+};
+
+let MQ = new mqClient(host, name, pwd, listenMq);
+console.log("程序启动完成");
