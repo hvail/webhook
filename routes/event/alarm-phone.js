@@ -12,6 +12,7 @@ const UIdPIX = area.replace(/-/g, "").toUpperCase() + "_UId_";
 const router = express.Router();
 const Trigger = `http://push.core.sky1088.com/alarm/phone/`;
 const GetDeviceAlarmUrl = `http://v3.man.server.${area}.sky1088.com/custom/alarm-phone/field/BindTarget/`;
+const GetDeviceAttrUrl = `http://v3.man.server.${area}.sky1088.com/custom/device-attr/single/`;
 const AlarmType = [4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 31, 38, 39, 46];
 
 // 向后台发送语音报警请求
@@ -38,8 +39,15 @@ let _doPush = function (phoneBind, eve) {
         SerialNumber: eve.SerialNumber,
         DataArea: area
     };
-    console.log(`${Trigger}${phoneBind.AlarmTarget}?template=10000 :: ${JSON.stringify(_eve)}`);
-    apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}?template=10000`, _eve).catch(err => console.log(err));
+    apiUtil.PromiseGet(GetDeviceAttrUrl.concat(eve.SerialNumber)).then(JSON.parse)
+        .then(attr => {
+            if (attr.DisplayName) {
+                _eve.DisplayName = attr.DisplayName;
+            }
+            apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}?template=TTS_151231802`, _eve).catch(err => console.log(err));
+        })
+        .catch(e => console.log(`报警出错 ${Trigger}${phoneBind.AlarmTarget}?template=TTS_151231802 :: ${JSON.stringify(_eve)}`) && apiUtil.Break(e))
+        .catch(console.log);
 };
 
 let getDemo = function (req, res, next) {
