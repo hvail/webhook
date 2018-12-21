@@ -56,7 +56,6 @@ app.use('/webhooks/power', power);
 app.use('/event', event);
 // 轨迹数据的触发
 app.use('/position', position);
-
 // 联网数据
 app.use('/webhooks/network', network);
 

@@ -4,29 +4,41 @@
  */
 let mq = require('hvail-rabbitmq');
 let mqClient = mq.MqCustom;
-// const redis = require('./../my_modules/redishelp');
 const {util: apiUtil} = require('api-base-hvail');
 const exPattern = /^Mileage_Timer_(\d{1,16})$/;
 const _env = process.env || {};
 const area = _env.DATAAREA || "zh-cn";
 const host = _env.MQ_RABBIT_HOST || "119.23.27.9", name = _env.MQ_RABBIT_NAME || "hvail",
     pwd = _env.MQ_RABBIT_PASSWORD || "hvail";
-const change = "hyz.fanout.event";
+const changeEvent = "hyz.fanout.event";
+const changeLocal = "hyz.fanout.position";
 const lisStart = _env.LISTEN_START || null;
 
-let listenMsg = (msg, type) => {
+let listenEventMsg = (msg, type) => {
     let tag = msg.fields.routingKey;
-    tag = tag.replace(change, "").substr(1);
+    tag = tag.replace(changeEvent, "").substr(1);
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         let es = JSON.parse(msg.content.toString());
         let eve = es[0];
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve).catch(console.log);
+        // console.log(tag + ":" + JSON.stringify(eve));
+    }
+};
+
+let listenPositionMsg = (msg, type) => {
+    let tag = msg.fields.routingKey;
+    tag = tag.replace(changeLocal, "").substr(1);
+    if (!lisStart || tag.indexOf(lisStart) === 0) {
+        let es = JSON.parse(msg.content.toString());
+        let eve = es[0];
+        apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/position`, eve).catch(console.log);
         console.log(tag + ":" + JSON.stringify(eve));
     }
 };
 
 let listenMq = (custom) => {
-    custom.listen(change, "run.event.push.ah", (msg) => listenMsg(msg, "position"));
+    custom.listen(changeEvent, "push.alarm", (msg) => listenEventMsg(msg, "position"));
+    custom.listen(changeLocal, "trigger.all", (msg) => listenEventMsg(msg, "position"));
 };
 
 let MQ = new mqClient(host, name, pwd, listenMq);
