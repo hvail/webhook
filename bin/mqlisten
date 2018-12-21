@@ -38,10 +38,8 @@ let listenPositionMsg = (msg, type) => {
 
 let listenMq = (custom) => {
     custom.listen(changeEvent, "push.alarm", (msg) => listenEventMsg(msg, "position"));
+    custom.listen(changeLocal, "trigger.all", (msg) => listenPositionMsg(msg, "position"));
 };
 
 let MQ = new mqClient(host, name, pwd, listenMq);
-new mqClient(host, name, pwd, (custom) =>
-    custom.listen(changeLocal, "trigger.all", (msg) => listenPositionMsg(msg, "position"))
-);
 console.log("程序启动完成");
