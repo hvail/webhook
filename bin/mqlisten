@@ -42,6 +42,6 @@ let listenMq = (custom) => {
 
 let MQ = new mqClient(host, name, pwd, listenMq);
 new mqClient(host, name, pwd, (custom) =>
-    custom.listen(changeLocal, "trigger.all", (msg) => listenEventMsg(msg, "position"))
+    custom.listen(changeLocal, "trigger.all", (msg) => listenPositionMsg(msg, "position"))
 );
 console.log("程序启动完成");
