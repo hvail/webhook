@@ -8,7 +8,6 @@ const apiBase = require('api-base-hvail');
 let {util: apiUtil} = apiBase;
 
 const gpsUtil = require('../../my_modules/gpsutils');
-const myUtil = require('../../my_modules/utils');
 const redis = require('../../my_modules/redishelp');
 const util = require('util');
 const router = express.Router();
@@ -95,6 +94,7 @@ let _location = function (req, res, next) {
         apiUtil.PromiseGet(getFenceUrl)
             .then(JSON.parse)
             .then(fences => {
+                console.log(fences);
                 fences.length > 0 && _readLastAndSet(sn, _pos.last(), function (poi) {
                     if (poi !== null) _pos = poi.concat(_pos);
                     for (let i = 0; i < fences.length; i++) {
