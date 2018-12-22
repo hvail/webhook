@@ -20,6 +20,7 @@ const end = (req, res) => {
 
 const error = function (err, req, res, next) {
     // set locals, only providing error in development
+    console.log("event error");
     console.log(err.message);
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
