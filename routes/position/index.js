@@ -22,7 +22,7 @@ const begin = (req, res, next) => {
 };
 
 const end = (req, res) => {
-    console.log("local end");
+    // console.log("local end");
 };
 
 const error = function (err, req, res, next) {
