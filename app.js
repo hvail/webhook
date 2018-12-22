@@ -12,7 +12,7 @@ const position = require('./routes/position');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
-const fence = require('./routes/position/fence');
+const fence = require('./routes/position');
 const power = require('./routes/power');
 const mileage = require('./routes/mileage');
 const network = require('./routes/network');
@@ -81,6 +81,7 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (err, req, res, next) {
     // set locals, only providing error in development
+    console.log(err);
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
