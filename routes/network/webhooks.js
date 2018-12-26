@@ -22,9 +22,12 @@ const _location = (req, res, next) => {
     let _pos = pos.filter(p => p !== "null");
     let sn = _pos[0].SerialNumber;
     let url = `${getWebhookUrl}/${sn}`;
-    apiUtil.PromiseGet(url).then(JSON.parse)
-        .then(arr => (arr && arr.length) && doWebPush(arr, _pos))
-        .catch(e => console.log(`${url} \r\n${e}`));
+    if (!sn) {
+        console.log(_pos);
+    } else
+        apiUtil.PromiseGet(url).then(JSON.parse)
+            .then(arr => (arr && arr.length) && doWebPush(arr, _pos))
+            .catch(e => console.log(`${url} \r\n${e}`));
     next();
 };
 router.get('/');
