@@ -6,17 +6,8 @@ const bodyParser = require('body-parser');
 const log4js = require('log4js');
 const fs = require('fs');
 
-// 正常处理
-const event = require('./routes/event');
-const position = require('./routes/position');
-
 const index = require('./routes/index');
 const users = require('./routes/users');
-const fence = require('./routes/position');
-const power = require('./routes/power');
-const mileage = require('./routes/mileage');
-const network = require('./routes/network');
-const webhooks = require('./routes/webhooks');
 const webtimer = require('./routes/webtimers');
 
 let app = express();
@@ -44,32 +35,21 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-/**独立性，唯一性接口**/
-// 转发接口
-app.use('/webhooks', webhooks);
-// 轨迹点过围栏
-app.use('/webhooks/location', fence);
-// 电量数据过电量处理
-app.use('/webhooks/power', power);
-
 // 报警数据的触发
-app.use('/event', event);
+app.use('/event', require('./routes/event'));
 // 轨迹数据的触发
-app.use('/position', position);
+app.use('/position', require('./routes/position'));
+// 电量数据的触发
+app.use('/power', require('./routes/power'));
 // 联网数据
-app.use('/webhooks/network', network);
+app.use('/network', require('./routes/network'));
 
 // ++++++++++++++++++  以上接口可以取代RabbitMq的部分功能  ++++++++++++++++++++++++++++++ //
 // ++++++++++++++++++  以上接口可以由接收端直接数据输入     ++++++++++++++++++++++++++++++ //
 
 app.use('/', index);
 app.use('/users', users);
-app.use('/fence', fence);
-app.use('/power', power);
-app.use('/webhook', webhooks);
 app.use('/webtimer', webtimer);
-app.use('/mileage', mileage);
-app.use('/network', network);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
