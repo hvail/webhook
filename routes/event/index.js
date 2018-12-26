@@ -12,6 +12,10 @@ const router = express.Router();
 const begin = (req, res, next) => {
     // console.log('post event begin');
     res.send("1");
+    if (!Array.isArray(req.body)) {
+        req.body = [req.body];
+    }
+    next();
     // next();
 };
 
