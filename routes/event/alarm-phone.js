@@ -74,17 +74,10 @@ let doEvent = function (eve) {
     // 查询此设备所对应的电话报警信息
     apiUtil.PromiseGet(DeviceAttrUrl).then(JSON.parse)
         .then(ds => {
-            // (ds.length > 0) && console.log(ds);
             for (let i = 0; i < ds.length; i++) _doPush(ds[i], eve);
         })
         .catch(e => console.log('ERROR : ' + DeviceAttrUrl) && stop(e))
         .catch(console.log);
-    // request(DeviceAttrUrl, function (err, response, data) {
-    //     if (data !== null && data !== "[]") {
-    //         let ds = JSON.parse(data);
-    //         for (let i = 0; i < ds.length; i++) _doPush(ds[i], eve);
-    //     }
-    // });
 };
 
 /* GET users listing. */
