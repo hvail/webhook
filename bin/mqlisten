@@ -39,6 +39,7 @@ let listenPositionMsg = (msg, type) => {
 
 let listenPowerMsg = (msg, type) => {
     let tag = msg.fields.routingKey;
+    console.log(tag);
     tag = tag.replace(changePower, "").substr(1);
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         let es = JSON.parse(msg.content.toString());
