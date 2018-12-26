@@ -1,19 +1,10 @@
-/***
- * 有关轨迹的相关计算
- * 里程，
- * 围栏，
- * 高速报警，
- * WebHooks
- * Created by hvail on 2018/9/8.
+/**
+ * Created by hvail on 2018/12/26.
  */
 const express = require('express');
 const router = express.Router();
 
-let fence = require('./fence');
-let webhooks = require('./webhooks');
-
 const begin = (req, res, next) => {
-    // console.log('post event begin');
     res.send("1");
     if (!Array.isArray(req.body)) {
         req.body = [req.body];
@@ -22,12 +13,12 @@ const begin = (req, res, next) => {
 };
 
 const end = (req, res) => {
-    // console.log("local end");
+    console.log("network end");
 };
 
 const error = function (err, req, res, next) {
     // set locals, only providing error in development
-    console.log("local error");
+    console.log("power error");
     console.log(err.message);
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -36,11 +27,9 @@ const error = function (err, req, res, next) {
     res.render('error');
 };
 
-
 /* GET users listing. */
 router.post('/', begin);
-router.post('/', fence);
-router.post('/', webhooks);
+router.post('/', require('./webhooks'));
 router.post('/', end);
 router.post('/', error);
 

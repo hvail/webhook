@@ -7,12 +7,12 @@ const router = express.Router();
 // const push_email = require('./alarm-email');
 // const push_phone = require('./alarm-phone');
 // const push_sms = require('./alarm-sms');
-const webhooks = require('./webhooks');
+// const webhooks = require('./webhooks');
 
 const begin = (req, res, next) => {
     // console.log('post event begin');
     res.send("1");
-    next();
+    // next();
 };
 
 const end = (req, res) => {
@@ -20,6 +20,7 @@ const end = (req, res) => {
 
 const error = function (err, req, res, next) {
     // set locals, only providing error in development
+    console.log("event error");
     console.log(err.message);
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -33,7 +34,7 @@ router.post('/', begin);
 // router.post('/', require('./alarm-sms'));
 router.post('/', require('./alarm-phone'));
 // router.post('/', require('./alarm-email'));
-router.post('/', webhooks);
+router.post('/', require('./webhooks'));
 router.post('/', end);
 router.post('/', error);
 

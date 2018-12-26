@@ -1,1 +1,45 @@
 // 监听rabbit的数据流，直接传达到 webhooks 时间处理
+/***
+ * Created by hvail on 2018/9/12.
+ */
+let mq = require('hvail-rabbitmq');
+let mqClient = mq.MqCustom;
+const {util: apiUtil} = require('api-base-hvail');
+const exPattern = /^Mileage_Timer_(\d{1,16})$/;
+const _env = process.env || {};
+const area = _env.DATAAREA || "zh-cn";
+const host = _env.MQ_RABBIT_HOST || "119.23.27.9", name = _env.MQ_RABBIT_NAME || "hvail",
+    pwd = _env.MQ_RABBIT_PASSWORD || "hvail";
+const changeEvent = "hyz.fanout.event";
+const changeLocal = "hyz.fanout.position";
+const lisStart = _env.LISTEN_START || null;
+
+let listenEventMsg = (msg, type) => {
+    let tag = msg.fields.routingKey;
+    tag = tag.replace(changeEvent, "").substr(1);
+    if (!lisStart || tag.indexOf(lisStart) === 0) {
+        let es = JSON.parse(msg.content.toString());
+        let eve = es[0];
+        apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve).catch(console.log);
+        // console.log(tag + ":" + JSON.stringify(eve));
+    }
+};
+
+let listenPositionMsg = (msg, type) => {
+    let tag = msg.fields.routingKey;
+    tag = tag.replace(changeLocal, "").substr(1);
+    if (!lisStart || tag.indexOf(lisStart) === 0) {
+        let es = JSON.parse(msg.content.toString());
+        let eve = es[0];
+        apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/position`, eve).catch(console.log);
+        console.log(tag + ":" + JSON.stringify(eve));
+    }
+};
+
+let listenMq = (custom) => {
+    custom.listen(changeEvent, "push.alarm", (msg) => listenEventMsg(msg, "position"));
+    custom.listen(changeLocal, "trigger.all", (msg) => listenPositionMsg(msg, "position"));
+};
+
+let MQ = new mqClient(host, name, pwd, listenMq);
+console.log("程序启动完成");

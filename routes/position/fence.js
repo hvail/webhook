@@ -8,7 +8,6 @@ const apiBase = require('api-base-hvail');
 let {util: apiUtil} = apiBase;
 
 const gpsUtil = require('../../my_modules/gpsutils');
-const myUtil = require('../../my_modules/utils');
 const redis = require('../../my_modules/redishelp');
 const util = require('util');
 const router = express.Router();
@@ -38,10 +37,11 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     be.UpTime = time();
     be.SerialNumber = sn;
     be.Description = "By Web Hooks";
+    console.log(be);
     // 利用MQ进行消息中转
     apiUtil.PromisePost(mqPostUrl, [be])
         .then(msg => {
-            // console.log(`${mqPostUrl} ==> ${msg}`);
+            console.log(`${mqPostUrl} ==> ${msg}`);
         })
 };
 
@@ -95,6 +95,7 @@ let _location = function (req, res, next) {
             .then(JSON.parse)
             .then(fences => {
                 fences.length > 0 && _readLastAndSet(sn, _pos.last(), function (poi) {
+                    // console.log(fences);
                     if (poi !== null) _pos = poi.concat(_pos);
                     for (let i = 0; i < fences.length; i++) {
                         trigger(_pos, fences[i]);
