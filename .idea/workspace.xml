@@ -68,7 +68,7 @@
       <file leaf-file-name="mqlisten" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bin/mqlisten">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
+            <state relative-caret-position="556">
               <caret line="40" column="36" lean-forward="true" selection-start-line="40" selection-start-column="36" selection-end-line="40" selection-end-column="36" />
               <folding />
             </state>
@@ -1059,12 +1059,12 @@
       <workItem from="1542189523750" duration="1875000" />
       <workItem from="1545380879223" duration="726000" />
       <workItem from="1545730658903" duration="4251000" />
-      <workItem from="1545806546825" duration="1454000" />
+      <workItem from="1545806546825" duration="1713000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="336618000" />
+    <option name="totallyTimeSpent" value="336877000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1358" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1478,7 +1478,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bin/mqlisten">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
+        <state relative-caret-position="556">
           <caret line="40" column="36" lean-forward="true" selection-start-line="40" selection-start-column="36" selection-end-line="40" selection-end-column="36" />
           <folding />
         </state>
