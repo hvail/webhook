@@ -41,9 +41,9 @@ let listenPowerMsg = (msg, type) => {
     let tag = msg.fields.routingKey;
     tag = tag.replace(changePower, "").substr(1);
     if (!lisStart || tag.indexOf(lisStart) === 0) {
-        let es = JSON.parse(msg.content.toString());
-        console.log(es);
-        let eve = es[0];
+        let eve = JSON.parse(msg.content.toString());
+        // console.log(es);
+        // let eve = es[0];
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/power`, eve)
             .then(result => console.log(result + " ::> " + tag + ":" + JSON.stringify(eve)))
             .catch(console.log);
