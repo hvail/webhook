@@ -13,6 +13,7 @@ const host = _env.MQ_RABBIT_HOST || "119.23.27.9", name = _env.MQ_RABBIT_NAME ||
 const changeEvent = "hyz.fanout.event";
 const changeLocal = "hyz.fanout.position";
 const changePower = "hyz.fanout.power";
+const changeNetwork = "hyz.fanout.connection";
 const lisStart = _env.LISTEN_START || null;
 
 let listenEventMsg = (msg, type) => {
@@ -44,10 +45,22 @@ let listenPowerMsg = (msg, type) => {
     }
 };
 
+let listenNetworkMsg = (msg, type) => {
+    let tag = msg.fields.routingKey;
+    tag = tag.replace(changePower, "").substr(1);
+    if (!lisStart || tag.indexOf(lisStart) === 0) {
+        let eve = JSON.parse(msg.content.toString());
+        apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/network`, eve)
+            .then(result => console.log(result + " ::> " + tag + ":" + JSON.stringify(eve)))
+            .catch(console.log);
+    }
+};
+
 let listenMq = (custom) => {
     custom.listen(changeEvent, "trigger.event", (msg) => listenEventMsg(msg, "position"));
     custom.listen(changeLocal, "trigger.local", (msg) => listenPositionMsg(msg, "position"));
     custom.listen(changePower, "trigger.power", (msg) => listenPowerMsg(msg, "position"));
+    custom.listen(changeNetwork, "trigger.network", (msg) => listenNetworkMsg(msg, "position"));
 };
 
 let MQ = new mqClient(host, name, pwd, listenMq);
