@@ -5,7 +5,7 @@ const express = require('express');
 const request = require('request');
 let {util: apiUtil} = require('api-base-hvail');
 const router = express.Router();
-const getWebhookUrl = `http://dealer.support.sky1088.com/device/push/Power`;
+const getWebhookUrl = `http://dealer.support.sky1088.com/device/push/Network`;
 const doWebPush = function (arr, data) {
     // console.log(arr);
     for (let i = 0; i < arr.length; i++)
