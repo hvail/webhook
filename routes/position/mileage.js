@@ -4,8 +4,6 @@
 const express = require('express');
 const request = require('request');
 
-
-
 /***
  * 这里只进行数据存储
  * @param req
@@ -44,11 +42,6 @@ let _doLocationPost = function (req, res, next) {
         .then(() => next())
         .catch(next);
 };
-
-// let _location = function (req, res, next) {
-//     next();
-// };
-// router.post('/', _location);
 
 router.post('/', _doPost);
 router.post('/', _doLocationPost);
