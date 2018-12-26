@@ -25,7 +25,7 @@ const _location = (req, res, next) => {
     // console.log(url);
     apiUtil.PromiseGet(url).then(JSON.parse)
         .then(arr => (arr && arr.length) && doWebPush(arr, _pos))
-        .catch(e => console.log(e));
+        .catch(e => console.log(`${url} \r\n${e}`));
     next();
 };
 router.get('/');
