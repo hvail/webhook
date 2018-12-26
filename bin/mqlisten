@@ -30,11 +30,7 @@ let listenPositionMsg = (msg, type) => {
     let tag = msg.fields.routingKey;
     tag = tag.replace(changeLocal, "").substr(1);
     if (!lisStart || tag.indexOf(lisStart) === 0) {
-        // let es = JSON.parse(msg.content.toString());
-        // let eve = es[0];
-        // console.log("es.length is " + es.length);
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/position`, JSON.parse(msg.content.toString())).catch(console.log);
-        // console.log(tag + ":" + JSON.stringify(eve));
     }
 };
 
