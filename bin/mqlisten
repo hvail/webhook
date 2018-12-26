@@ -51,7 +51,7 @@ let listenNetworkMsg = (msg, type) => {
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         let eve = JSON.parse(msg.content.toString());
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/network`, eve)
-            .then(result => console.log(result + " ::> " + tag + ":" + JSON.stringify(eve)))
+        // .then(result => console.log(result + " ::> " + tag + ":" + JSON.stringify(eve)))
             .catch(console.log);
     }
 };

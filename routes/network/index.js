@@ -13,7 +13,7 @@ const begin = (req, res, next) => {
 };
 
 const end = (req, res) => {
-    console.log("network end");
+    // console.log("network end");
 };
 
 const error = function (err, req, res, next) {
