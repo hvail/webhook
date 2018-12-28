@@ -45,9 +45,9 @@ let _doPush = function (phoneBind, eve) {
                 _eve.DisplayName = attr.DisplayName;
             }
             // console.log(`push to alarm phone ${JSON.stringify(_eve)}`)
-            apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}?template=TTS_151231802`, _eve).catch(err => console.log(err));
+            apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}`, _eve).catch(err => console.log(err));
         })
-        .catch(e => console.log(`报警出错 ${Trigger}${phoneBind.AlarmTarget}?template=TTS_151231802 :: ${JSON.stringify(_eve)}`) && apiUtil.Break(e))
+        .catch(e => console.log(`报警出错 ${Trigger}${phoneBind.AlarmTarget} :: ${JSON.stringify(_eve)}`) && apiUtil.Break(e))
         .catch(console.log);
 };
 
