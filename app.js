@@ -47,7 +47,6 @@ app.use('/network', require('./routes/network'));
 // ++++++++++++++++++  以上接口可以由接收端直接数据输入     ++++++++++++++++++++++++++++++ //
 
 app.use('/', index);
-app.use('/users', users);
 app.use('/webtimer', webtimer);
 
 // catch 404 and forward to error handler
