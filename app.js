@@ -7,7 +7,6 @@ const log4js = require('log4js');
 const fs = require('fs');
 
 const index = require('./routes/index');
-const webtimer = require('./routes/webtimers');
 
 let app = express();
 
@@ -37,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 报警数据的触发
 app.use('/event', require('./routes/event'));
 // 轨迹数据的触发
-app.use('/position', require('./routes/position'));
+// app.use('/position', require('./routes/position'));
 // 电量数据的触发
 app.use('/power', require('./routes/power'));
 // 联网数据
@@ -47,7 +46,6 @@ app.use('/network', require('./routes/network'));
 // ++++++++++++++++++  以上接口可以由接收端直接数据输入     ++++++++++++++++++++++++++++++ //
 
 app.use('/', index);
-app.use('/webtimer', webtimer);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
