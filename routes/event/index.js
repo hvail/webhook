@@ -12,7 +12,7 @@ const router = express.Router();
 const begin = (req, res, next) => {
     // console.log('post event begin');
     res.send("1");
-    // next();
+    next();
 };
 
 const end = (req, res) => {
