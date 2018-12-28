@@ -7,7 +7,6 @@ const log4js = require('log4js');
 const fs = require('fs');
 
 const index = require('./routes/index');
-const users = require('./routes/users');
 const webtimer = require('./routes/webtimers');
 
 let app = express();
