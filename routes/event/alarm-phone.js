@@ -68,7 +68,7 @@ let doEvent = function (eve) {
     if (AlarmType.indexOf(eve.EventType) < 0)  return;
     let DeviceAttrUrl = `${GetDeviceAlarmUrl}${eve.SerialNumber}`;
     // 查询此设备所对应的电话报警信息
-    console.log(JSON.stringify(eve));
+    // console.log(JSON.stringify(eve));
     apiUtil.PromiseGet(DeviceAttrUrl).then(JSON.parse)
         .then(ds => {
             // (ds.length > 0) && console.log(ds);
