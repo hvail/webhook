@@ -60,7 +60,7 @@ let listenMq = (custom) => {
     custom.listen(changeEvent, "trigger.event", (msg) => listenEventMsg(msg, "position"));
     custom.listen(changeLocal, "trigger.local", (msg) => listenPositionMsg(msg, "position"));
     custom.listen(changePower, "trigger.power", (msg) => listenPowerMsg(msg, "position"));
-    custom.listen(changeNetwork, "trigger.network", (msg) => listenNetworkMsg(msg, "position"));
+    // custom.listen(changeNetwork, "trigger.network", (msg) => listenNetworkMsg(msg, "position"));
 };
 
 let MQ = new mqClient(host, name, pwd, listenMq);
