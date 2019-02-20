@@ -5,7 +5,7 @@
 const express = require('express');
 const request = require('request');
 const apiBase = require('api-base-hvail');
-let {util: apiUtil} = apiBase;
+let {util: apiUtil, gpsutil} = apiBase;
 
 const gpsUtil = require('../../my_modules/gpsutils');
 const redis = require('../../my_modules/redishelp');
@@ -104,34 +104,6 @@ let _location = function (req, res, next) {
             })
             .catch(e => console.log(e));
     next();
-
-    // request(getFenceUrl, function (err, response, result) {
-    //     if (response.statusCode !== 200 && result === "[]") {
-    //         if (response.statusCode !== 200) console.log(result);
-    //         return;
-    //     }
-    //     try {
-    //         let fences = JSON.parse(result);
-    //         if (fences.length < 1 || pos.length < 1) return;
-    //         // 这里读取最后一次记录的轨迹点
-    //         let ps = [];
-    //         for (let m = 0; m < pos.length; m++) {
-    //             if (pos[m].UpMode < 2) ps.push(pos[m]);
-    //         }
-    //         if (ps.length > 0) {
-    //             pos = null;
-    //             _readLastAndSet(sn, ps[ps.length - 1], function (poi) {
-    //                 if (poi !== null) ps = poi.concat(ps);
-    //                 for (let i = 0; i < fences.length; i++) {
-    //                     trigger(ps, fences[i]);
-    //                 }
-    //             });
-    //         }
-    //     } catch (e) {
-    //         console.log(e);
-    //         console.log("GET " + getFenceUrl + " : " + response.statusCode + " ; " + result);
-    //     }
-    // });
 };
 
 router.get('/');

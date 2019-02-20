@@ -1,4 +1,4 @@
-/**
+/***
  * Created by hvail on 2018/9/11.
  */
 const express = require('express');
@@ -13,11 +13,12 @@ const doWebPush = function (arr, data) {
             for (let j = 0; j < data.length; j++) {
                 if (arr[i] && arr[i].Url)
                     apiUtil.PromisePost(arr[i].Url, data[j])
-                        .then(ss => console.log(arr[i].Url + " : (" + JSON.stringify(data) + ")"))
+                        // .then(ss => console.log(arr[i].Url + " : (" + JSON.stringify(data) + ")"))
                         .catch(e => console.log(arr[i].Url + ":" + e));
             }
         } else console.log(data);
 };
+
 const _location = (req, res, next) => {
     let pos = req.body;
     let _pos = pos.filter(p => p !== "null");
@@ -31,6 +32,7 @@ const _location = (req, res, next) => {
             .catch(e => console.log(`${url} \r\n${e}`));
     next();
 };
+
 router.get('/');
 router.post('/', _location);
 

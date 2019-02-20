@@ -4,7 +4,8 @@
 const schedule = require("node-schedule");
 const express = require('express');
 const redis = require('./../my_modules/redishelp');
-const myUtil = require('./../my_modules/utils');
+const {util: myUtil} = require("api-base-hvail");
+// const myUtil = require('./../my_modules/utils');
 const router = express.Router();
 const endTimePatten = /^(.*)-(.*)-(.*)T(.*):(.*):.*$/;
 const monthDay = [31, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -113,7 +114,8 @@ let _doJobBegin = function (objs, DateString, i) {
         if (obj === null) return;
         if (eval("/" + obj.Spec + "/").test(DateString)) {
             // 如果符合条件就向其发送数据
-            myUtil.DoPushPost(obj.Hooks, obj.Hooks.Data);
+            myUtil.PromisePost(obj.Hooks, obj.Hooks.Data);
+            // myUtil.DoPushPost(obj.Hooks, obj.Hooks.Data);
         } else {
             if (ii++ === objs.length - 1) {
                 _doJobEnd();

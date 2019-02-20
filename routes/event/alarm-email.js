@@ -5,7 +5,6 @@
 let express = require('express');
 let request = require('request');
 let util = require('util');
-let myUtil = require('../../my_modules/utils');
 let area = process.env.DATAAREA || "zh-cn";
 let router = express.Router();
 
