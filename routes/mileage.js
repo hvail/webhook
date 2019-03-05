@@ -91,7 +91,7 @@ const _calcMileage = (req, res, next) => {
         .then(msg => (redis.ArrayToObject(msg)))
         .then(arr => {
             if (arr.length > 1) {
-                // console.log(`${sn} 开始执行里程计算 开始: ${arr.first().GPSTime} , 结束: ${arr.last().GPSTime} , 数量: ${arr.length}`);
+                console.log(`${sn} 开始执行里程计算 开始: ${arr.first().GPSTime} , 结束: ${arr.last().GPSTime} , 数量: ${arr.length}`);
                 return _doRunLocations(arr, sn);
             }
         })
