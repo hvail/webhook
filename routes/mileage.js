@@ -14,7 +14,7 @@ const {util: apiUtil} = require('api-base-hvail');
 
 const calc_mid = 5 * 60;              // 计算间隔5分钟
 const calc_length = 2 * calc_mid;    // 单次读取长度,2个计算周期 10分钟计算一次以减少系统压力和提高响应速度
-const mq_url = `http://v3.mq-rabbit.server.${area}.sky1088.com/data`;
+const mq_url = `http://v3.mq-rabbit.server.${area}.sky1088.com/mileage/single`;
 // 存储规则为右进左出
 // RPUSH & LRANGE
 const redisMileageList = "list-run-mileage-";
@@ -37,7 +37,7 @@ const _addRange = (arr) => {
     if (!arr) return;
     if (!Array.isArray(arr)) arr = [arr];
     apiUtil.PromisePost(mq_url, arr)
-    // .then(msg => console.log(`${mq_url} :: ${msg}`))
+        .then(msg => console.log(`${mq_url} :: ${msg}`))
         .catch(e => console.log(e));
 };
 
