@@ -8,7 +8,7 @@ const fs = require('fs');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
-const webtimer = require('./routes/webtimers');
+// const webtimer = require('./routes/webtimers');
 
 let app = express();
 
@@ -49,7 +49,7 @@ app.use('/network', require('./routes/network'));
 
 app.use('/', index);
 app.use('/users', users);
-app.use('/webtimer', webtimer);
+// app.use('/webtimer', webtimer);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
