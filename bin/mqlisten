@@ -22,7 +22,8 @@ let listenEventMsg = (msg, type) => {
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         let es = JSON.parse(msg.content.toString());
         let eve = es[0];
-        apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve).catch(console.log);
+        apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve)
+            .catch(console.log);
     }
 };
 
@@ -30,7 +31,8 @@ let listenPositionMsg = (msg, type) => {
     let tag = msg.fields.routingKey;
     tag = tag.replace(changeLocal, "").substr(1);
     if (!lisStart || tag.indexOf(lisStart) === 0) {
-        apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/position`, JSON.parse(msg.content.toString())).catch(console.log);
+        apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/position`, JSON.parse(msg.content.toString()))
+            .catch(console.log);
     }
 };
 

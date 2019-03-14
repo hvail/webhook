@@ -13,7 +13,7 @@ const doWebPush = function (arr, data) {
                 if (arr[i] && arr[i].Url) {
                     delete data[j].Hash;
                     apiUtil.PromisePost(arr[i].Url, data[j])
-                    // .then(ss => console.log(arr[i].Url + " : (" + JSON.stringify(data) + ")"))
+                        .then(ss => console.log(arr[i].Url + " : (" + JSON.stringify(data[j]) + ")"))
                         .catch(e => console.log(arr[i].Url + ":" + e));
                 }
             }
