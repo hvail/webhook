@@ -41,13 +41,32 @@ const _addRange = (arr) => {
         .catch(e => console.log(e));
 };
 
+const _filterPos = (previous, current) => {
+    if (!previous) return true;
+    // 计算时间差
+    let m_t = current.GPSTime - previous.GPSTime;
+    // 计算距离差
+    let m_d = gpsUtil.GetDistance(previous.Lat, previous.Lng, current.Lat, current.Lng);
+    // 速度计算单位(米/秒)
+    let speed = m_d / m_t;
+    return speed <= 100;
+
+};
+
 const _doRunLocations = (arr, sn) => {
+    // 这里先对arr进行过滤
+    let _arr = [];
+    for (let i = 1; i < arr.length; i++) {
+        if (_filterPos(arr[i - 1], arr[i])) {
+            _arr.push(arr[i]);
+        }
+    }
     let result = {
         SerialNumber: sn,
         MaxSpeed: 0,
-        StartTime: arr.first().GPSTime,
-        EndTime: arr.last().GPSTime,
-        Distance: gpsUtil.GetLineDistance(arr),
+        StartTime: _arr.first().GPSTime,
+        EndTime: _arr.last().GPSTime,
+        Distance: gpsUtil.GetLineDistance(_arr),
         PointCount: arr.length,
         Type: "MileageCalc",
     };
