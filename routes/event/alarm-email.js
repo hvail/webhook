@@ -1,7 +1,7 @@
-/**
+/****
  * 短信报警处理程序
  * Created by hvail on 2018/2/2.
- */
+ ***/
 let express = require('express');
 let request = require('request');
 let util = require('util');
@@ -26,3 +26,4 @@ let doPostAlarm = function (req, res, next) {
 router.post('/', doPostAlarm);
 
 module.exports = router;
+
