@@ -43,7 +43,7 @@ const _addRange = (arr) => {
 
 const _filterPos = (previous, current) => {
     if (!previous) return true;
-    console.log(current);
+    if(current.UpMode === 2) return false;
     // 计算时间差
     let m_t = current.GPSTime - previous.GPSTime;
     // 计算距离差
