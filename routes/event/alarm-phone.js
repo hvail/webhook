@@ -26,7 +26,7 @@ let _doPush = function (phoneBind, eve) {
     }
     // console.log(JSON.stringify(phoneBind));
     if (phoneBind.Status * 1 === 0) {
-        // console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警已经暂停 ${new Date(phoneBind.ExpireTime * 1000)}`);
+        console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警已经暂停 ${new Date(phoneBind.ExpireTime * 1000)}`);
         return;
     }
 
@@ -44,7 +44,7 @@ let _doPush = function (phoneBind, eve) {
             if (attr.DisplayName) {
                 _eve.DisplayName = attr.DisplayName;
             }
-            // console.log(`push to alarm phone ${JSON.stringify(_eve)}`)
+            console.log(`push to alarm phone ${JSON.stringify(_eve)}`);
             apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}`, _eve).catch(err => console.log(err));
         })
         .catch(e => console.log(`报警出错 ${Trigger}${phoneBind.AlarmTarget} :: ${JSON.stringify(_eve)}`) && apiUtil.Break(e))
