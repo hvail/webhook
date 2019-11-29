@@ -37,7 +37,7 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     be.UpTime = time();
     be.SerialNumber = sn;
     be.Description = "By Web Hooks";
-    // console.log(be);
+    console.log(be);
     // 利用MQ进行消息中转
     apiUtil.PromisePost(mqPostUrl, [be])
         .then(msg => {
@@ -79,7 +79,6 @@ let _readLastAndSet = function (sn, poi, cb) {
         err && console.log(err);
         if (rs !== null && rs[0] === '{') {
             let obj = JSON.parse(rs);
-            console.log(obj);
             cb && cb([obj]);
         } else cb && cb(null);
         redis.hset(key_poi_calc, sn, JSON.stringify(poi));
@@ -95,16 +94,16 @@ let _location = function (req, res, next) {
         apiUtil.PromiseGet(getFenceUrl)
             .then(JSON.parse)
             .then(fences => {
-                fences.length > 0 && _readLastAndSet(sn, _pos.last(), function (poi) {
+                fences.length > 0 && _readLastAndSet(sn, _pos.last(), (poi) => {
                     // console.log(fences);
                     if (poi !== null) _pos = poi.concat(_pos);
                     for (let i = 0; i < fences.length; i++) {
                         trigger(_pos, fences[i]);
                     }
                 });
-                if (fences.length > 0) {
-                    console.log(`${getFenceUrl} length is ${fences.length}`);
-                }
+                // if (fences.length > 0) {
+                //     console.log(`${getFenceUrl} length is ${fences.length}`);
+                // }
             })
             .catch(e => console.log(e));
     next();
