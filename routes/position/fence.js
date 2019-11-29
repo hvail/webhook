@@ -22,7 +22,7 @@ const EnterTitle = "entered";
 const LeaveTitle = "exited";
 
 const key_poi_calc = "HASH-spark-end-point";
-const ExchangeName = "hyz.fanout.event";
+// const ExchangeName = "hyz.fanout.event";
 
 const time = function () {
     return Math.round(new Date().getTime() / 1000);
@@ -78,6 +78,7 @@ let _readLastAndSet = function (sn, poi, cb) {
     redis.hget(key_poi_calc, sn, function (err, rs) {
         err && console.log(err);
         if (rs !== null && rs[0] === '{') {
+            console.log(obj);
             let obj = JSON.parse(rs);
             cb && cb([obj]);
         } else cb && cb(null);

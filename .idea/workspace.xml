@@ -53,8 +53,8 @@
       <file leaf-file-name="fence.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/position/fence.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="781">
-              <caret line="104" column="57" lean-forward="false" selection-start-line="104" selection-start-column="57" selection-end-line="104" selection-end-column="57" />
+            <state relative-caret-position="565">
+              <caret line="81" column="31" lean-forward="false" selection-start-line="81" selection-start-column="31" selection-end-line="81" selection-end-column="31" />
               <folding />
             </state>
           </provider>
@@ -131,7 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>scheduleJob</find>
       <find>Pro</find>
       <find>createClient</find>
       <find>arg</find>
@@ -161,6 +160,7 @@
       <find>gpsUtil</find>
       <find>myUtil</find>
       <find>_doPush</find>
+      <find>ExchangeName</find>
     </findStrings>
     <replaceStrings>
       <replace>let</replace>
@@ -1080,7 +1080,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="402760000" />
+    <option name="totallyTimeSpent" value="403759000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1358" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1463,8 +1463,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/position/fence.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="781">
-          <caret line="104" column="57" lean-forward="false" selection-start-line="104" selection-start-column="57" selection-end-line="104" selection-end-column="57" />
+        <state relative-caret-position="565">
+          <caret line="81" column="31" lean-forward="false" selection-start-line="81" selection-start-column="31" selection-end-line="81" selection-end-column="31" />
           <folding />
         </state>
       </provider>
