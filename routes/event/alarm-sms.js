@@ -26,3 +26,4 @@ let doPostAlarm = function (req, res, next) {
 router.post('/', doPostAlarm);
 
 module.exports = router;
+

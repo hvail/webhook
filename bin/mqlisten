@@ -1,7 +1,7 @@
 // 监听rabbit的数据流，直接传达到 webhooks 时间处理
 /***
  * Created by hvail on 2018/9/12.
- */
+ ***/
 let mq = require('hvail-rabbitmq');
 let mqClient = mq.MqCustom;
 const {util: apiUtil} = require('api-base-hvail');
