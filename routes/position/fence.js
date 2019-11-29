@@ -101,6 +101,9 @@ let _location = function (req, res, next) {
                         trigger(_pos, fences[i]);
                     }
                 });
+                if (fences.length > 0) {
+                    console.log(`${getFenceUrl} length is ${fences.length}`);
+                }
             })
             .catch(e => console.log(e));
     next();
