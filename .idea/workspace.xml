@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="93d1e16b-3593-46e4-b69f-d677c3c76956" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/listen.js" afterPath="$PROJECT_DIR$/bin/listen.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -30,8 +28,8 @@
       <file leaf-file-name="listen.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bin/listen.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="32" column="77" lean-forward="false" selection-start-line="32" selection-start-column="77" selection-end-line="32" selection-end-column="77" />
+            <state relative-caret-position="240">
+              <caret line="16" column="87" lean-forward="false" selection-start-line="16" selection-start-column="87" selection-end-line="16" selection-end-column="87" />
               <folding />
             </state>
           </provider>
@@ -89,7 +87,7 @@
             <state relative-caret-position="0">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
-                <marker date="1574997563008" expanded="true" signature="68828:68843" ph="..." />
+                <marker date="1574998005137" expanded="true" signature="68586:68601" ph="..." />
               </folding>
             </state>
           </provider>
@@ -953,7 +951,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="326866000" />
+    <option name="totallyTimeSpent" value="327307000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1358" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1270,8 +1268,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bin/listen.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="32" column="77" lean-forward="false" selection-start-line="32" selection-start-column="77" selection-end-line="32" selection-end-column="77" />
+        <state relative-caret-position="240">
+          <caret line="16" column="87" lean-forward="false" selection-start-line="16" selection-start-column="87" selection-end-line="16" selection-end-column="87" />
           <folding />
         </state>
       </provider>
