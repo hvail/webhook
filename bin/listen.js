@@ -6,7 +6,6 @@ let mqClient = mq.MqCustom;
 const redis = require('./../my_modules/redishelp');
 const {util: apiUtil} = require('api-base-hvail');
 const exPattern = /^Mileage_Timer_(\d{1,16})$/;
-// console.log("Mileage_Timer_0028231712090269".match(exPattern));
 const _env = process.env || {};
 const host = _env.MQ_RABBIT_HOST || "localhost", name = _env.MQ_RABBIT_NAME || "user",
     pwd = _env.MQ_RABBIT_PASSWORD || "pwd";
@@ -16,7 +15,7 @@ let listenMsg = (msg, type) => {
     apiUtil.PromisePost('http://core.mileage.sky1088.com/mileage', arr)
         .then(msg => {
             if (msg !== 1)
-                console.log('http://core.mileage.sky1088.com/mileage :: ' + msg);
+                console.log(`http://core.mileage.sky1088.com/mileage :: ${msg}`);
         });
 };
 
@@ -28,14 +27,17 @@ let listenMq = (custom) => {
 let MQ = new mqClient(host, name, pwd, listenMq);
 
 redis.on('pmessage', (pattern, channel, message) => {
-    console.log(message);
     let gs = message.match(exPattern);
     if (gs) {
-        apiUtil.PromisePost('http://core.mileage.sky1088.com/mileage/clear', {SerialNumber: gs[1]})
+        let url = 'http://core.mileage.sky1088.com/mileage/clear';
+        apiUtil.PromisePost(url, {SerialNumber: gs[1]})
+            .then(m => console.log(url + " : " + m))
             .catch(e => {
-                console.log('http://core.mileage.sky1088.com/mileage/clear');
+                console.log(url);
                 console.log(e)
             });
+    } else {
+        console.log(`非法过期： ${message}`);
     }
 });
 
