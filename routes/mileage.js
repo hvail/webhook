@@ -43,7 +43,7 @@ const _addRange = (arr) => {
 
 const _filterPos = (previous, current) => {
     if (!previous) return true;
-    if(current.UpMode === 2) return false;
+    if (current.UpMode === 2) return false;
     // 计算时间差
     let m_t = current.GPSTime - previous.GPSTime;
     // 计算距离差
@@ -85,7 +85,10 @@ const _doList = (req, res, next) => {
     // 此处只处理存放到Redis中即可
     let key = `${listKey}_${sn}`;
     let p_data = data.map(o => (JSON.stringify(o)));
+    // 采用左进右出的策略
     redis.execPromise('rpush', key, p_data);
+    // 设置过期时间为15分钟，这样过期数据将会被监听到
+    redis.expire(key, 900);
     next();
 };
 
