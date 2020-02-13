@@ -87,8 +87,8 @@ const _doList = (req, res, next) => {
     let p_data = data.map(o => (JSON.stringify(o)));
     // 采用左进右出的策略
     redis.execPromise('rpush', key, p_data);
-    // 设置过期时间为15分钟，这样过期数据将会被监听到
-    redis.expire(key, 900);
+    // 设置过期时间为20分钟，这样过期数据将会被监听到，也会避免因数据量过大而导致数据库怠机
+    redis.expire(key, 1200);
     next();
 };
 
