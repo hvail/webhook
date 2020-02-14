@@ -31,7 +31,7 @@ redis.on('pmessage', (pattern, channel, message) => {
     if (gs) {
         let url = 'http://core.mileage.sky1088.com/mileage/clear';
         apiUtil.PromisePost(url, {SerialNumber: gs[1]})
-            .then(m => console.log(url + " : " + m))
+            .then(m => console.log(`${gs[1]}:${url}=${m}`))
             .catch(e => {
                 console.log(url);
                 console.log(e)
