@@ -23,6 +23,9 @@ let listenEventMsg = (msg, type) => {
         let es = JSON.parse(msg.content.toString());
         let eve = es[0];
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve)
+            .then(result => {
+                console.log(result + " ::> " + tag + ":" + msg.content);
+            })
             .catch(console.log);
     }
 };
@@ -32,7 +35,9 @@ let listenPositionMsg = (msg, type) => {
     tag = tag.replace(changeLocal, "").substr(1);
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/position`, JSON.parse(msg.content.toString()))
-            .then(result => console.log(result + " ::> " + tag + ":" + msg.content))
+            .then(result => {
+                if (result < 1) console.log(result + " ::> " + tag + ":" + msg.content);
+            })
             .catch(console.log);
     }
 };
@@ -43,7 +48,9 @@ let listenPowerMsg = (msg, type) => {
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         let eve = JSON.parse(msg.content.toString());
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/power`, eve)
-            .then(result => console.log(result + " ::> " + tag + ":" + JSON.stringify(eve)))
+            .then(result => {
+                if (result < 1) console.log(result + " ::> " + tag + ":" + JSON.stringify(eve))
+            })
             .catch(console.log);
     }
 };

@@ -13,7 +13,7 @@ const doWebPush = function (arr, data) {
             for (let j = 0; j < data.length; j++) {
                 if (arr[i] && arr[i].Url)
                     apiUtil.PromisePost(arr[i].Url, data[j])
-                        // .then(ss => console.log(arr[i].Url + " : (" + JSON.stringify(data) + ")"))
+                    // .then(ss => console.log(arr[i].Url + " : (" + JSON.stringify(data) + ")"))
                         .catch(e => console.log(arr[i].Url + ":" + e));
             }
         } else console.log(data);
@@ -26,7 +26,8 @@ const _location = (req, res, next) => {
     if (!sn) {
         console.log(_pos);
     } else
-        apiUtil.PromiseGet(url).then(JSON.parse)
+        apiUtil.PromiseGet(url)
+            .then(JSON.parse)
             .then(arr => (arr && arr.length) && doWebPush(arr, _pos))
             .catch(e => console.log(`${url} \r\n${e}`));
     next();
