@@ -41,7 +41,7 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     // 利用MQ进行消息中转
     apiUtil.PromisePost(mqPostUrl, [be])
         .then(msg => {
-            console.log(`${mqPostUrl} ==> ${msg}`);
+            // console.log(`${mqPostUrl} ==> ${msg}`);
         })
 };
 
