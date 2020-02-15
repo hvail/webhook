@@ -51,7 +51,7 @@ app.use('/', index);
 app.use('/users', users);
 // app.use('/webtimer', webtimer);
 
-// catch 404 and forward to error handler
+// catch 404 and forward to error handlerd
 app.use(function (req, res, next) {
     let err = new Error('Not Found');
     err.status = 404;

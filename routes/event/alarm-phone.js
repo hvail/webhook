@@ -13,7 +13,7 @@ const router = express.Router();
 const Trigger = `http://push.core.sky1088.com/alarm/phone/`;
 const GetDeviceAlarmUrl = `http://v3.man.server.${area}.sky1088.com/custom/alarm-phone/field/BindTarget/`;
 const GetDeviceAttrUrl = `http://v3.man.server.${area}.sky1088.com/custom/device-attr/single/`;
-const AlarmType = [4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 31, 38, 39, 46];
+const AlarmType = [4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 31, 38, 39, 46, 64, 65];
 
 // 向后台发送语音报警请求
 let _doPush = function (phoneBind, eve) {
