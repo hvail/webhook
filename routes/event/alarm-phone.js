@@ -44,8 +44,9 @@ let _doPush = function (phoneBind, eve) {
             if (attr.DisplayName) {
                 _eve.DisplayName = attr.DisplayName;
             }
-            console.log(`push to alarm phone ${eve.SerialNumber}-${_eve.CallPhone}`);
-            apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}`, _eve).catch(err => console.log(err));
+            apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}`, _eve)
+                .then(e => console.log(`push to alarm phone ${eve.SerialNumber}-${_eve.CallPhone} ${e}`))
+                .catch(err => console.log(err));
         })
         .catch(e => console.log(`报警出错 ${Trigger}${phoneBind.AlarmTarget} :: ${JSON.stringify(_eve)}`) && apiUtil.Break(e))
         .catch(console.log);
