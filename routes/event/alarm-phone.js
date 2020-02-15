@@ -68,9 +68,12 @@ let stop = (e) => {
 };
 
 let doEvent = function (eve) {
-    if (!eve.SerialNumber) return;
     if (eve.SerialNumber.length < 16) {
         console.log(JSON.stringify(eve));
+    }
+    if (!eve.SerialNumber) {
+        console.log(JSON.stringify(eve));
+        return;
     }
     if (AlarmType.indexOf(eve.EventType) < 0)  return;
     let DeviceAttrUrl = `${GetDeviceAlarmUrl}${eve.SerialNumber}`;
