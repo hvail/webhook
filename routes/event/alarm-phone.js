@@ -19,7 +19,7 @@ const AlarmType = [4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 31, 38, 39, 46, 64, 65]
 let _doPush = function (phoneBind, eve) {
     let curr = Math.round(new Date().getTime() / 1000);
     if (phoneBind.ExpireTime < curr) {
-        console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警已经过期 最后时间 ${new Date(phoneBind.ExpireTime * 1000)}`);
+        // console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警已经过期 最后时间 ${new Date(phoneBind.ExpireTime * 1000)}`);
         return;
         // } else if ((phoneBind.ExpireTime - 7 * 86400) < curr) {
         // console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警还有7天过期 最后时间 ${new Date(phoneBind.ExpireTime * 1000)}`);
