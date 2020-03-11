@@ -67,9 +67,9 @@ let listenNetworkMsg = (msg, type) => {
 };
 
 let listenMq = (custom) => {
-    custom.listen(changeEvent, "trigger.event", (msg) => listenEventMsg(msg, "position"));
-    custom.listen(changeLocal, "trigger.local", (msg) => listenPositionMsg(msg, "position"));
-    custom.listen(changePower, "trigger.power", (msg) => listenPowerMsg(msg, "position"));
+    custom.listen(changeEvent, "trigger.event", (msg) => listenEventMsg(msg, "webhook"));
+    custom.listen(changeLocal, "trigger.local", (msg) => listenPositionMsg(msg, "webhook"));
+    custom.listen(changePower, "trigger.power", (msg) => listenPowerMsg(msg, "webhook"));
     // custom.listen(changeNetwork, "trigger.network", (msg) => listenNetworkMsg(msg, "position"));
 };
 
