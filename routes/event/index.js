@@ -4,11 +4,6 @@
 const express = require('express');
 const router = express.Router();
 
-// const push_email = require('./alarm-email');
-// const push_phone = require('./alarm-phone');
-// const push_sms = require('./alarm-sms');
-// const webhooks = require('./webhooks');
-
 const begin = (req, res, next) => {
     // console.log('post event begin');
     res.send("1");

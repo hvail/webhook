@@ -9,7 +9,6 @@
 const express = require('express');
 const router = express.Router();
 
-let fence = require('./fence');
 let webhooks = require('./webhooks');
 
 const begin = (req, res, next) => {
