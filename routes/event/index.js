@@ -34,9 +34,6 @@ const error = function (err, req, res, next) {
 
 /* GET users listing. */
 router.post('/', begin);
-router.post('/', require('./alarm-sms'));
-router.post('/', require('./alarm-phone'));
-router.post('/', require('./alarm-email'));
 router.post('/', require('./webhooks'));
 router.post('/', end);
 router.post('/', error);
