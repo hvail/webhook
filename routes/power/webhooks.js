@@ -9,7 +9,7 @@ const getWebhookUrl = `http://dealer.support.sky1088.com/device/push/Power`;
 const doWebPush = function (url, data) {
     for (let j = 0; j < data.length; j++) {
         apiUtil.PromisePost(url, data[j])
-            .then(ss => console.log(url + " : (" + JSON.stringify(data[j]) + ")"))
+            .then(ss => console.log(`${url} , 200 (${ss}) INFO : (${JSON.stringify(data[j])})`))
             .catch(e => console.log(url + ":" + e));
     }
 };
