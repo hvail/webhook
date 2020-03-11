@@ -6,17 +6,12 @@ const request = require('request');
 let {util: apiUtil} = require('api-base-hvail');
 const router = express.Router();
 const getWebhookUrl = `http://dealer.support.sky1088.com/device/push/Power`;
-const doWebPush = function (arr, data) {
-    // console.log(arr);
-    for (let i = 0; i < arr.length; i++)
-        if (arr[i]) {
-            for (let j = 0; j < data.length; j++) {
-                if (arr[i] && arr[i].Url)
-                    apiUtil.PromisePost(arr[i].Url, data[j])
-                    // .then(ss => console.log(arr[i].Url + " : (" + JSON.stringify(data) + ")"))
-                        .catch(e => console.log(arr[i].Url + ":" + e));
-            }
-        } else console.log(data);
+const doWebPush = function (url, data) {
+    for (let j = 0; j < data.length; j++) {
+        apiUtil.PromisePost(url, data[j])
+            .then(ss => console.log(url + " : (" + JSON.stringify(data) + ")"))
+            .catch(e => console.log(url + ":" + e));
+    }
 };
 const _location = (req, res, next) => {
     let pos = req.body;
@@ -26,10 +21,7 @@ const _location = (req, res, next) => {
     if (!sn) {
         console.log(_pos);
     } else
-        apiUtil.PromiseGet(url)
-            .then(JSON.parse)
-            .then(arr => (arr && arr.length) && doWebPush(arr, _pos))
-            .catch(e => console.log(`${url} \r\n${e}`));
+        doWebPush("http://hdapi.zcyxcn.com/rest/seal/addSealBattery", _pos);
     next();
 };
 router.get('/');

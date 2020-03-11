@@ -12,16 +12,14 @@ let getDemo = function (req, res, next) {
     res.send('alarm push system 1.2.0.0');
 };
 
-const doWebPush = function (arr, data) {
-    for (let i = 0; i < arr.length; i++)
-        for (let j = 0; j < data.length; j++) {
-            if (arr[i] && arr[i].Url)
-                apiUtil.PromisePost(arr[i].Url, data[j])
-                    .then(ss => {
-                        console.log(arr[i].Url + " : (" + JSON.stringify(data[j]) + ")");
-                    })
-                    .catch(e => console.log(arr[i].Url + ":" + e));
-        }
+const doWebPush = function (url, data) {
+    for (let j = 0; j < data.length; j++) {
+        apiUtil.PromisePost(url, data[j])
+            .then(ss => {
+                console.log(url + " : (" + JSON.stringify(data[j]) + ")");
+            })
+            .catch(e => console.log(url + ":" + e));
+    }
 };
 
 const _location = (req, res, next) => {
@@ -32,9 +30,7 @@ const _location = (req, res, next) => {
     if (!sn) {
         console.log(_pos);
     } else
-        apiUtil.PromiseGet(url).then(JSON.parse)
-            .then(arr => (arr && arr.length > 0) && doWebPush(arr, _pos))
-            .catch(e => console.log(`${url} \r\n${e}`));
+        doWebPush("http://hdapi.zcyxcn.com/rest/seal/addSealEvent", _pos);
     next();
 };
 router.get('/', getDemo);
