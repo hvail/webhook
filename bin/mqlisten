@@ -14,7 +14,23 @@ const changeEvent = "hyz.fanout.event";
 const changeLocal = "hyz.fanout.position";
 const changePower = "hyz.fanout.power";
 const changeNetwork = "hyz.fanout.connection";
+const log4js = require('log4js');
 const lisStart = _env.LISTEN_START || null;
+
+log4js.configure({
+    appenders: {
+        cheese: {
+            type: 'dateFile',
+            filename: '/usr/log/trigger/logger',
+            pattern: '-yyMMdd.log',
+            alwaysIncludePattern: true
+        }
+    },
+    categories: {default: {appenders: ['cheese'], level: 'info'}},
+    replaceConsole: true
+});
+
+let logger = log4js.getLogger('normal');
 
 let listenEventMsg = (msg, type) => {
     let tag = msg.fields.routingKey;
@@ -25,6 +41,7 @@ let listenEventMsg = (msg, type) => {
         let eve = es[0];
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve)
             .then(result => {
+                logger.info(result + " ::> " + tag + ":" + msg.content);
                 console.log(result + " ::> " + tag + ":" + msg.content);
             })
             .catch(console.log);
@@ -37,6 +54,7 @@ let listenPositionMsg = (msg, type) => {
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/position`, JSON.parse(msg.content.toString()))
             .then(result => {
+                logger.info(result + " ::> " + tag + ":" + msg.content);
                 console.log(result + " ::> " + tag + ":" + msg.content);
             })
             .catch(console.log);
@@ -50,6 +68,7 @@ let listenPowerMsg = (msg, type) => {
         let eve = JSON.parse(msg.content.toString());
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/power`, eve)
             .then(result => {
+                logger.info(result + " ::> " + tag + ":" + JSON.stringify(eve))
                 console.log(result + " ::> " + tag + ":" + JSON.stringify(eve))
             })
             .catch(console.log);
