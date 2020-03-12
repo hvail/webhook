@@ -5,7 +5,10 @@ const express = require('express');
 const request = require('request');
 let {util: apiUtil} = require('api-base-hvail');
 const router = express.Router();
+const log4js = require('log4js');
 const getWebhookUrl = `http://dealer.support.sky1088.com/device/push/Position`;
+let logger = log4js.getLogger('normal');
+
 const doWebPush = function (url, data) {
     for (let j = 0; j < data.length; j++) {
         delete data[j].Hash;
