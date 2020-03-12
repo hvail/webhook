@@ -24,7 +24,7 @@ const doWebPush = function (url, data) {
         if (data[j].Message) {
             let msg = data[j].Message;
             data[j].Message = msg.replace(reg, "$2");
-            // console.log(data[j].Message);
+            console.log(JSON.stringify(data[j].Message));
         }
         apiUtil.PromisePost(url, data[j])
             .then(ss => logger.info(`${url} , 200 (${JSON.stringify(ss)}) INFO : (${JSON.stringify(data[j])})`))
