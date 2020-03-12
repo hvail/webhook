@@ -14,8 +14,18 @@ let getDemo = function (req, res, next) {
     res.send('alarm push system 1.2.0.0');
 };
 
+let reg = new RegExp("(\\d+)\\s+(.*)");
+// console.log(reg.test('2025021803303227 系统通知您:设置当前可用盖章次数为50次'));
+// console.log('系统通知您:设置当前可用盖章次数为50次'.replace(reg,"$2"));
+
+
 const doWebPush = function (url, data) {
     for (let j = 0; j < data.length; j++) {
+        if (data[j].Message) {
+            let msg = data[j].Message;
+            data[j].Message = msg.replace(reg, "$2");
+            // console.log(data[j].Message);
+        }
         apiUtil.PromisePost(url, data[j])
             .then(ss => logger.info(`${url} , 200 (${JSON.stringify(ss)}) INFO : (${JSON.stringify(data[j])})`))
             .catch(e => console.log(url + ":" + e));
