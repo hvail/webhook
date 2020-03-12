@@ -8,8 +8,8 @@ const {util: apiUtil} = require('api-base-hvail');
 const exPattern = /^Mileage_Timer_(\d{1,16})$/;
 const _env = process.env || {};
 const area = _env.DATAAREA || "zh-cn";
-const host = _env.MQ_RABBIT_HOST || "119.23.27.9", name = _env.MQ_RABBIT_NAME || "hvail",
-    pwd = _env.MQ_RABBIT_PASSWORD || "hvail";
+const host = _env.MQ_RABBIT_HOST || "127.0.0.1", name = _env.MQ_RABBIT_NAME || "admin",
+    pwd = _env.MQ_RABBIT_PASSWORD || "admin";
 const changeEvent = "hyz.fanout.event";
 const changeLocal = "hyz.fanout.position";
 const changePower = "hyz.fanout.power";
@@ -21,7 +21,7 @@ log4js.configure({
     appenders: {
         cheese: {
             type: 'dateFile',
-            filename: '/usr/log/trigger/logger',
+            filename: '/usr/log/webhook/trigger',
             pattern: '-yyMMdd.log',
             alwaysIncludePattern: true
         }
