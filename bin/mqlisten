@@ -35,10 +35,12 @@ let logger = log4js.getLogger('normal');
 let listenEventMsg = (msg, type) => {
     let tag = msg.fields.routingKey;
     tag = tag.replace(changeEvent, "").substr(1);
+
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         let es = JSON.parse(msg.content.toString());
         if (!Array.isArray(es)) es = [es];
-        for (let eve in es) {
+        for (let i = 0; i < es.length; i++) {
+            eve = es[i];
             apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve)
                 .then(result => {
                     logger.info(result + " ::> " + tag + ":" + msg.content);

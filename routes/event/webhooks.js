@@ -15,9 +15,6 @@ let getDemo = function (req, res, next) {
 };
 
 let reg = new RegExp("(\\d+)\\s+(.*)");
-// console.log(reg.test('2025021803303227 系统通知您:设置当前可用盖章次数为50次'));
-// console.log('系统通知您:设置当前可用盖章次数为50次'.replace(reg,"$2"));
-
 
 const doWebPush = function (url, data) {
     for (let j = 0; j < data.length; j++) {
