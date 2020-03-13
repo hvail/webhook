@@ -38,13 +38,14 @@ let listenEventMsg = (msg, type) => {
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         let es = JSON.parse(msg.content.toString());
         if (!Array.isArray(es)) es = [es];
-        let eve = es[0];
-        apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve)
-            .then(result => {
-                logger.info(result + " ::> " + tag + ":" + msg.content);
-                console.log(result + " ::> " + tag + ":" + msg.content);
-            })
-            .catch(console.log);
+        for (let eve in es) {
+            apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve)
+                .then(result => {
+                    logger.info(result + " ::> " + tag + ":" + msg.content);
+                    console.log(result + " ::> " + tag + ":" + msg.content);
+                })
+                .catch(console.log);
+        }
     }
 };
 
