@@ -29,7 +29,6 @@ const error = function (err, req, res, next) {
 
 /* GET users listing. */
 router.post('/', begin);
-router.post('/', require('./webhooks'));
 router.post('/', end);
 router.post('/', error);
 

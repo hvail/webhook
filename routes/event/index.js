@@ -4,13 +4,7 @@
 const express = require('express');
 const router = express.Router();
 
-// const push_email = require('./alarm-email');
-// const push_phone = require('./alarm-phone');
-// const push_sms = require('./alarm-sms');
-// const webhooks = require('./webhooks');
-
 const begin = (req, res, next) => {
-    // console.log('post event begin');
     res.send("1");
     if (!Array.isArray(req.body)) {
         req.body = [req.body];
@@ -37,7 +31,6 @@ router.post('/', begin);
 router.post('/', require('./alarm-sms'));
 router.post('/', require('./alarm-phone'));
 router.post('/', require('./alarm-email'));
-router.post('/', require('./webhooks'));
 router.post('/', end);
 router.post('/', error);
 
