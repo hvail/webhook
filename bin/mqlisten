@@ -8,7 +8,8 @@ const {util: apiUtil} = require('api-base-hvail');
 const exPattern = /^Mileage_Timer_(\d{1,16})$/;
 const _env = process.env || {};
 const area = _env.DATAAREA || "zh-cn";
-const host = _env.MQ_RABBIT_HOST || "127.0.0.1", name = _env.MQ_RABBIT_NAME || "admin",
+const host = _env.MQ_RABBIT_HOST || "127.0.0.1",
+    name = _env.MQ_RABBIT_NAME || "admin",
     pwd = _env.MQ_RABBIT_PASSWORD || "admin";
 const changeEvent = "hyz.fanout.event";
 const changeLocal = "hyz.fanout.position";
@@ -35,7 +36,6 @@ let logger = log4js.getLogger('normal');
 let listenEventMsg = (msg, type) => {
     let tag = msg.fields.routingKey;
     tag = tag.replace(changeEvent, "").substr(1);
-
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         let es = JSON.parse(msg.content.toString());
         if (!Array.isArray(es)) es = [es];
@@ -57,8 +57,8 @@ let listenPositionMsg = (msg, type) => {
     if (!lisStart || tag.indexOf(lisStart) === 0) {
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/position`, JSON.parse(msg.content.toString()))
             .then(result => {
-                logger.info(result + " ::> " + tag + ":" + msg.content);
-                console.log(result + " ::> " + tag + ":" + msg.content);
+                logger.info(result + " ::> " + tag + " : " + msg.content);
+                console.log(result + " ::> " + tag + " : " + msg.content);
             })
             .catch(console.log);
     }
@@ -71,8 +71,8 @@ let listenPowerMsg = (msg, type) => {
         let eve = JSON.parse(msg.content.toString());
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/power`, eve)
             .then(result => {
-                logger.info(result + " ::> " + tag + ":" + JSON.stringify(eve))
-                console.log(result + " ::> " + tag + ":" + JSON.stringify(eve))
+                logger.info(result + " ::> " + tag + ":" + JSON.stringify(eve));
+                console.log(result + " ::> " + tag + ":" + JSON.stringify(eve));
             })
             .catch(console.log);
     }
