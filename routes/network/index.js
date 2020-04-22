@@ -6,14 +6,6 @@ const router = express.Router();
 
 const begin = (req, res, next) => {
     res.send("1");
-    if (!Array.isArray(req.body)) {
-        req.body = [req.body];
-    }
-    next();
-};
-
-const end = (req, res) => {
-    // console.log("network end");
 };
 
 const error = function (err, req, res, next) {
@@ -29,8 +21,6 @@ const error = function (err, req, res, next) {
 
 /* GET users listing. */
 router.post('/', begin);
-router.post('/', require('./webhooks'));
-router.post('/', end);
 router.post('/', error);
 
 module.exports = router;
