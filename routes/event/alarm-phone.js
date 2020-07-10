@@ -67,7 +67,7 @@ let doPostAlarm = function (req, res, next) {
     let eve = req.body;
     if (!Array.isArray(eve)) eve = [eve];
     if (eve.length) {
-        console.log("event request phone alarm " + eve.length + " : " + JSON.stringify(eve));
+        // console.log("event request phone alarm " + eve.length + " : " + JSON.stringify(eve));
         for (let i = 0; i < eve.length; i++) doEvent(eve[i]);
     } else {
         console.log("eve request phone alarm length is 0");
@@ -88,7 +88,7 @@ let doEvent = function (eve) {
         // console.log(JSON.stringify(eve));
     }
     if (AlarmTypes.indexOf(eve.AlarmType) < 0) {
-        // console.log("Type : 不适合报警 , " + JSON.stringify(eve));
+        console.log("Type : 不适合报警 , " + JSON.stringify(eve));
         return;
     }
     let DeviceAttrUrl = `${GetDeviceAlarmUrl}${eve.SerialNumber}`;
