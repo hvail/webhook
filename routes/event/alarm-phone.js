@@ -65,9 +65,11 @@ let getDemo = function (req, res, next) {
 let doPostAlarm = function (req, res, next) {
     let eve = req.body;
     if (!Array.isArray(eve)) eve = [eve];
-    // console.log("event request phone alarm " + eve.length + " : " + eve);
     if (eve.length) {
+        console.log("event request phone alarm " + eve.length + " : " + JSON.stringify(eve));
         for (let i = 0; i < eve.length; i++) doEvent(eve[i]);
+    } else {
+        console.log("eve request phone alarm length is 0);
     }
     next();
 };
