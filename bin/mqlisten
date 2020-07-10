@@ -23,9 +23,10 @@ let listenEventMsg = (msg, type) => {
         let es = JSON.parse(msg.content.toString());
         if (!Array.isArray(es)) es = [es];
         let eve = es[0];
-        apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve)
+        let url = `http://webhook.${area}.sky1088.com/event`;
+        apiUtil.PromisePost(url, eve)
             .then(result => {
-                console.log(result + " :event:> " + tag + ":" + msg.content);
+                console.log(url + " , " + result + " :event:> " + tag + ":" + msg.content);
             })
             .catch(console.log);
     }
