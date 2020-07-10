@@ -45,6 +45,7 @@ let _doPush = function (phoneBind, eve) {
             if (attr.DisplayName) {
                 _eve.DisplayName = attr.DisplayName;
             }
+            console.log(`${Trigger}${phoneBind.AlarmTarget}`);
             apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}`, _eve)
                 .then(e => {
                     if (e.length > 5) {
