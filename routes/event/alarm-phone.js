@@ -65,9 +65,10 @@ let getDemo = function (req, res, next) {
 let doPostAlarm = function (req, res, next) {
     let eve = req.body;
     if (!Array.isArray(eve)) eve = [eve];
-    console.log("event request phone alarm " + eve.length + " : " + eve);
-    if (eve.length)
+    // console.log("event request phone alarm " + eve.length + " : " + eve);
+    if (eve.length) {
         for (let i = 0; i < eve.length; i++) doEvent(eve[i]);
+    }
     next();
 };
 
@@ -80,9 +81,12 @@ let doEvent = function (eve) {
         console.log(JSON.stringify(eve));
         return;
     } else if (eve.SerialNumber.length < 16) {
-        console.log(JSON.stringify(eve));
+        // console.log(JSON.stringify(eve));
     }
-    if (AlarmType.indexOf(eve.EventType) < 0)  return;
+    if (AlarmType.indexOf(eve.EventType) < 0) {
+        console.log("Type : 不适合报警 , " + JSON.stringify(eve));
+        return;
+    }
     let DeviceAttrUrl = `${GetDeviceAlarmUrl}${eve.SerialNumber}`;
     // 查询此设备所对应的电话报警信息
     console.log(DeviceAttrUrl + " 查询此设备所对应的电话报警信息");
