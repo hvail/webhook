@@ -31,9 +31,11 @@ let _doPush = function (phoneBind, eve) {
         return;
     }
 
+    let _type = eve.EventType;
+    if (!_type) _type = eve.AlarmType;
     let _eve = {
         DisplayName: phoneBind.BindTarget,
-        AlarmType: eve.EventType,
+        AlarmType: _type,
         EventTime: eve.UpTime,
         CallPhone: phoneBind.Phone,
         CallAccount: UIdPIX + phoneBind.UId,
