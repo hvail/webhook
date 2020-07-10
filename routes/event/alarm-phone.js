@@ -86,7 +86,7 @@ let doEvent = function (eve) {
     } else if (eve.SerialNumber.length < 16) {
         // console.log(JSON.stringify(eve));
     }
-    if (AlarmTypes.indexOf(eve.EventType) < 0) {
+    if (AlarmTypes.indexOf(eve.AlarmType) < 0) {
         console.log("Type : 不适合报警 , " + JSON.stringify(eve));
         return;
     }
