@@ -17,7 +17,7 @@ const AlarmTypes = [4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 31, 38, 39, 46, 64, 65
 
 // 向后台发送语音报警请求
 let _doPush = function (phoneBind, eve) {
-    // console.log("_doPush : " + JSON.stringify(phoneBind));
+    console.log("_doPush : " + JSON.stringify(phoneBind));
     let curr = Math.round(new Date().getTime() / 1000);
     if (phoneBind.ExpireTime < curr) {
         // console.log(`${phoneBind.UId} @ ${phoneBind.BindTarget} 电话报警已经过期 最后时间 ${new Date(phoneBind.ExpireTime * 1000)}`);
@@ -87,12 +87,11 @@ let doEvent = function (eve) {
         // console.log(JSON.stringify(eve));
     }
     if (AlarmTypes.indexOf(eve.AlarmType) < 0) {
-        console.log("Type : 不适合报警 , " + JSON.stringify(eve));
+        // console.log("Type : 不适合报警 , " + JSON.stringify(eve));
         return;
     }
     let DeviceAttrUrl = `${GetDeviceAlarmUrl}${eve.SerialNumber}`;
     // 查询此设备所对应的电话报警信息
-    console.log(DeviceAttrUrl + " 查询此设备所对应的电话报警信息");
     apiUtil.PromiseGet(DeviceAttrUrl).then(JSON.parse)
         .then(ds => {
             for (let i = 0; i < ds.length; i++) _doPush(ds[i], eve);
