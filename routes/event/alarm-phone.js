@@ -63,6 +63,7 @@ let getDemo = function (req, res, next) {
 };
 
 let doPostAlarm = function (req, res, next) {
+    console.log("event request phone alarm : " + JSON.stringify(req.body));
     let eve = req.body;
     if (!Array.isArray(eve)) eve = [eve];
     if (eve.length)

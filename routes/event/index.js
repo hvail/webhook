@@ -6,7 +6,7 @@ const router = express.Router();
 
 const begin = (req, res, next) => {
     res.send("1");
-    console.log("event request : " + JSON.stringify(req.body));
+    console.log("event request base : " + JSON.stringify(req.body));
     if (!Array.isArray(req.body)) {
         req.body = [req.body];
     }
