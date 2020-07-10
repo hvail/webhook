@@ -69,7 +69,7 @@ let doPostAlarm = function (req, res, next) {
         console.log("event request phone alarm " + eve.length + " : " + JSON.stringify(eve));
         for (let i = 0; i < eve.length; i++) doEvent(eve[i]);
     } else {
-        console.log("eve request phone alarm length is 0);
+        console.log("eve request phone alarm length is 0");
     }
     next();
 };
