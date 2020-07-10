@@ -15,6 +15,7 @@ const area = process.env.DATAAREA || "zh-cn";
 
 const fenceUrl = `http://v3.res.server.${area}.sky1088.com/fence/sn/`;
 const mqPostUrl = `http://v3.mq-rabbit.server.${area}.sky1088.com/data`;
+// const doPostUrl = `http://resource.data-hub.sky1088.com/gps/event`;
 const FenceTypeEnum = [null, gpsUtil.IsPointInCircle, gpsUtil.IsPointInRect, gpsUtil.IsPointInPolygon];
 
 const FenceTriggerTitle = "Device %s has %s fence %s";
@@ -37,11 +38,10 @@ let TriggerFenceAlarm = function (sn, fence, x) {
     be.UpTime = time();
     be.SerialNumber = sn;
     be.Description = "By Web Hooks";
-    // console.log(JSON.stringify(be));
     // 利用MQ进行消息中转
-    apiUtil.PromisePost(mqPostUrl, [be])
+    apiUtil.PromisePost(mqPostUrl, be)
         .then(msg => {
-            // console.log(`${mqPostUrl} ==> ${msg}`);
+            console.log(`${mqPostUrl} ==> ${msg}`);
         })
 };
 
