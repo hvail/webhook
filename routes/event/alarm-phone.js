@@ -37,11 +37,12 @@ let _doPush = function (phoneBind, eve) {
         DisplayName: phoneBind.BindTarget,
         AlarmType: _type,
         EventTime: eve.UpTime,
-        CallPhone: phoneBind.Phone,
+        CallPhone: phoneBind.Phone || "AUTO",
         CallAccount: UIdPIX + phoneBind.UId,
         SerialNumber: eve.SerialNumber,
         DataArea: area
     };
+    cosnole.log(JSON.stringify(_eve));
     apiUtil.PromiseGet(GetDeviceAttrUrl.concat(eve.SerialNumber)).then(JSON.parse)
         .then(attr => {
             if (attr.DisplayName) {
