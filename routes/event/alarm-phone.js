@@ -96,15 +96,15 @@ let doEvent = function (eve) {
     }
     let DeviceAttrUrl = `${GetDeviceAlarmUrl}${eve.SerialNumber}`;
     // 查询此设备所对应的电话报警信息
-    apiUtil.PromiseGet(DeviceAttrUrl).then(JSON.parse)
-        .then(ds => {
-            // if (ds.length > 0) {
-            //     console.log(DeviceAttrUrl + " : " + JSON.stringify(ds) + " : " + JSON.stringify(eve));
-            // }
-            for (let i = 0; i < ds.length; i++) _doPush(ds[i], eve);
-        })
-        .catch(e => console.log('ERROR : ' + DeviceAttrUrl) && stop(e))
-        .catch(console.log);
+    // apiUtil.PromiseGet(DeviceAttrUrl).then(JSON.parse)
+    //     .then(ds => {
+    //         // if (ds.length > 0) {
+    //         //     console.log(DeviceAttrUrl + " : " + JSON.stringify(ds) + " : " + JSON.stringify(eve));
+    //         // }
+    //         for (let i = 0; i < ds.length; i++) _doPush(ds[i], eve);
+    //     })
+    //     .catch(e => console.log('ERROR : ' + DeviceAttrUrl) && stop(e))
+    //     .catch(console.log);
 };
 
 /* GET users listing. */
