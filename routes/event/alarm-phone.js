@@ -42,7 +42,7 @@ let _doPush = function (phoneBind, eve) {
         SerialNumber: eve.SerialNumber,
         DataArea: area
     };
-    cosnole.log(JSON.stringify(_eve));
+    console.log(JSON.stringify(_eve));
     apiUtil.PromiseGet(GetDeviceAttrUrl.concat(eve.SerialNumber)).then(JSON.parse)
         .then(attr => {
             if (attr.DisplayName) {
