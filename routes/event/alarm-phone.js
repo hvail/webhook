@@ -43,23 +43,23 @@ let _doPush = function (phoneBind, eve) {
         DataArea: area
     };
     console.log(JSON.stringify(_eve));
-    apiUtil.PromiseGet(GetDeviceAttrUrl.concat(eve.SerialNumber)).then(JSON.parse)
-        .then(attr => {
-            if (attr.DisplayName) {
-                _eve.DisplayName = attr.DisplayName;
-            }
-            console.log(`${Trigger}${phoneBind.AlarmTarget}`);
-            apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}`, _eve)
-                .then(e => {
-                    if (e.length > 5) {
-                        console.log(`${JSON.stringify(_eve)}`);
-                        console.log(`push ${eve.SerialNumber}-${_eve.CallPhone} ${Trigger}${phoneBind.AlarmTarget}:${e}`);
-                    }
-                })
-                .catch(err => console.log(err));
-        })
-        .catch(e => console.log(`报警出错 ${Trigger}${phoneBind.AlarmTarget} :: ${JSON.stringify(_eve)}`) && apiUtil.Break(e))
-        .catch(console.log);
+    // apiUtil.PromiseGet(GetDeviceAttrUrl.concat(eve.SerialNumber)).then(JSON.parse)
+    //     .then(attr => {
+    //         if (attr.DisplayName) {
+    //             _eve.DisplayName = attr.DisplayName;
+    //         }
+    //         console.log(`${Trigger}${phoneBind.AlarmTarget}`);
+    //         apiUtil.PromisePost(`${Trigger}${phoneBind.AlarmTarget}`, _eve)
+    //             .then(e => {
+    //                 if (e.length > 5) {
+    //                     console.log(`${JSON.stringify(_eve)}`);
+    //                     console.log(`push ${eve.SerialNumber}-${_eve.CallPhone} ${Trigger}${phoneBind.AlarmTarget}:${e}`);
+    //                 }
+    //             })
+    //             .catch(err => console.log(err));
+    //     })
+    //     .catch(e => console.log(`报警出错 ${Trigger}${phoneBind.AlarmTarget} :: ${JSON.stringify(_eve)}`) && apiUtil.Break(e))
+    //     .catch(console.log);
 };
 
 let getDemo = function (req, res, next) {
