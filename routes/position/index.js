@@ -37,7 +37,7 @@ const error = function (err, req, res, next) {
 
 /* GET users listing. */
 router.post('/', begin);
-router.post('/', fence);
+// router.post('/', fence);
 router.post('/', end);
 router.post('/', error);
 
