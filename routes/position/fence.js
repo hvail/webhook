@@ -95,15 +95,12 @@ let _location = function (req, res, next) {
             .then(JSON.parse)
             .then(fences => {
                 fences.length > 0 && _readLastAndSet(sn, _pos.last(), (poi) => {
-                    // console.log(fences);
+                    console.log(fences);
                     if (poi !== null) _pos = poi.concat(_pos);
                     for (let i = 0; i < fences.length; i++) {
                         trigger(_pos, fences[i]);
                     }
                 });
-                // if (fences.length > 0) {
-                //     console.log(`${getFenceUrl} length is ${fences.length}`);
-                // }
             })
             .catch(e => console.log(e));
     next();
@@ -113,4 +110,3 @@ router.get('/');
 router.post('/', _location);
 
 module.exports = router;
-
