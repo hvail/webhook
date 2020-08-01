@@ -9,14 +9,14 @@
 const express = require('express');
 const router = express.Router();
 
-let fence = require('./fence');
+// let fence = require('./fence');
 
 const begin = (req, res, next) => {
     res.send("1");
-    if (!Array.isArray(req.body)) {
-        req.body = [req.body];
-    }
-    next();
+    // if (!Array.isArray(req.body)) {
+    //     req.body = [req.body];
+    // }
+    // next();
 };
 
 const end = (req, res) => {

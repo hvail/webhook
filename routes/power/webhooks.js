@@ -16,7 +16,9 @@ const doWebPush = function (arr, data) {
                     // .then(ss => console.log(arr[i].Url + " : (" + JSON.stringify(data) + ")"))
                         .catch(e => console.log(arr[i].Url + ":" + e));
             }
-        } else console.log(data);
+        } else {
+            console.log(data);
+        }
 };
 const _location = (req, res, next) => {
     let pos = req.body;
