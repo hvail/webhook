@@ -44,7 +44,7 @@ let listenEventMsg = (msg, type) => {
             apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/event`, eve)
                 .then(result => {
                     logger.info(result + " ::> " + tag + ":" + msg.content);
-                    console.log(result + " ::> " + tag + ":" + msg.content);
+                    // console.log(result + " ::> " + tag + ":" + msg.content);
                 })
                 .catch(console.log);
         }
@@ -72,7 +72,7 @@ let listenPowerMsg = (msg, type) => {
         apiUtil.PromisePost(`http://webhook.${area}.sky1088.com/power`, eve)
             .then(result => {
                 logger.info(result + " ::> " + tag + ":" + JSON.stringify(eve));
-                console.log(result + " ::> " + tag + ":" + JSON.stringify(eve));
+                // console.log(result + " ::> " + tag + ":" + JSON.stringify(eve));
             })
             .catch(console.log);
     }
